@@ -126,6 +126,10 @@ The other games: [Hisar](https://furkiozknn.github.io/kale-savunmasi/) ·
 [Mehter](https://furkiozknn.github.io/mehter/) · [Boğaz Vapuru](https://furkiozknn.github.io/bogaz-vapuru/) ·
 [Simit Fırını](https://furkiozknn.github.io/simit-firini/) · [Karagöz](https://furkiozknn.github.io/karagoz/)
 
+**Round 5:** [Kapadokya Balonu](https://furkiozknn.github.io/kapadokya-balonu/) ·
+[Ebru](https://furkiozknn.github.io/ebru/) · [Kırkpınar](https://furkiozknn.github.io/kirkpinar/) ·
+[Çarşı Kaçışı](https://furkiozknn.github.io/carsi-kacisi/)
+
 ## Türkçe
 
 **Lale Bahçesi**, Lale Devri'nde Boğaz kıyısındaki bir saray terasında geçen sakin bir 3D bahçe kurma oyunu. Lale
