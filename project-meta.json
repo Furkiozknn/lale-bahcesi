@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "lale-bahcesi",
+  "owner": "Furkiozknn",
+  "repository": "https://github.com/Furkiozknn/lale-bahcesi",
+  "homepage": "https://furkiozknn.github.io/lale-bahcesi/",
+  "releases": null,
+  "status": "active",
+  "category": "game",
+  "platform": [
+    "web"
+  ],
+  "primary_language": "JavaScript",
+  "technologies": [
+    "Three.js r170",
+    "Web Audio API"
+  ],
+  "version": null,
+  "license": "MIT",
+  "topics": [
+    "browser-game",
+    "threejs",
+    "cozy-game",
+    "garden-builder",
+    "claude-code",
+    "claude-game-arena"
+  ],
+  "summary": "Cosy 3D tulip garden builder in the Ottoman Tulip Era, built by Claude Haiku 5.5 · Lale Devri'nde sakin bir 3D lale bahçesi kurma oyunu, Claude Haiku 5.5 yaptı",
+  "key_features": [
+    "Plant, water and cut tulips on a walled palace terrace by the Bosphorus",
+    "Breed hybrids from neighbouring blooms: colour, petal shape and pattern mix the parents'",
+    "A bazaar where prices rise and crash, especially during a tulip mania",
+    "Build paths, beds, a turtle pool, cypress and plane trees, lanterns and benches; the garden grows each season",
+    "30-day seasons end in a festival; win the final one with three stars and at least 20 varieties"
+  ],
+  "media": {
+    "hero": "docs/gameplay.png",
+    "screenshots": [
+      "docs/title.png",
+      "docs/gameplay.png",
+      "docs/festival.png",
+      "docs/phone-gameplay.png"
+    ],
+    "gifs": [
+      "docs/gameplay.gif"
+    ],
+    "videos": [
+      "docs/gameplay.mp4"
+    ]
+  },
+  "tests": null,
+  "ci": {
+    "workflows": [],
+    "badge": null
+  },
+  "docs": {
+    "readme": "README.md",
+    "changelog": null,
+    "version_history": null,
+    "roadmap": null,
+    "security": null,
+    "contributing": null,
+    "license_file": "LICENSE"
+  },
+  "social": {
+    "headline": "Grow a tulip garden in the Ottoman Tulip Era: breed new varieties and win the Sultan's festival · Lale Devri'nde bahçe kur: yeni çeşitler melezle, Sultan'ın şenliğini kazan",
+    "hashtags": [
+      "claudecode",
+      "indiegame"
+    ],
+    "primary_link": "https://furkiozknn.github.io/lale-bahcesi/"
+  },
+  "provenance": {
+    "generated_at": "2026-10-27",
+    "generator": "hand-written",
+    "rule": "mechanical fields read from the repository; editorial fields hand-written from the README, index.html and the video-studio analiz.md; no field is generated from a guess"
+  }
+}
