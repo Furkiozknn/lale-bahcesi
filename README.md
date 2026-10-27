@@ -1,6 +1,7 @@
 # Lale Bahçesi (Tulip Garden) · Claude Game Arena
 
 **Play online:** https://furkiozknn.github.io/lale-bahcesi/ (desktop and phone, no install)
+
 ![Lale Bahçesi gameplay: tulips blooming around the fountain](docs/gameplay.gif)
 
 A 3D cosy garden builder set in the Ottoman Tulip Era. Plant tulip bulbs on a walled palace terrace by the Bosphorus, water them, cut the blooms, breed new varieties, sell at the bazaar and win the Sultan's tulip festival with three stars.
