@@ -18,6 +18,10 @@
 
 <p align="center"><b>Play online: <a href="https://furkiozknn.github.io/lale-bahcesi/">https://furkiozknn.github.io/lale-bahcesi/</a></b> (desktop and phone, no install)</p>
 
+<!-- portals:start -->
+<p align="center">Also on: <a href="https://furkiozknn.itch.io/lale-bahcesi">itch.io</a></p>
+<!-- portals:end -->
+
 ## Highlights
 
 - **Plant, water, cut.** Plant bulbs in the beds, water them by hand or let the fountain do it, cut the blooms and lift
@@ -146,3 +150,5 @@ tarayıcıda oynanır. Claude Haiku 5.5 tarafından Claude Code ile tek bir prom
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
+Like the game? You can support new rounds on [Buy Me a Coffee](https://buymeacoffee.com/furkiozkann). The game stays free.
