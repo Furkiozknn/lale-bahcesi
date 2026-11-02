@@ -7,27 +7,30 @@
 <meta name="description" content="Lale Bahçesi: a 3D tulip garden builder in the Ottoman Tulip Era. Plant, water, breed and win the Sultan's festival. Built with Three.js and Web Audio.">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script>
 <style>
-:root{--accent:#BE185D;--accent-hi:#f472b6;--ink:#3b1d2c;--paper:#fff6f8;--glass:rgba(255,246,250,.84);--line:rgba(190,24,93,.28);--focus:#f59e0b;--mut:#7a4a62;--sky:#cfe9f2;--gold:#f5c34b;--head:#BE185D}
+:root{--accent:#B3262F;--accent-hi:#E63946;--ink:#3a1f1c;--paper:#fff6e6;--glass:rgba(255,246,230,.93);--line:rgba(179,38,47,.32);--focus:#f59e0b;--mut:#6e4b3e;--sky:#cdeaf8;--gold:#f5c34b;--head:#8E1B24;--leaf:#3A7D44;
+  --corner:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath d='M2 28C2 14 10 8 16 2C22 8 28 14 28 28' fill='none' stroke='%233A7D44' stroke-width='1.6'/%3E%3Cpath d='M16 2C12 6 10 10 10 14C13 11 14 10 16 10C18 10 19 11 22 14C22 10 20 6 16 2Z' fill='%23E63946'/%3E%3Ccircle cx='16' cy='18' r='2.4' fill='%23FFD166'/%3E%3C/svg%3E")}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#d7f0fa;overflow:hidden}
+html,body{margin:0;height:100%;background:var(--sky);overflow:hidden}
 body{font:15px/1.4 system-ui,"Segoe UI",Roboto,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-button{font:inherit;color:inherit;min-height:44px;min-width:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.55);cursor:pointer;touch-action:manipulation}
-button:hover{background:rgba(255,255,255,.9)}
+button{font:inherit;color:inherit;min-height:44px;min-width:44px;padding:8px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fffaf0;cursor:pointer;touch-action:manipulation;box-shadow:0 2px 0 rgba(142,27,36,.18)}
+button:hover{background:#fff}
+button:active{transform:translateY(1px);box-shadow:none}
 button:disabled{opacity:.45;cursor:default}
-button.primary{background:var(--accent);border-color:transparent;color:#fff;font-weight:700}
-button.on{background:rgba(190,24,93,.18);border-color:var(--accent)}
+button.primary{background:linear-gradient(180deg,#c93b47,var(--accent));border-color:transparent;color:#fff;font-weight:700;box-shadow:0 3px 0 #7a1820}
+button.on{background:rgba(179,38,47,.16);border-color:var(--accent)}
 button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 input[type=range]{width:100%;min-height:44px;accent-color:var(--accent)}
 .hidden{display:none!important}
-.glass{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(120,30,70,.18)}
-.screen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(255,240,246,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:auto}
-#scr-title{background:linear-gradient(180deg,rgba(207,233,242,.1),rgba(255,236,244,.85))}
-.panel{width:100%;max-width:640px;padding:20px;display:flex;flex-direction:column;gap:14px;max-height:100%;overflow:auto;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(120,30,70,.18)}
+.glass{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 10px 28px rgba(90,30,30,.2)}
+.screen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(255,244,226,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:auto}
+#scr-title{background:linear-gradient(180deg,rgba(205,234,248,.15),rgba(255,240,220,.88))}
+/* garden-scroll panel: parchment, a tulip flourish in each corner and a rolled-edge inset line */
+.panel{width:100%;max-width:640px;padding:22px;display:flex;flex-direction:column;gap:14px;max-height:100%;overflow:auto;background:var(--corner) no-repeat 10px 10px/30px 30px,var(--corner) no-repeat right 10px top 10px/30px 30px,var(--corner) no-repeat left 10px bottom 10px/30px 30px,var(--corner) no-repeat right 10px bottom 10px/30px 30px,var(--paper);border:1.5px solid var(--line);border-radius:14px;box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5px rgba(179,38,47,.28),0 14px 34px rgba(90,30,30,.22)}
 .panel>*{flex-shrink:0}
 .panel.wide{max-width:920px}
 h1,h2{margin:0;font-weight:800;letter-spacing:.02em}
-h1{font-size:clamp(38px,9vw,64px);color:var(--head);font-family:Georgia,"Times New Roman",serif}
+h1{font-size:clamp(38px,9vw,64px);color:var(--head);font-family:Georgia,"Times New Roman",serif;text-shadow:0 2px 0 #fff6e6}
 h2{font-size:22px;color:var(--head)}
 .center{text-align:center;align-items:center}
 .logo{width:96px;height:96px;margin:0 auto}
@@ -43,7 +46,7 @@ h2{font-size:22px;color:var(--head)}
 .foot a{pointer-events:auto;color:var(--accent)}
 #title-best{font-size:14px;margin:0}
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 16px;font-variant-numeric:tabular-nums}
-.stats-grid div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 0}
+.stats-grid div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:4px 0}
 .bars{display:flex;flex-direction:column;gap:8px;width:100%}
 .bar{display:grid;grid-template-columns:150px 1fr 44px;gap:10px;align-items:center;font-size:14px;width:100%}
 .track{height:12px;border-radius:6px;background:rgba(190,24,93,.16);overflow:hidden}
@@ -79,19 +82,20 @@ h2{font-size:22px;color:var(--head)}
 .ibtn svg{width:22px;height:22px;fill:currentColor}
 .ibtn.txt{font-weight:800;font-size:13px}
 /* bottom panels */
-#tile{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:9;width:min(92vw,420px);padding:12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+#tile{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:9;width:min(92vw,420px);padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:15px;background:var(--corner) no-repeat right 8px top 8px/24px 24px,var(--glass)}
 #tile .head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#coach{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:9;width:min(92vw,460px);padding:10px 14px;font-size:15px;text-align:center;pointer-events:none}
 #build{position:fixed;left:8px;right:8px;bottom:30px;z-index:9;display:flex;gap:6px;padding:6px;overflow-x:auto;justify-content:center}
 #build button{flex:none;display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 8px;font-size:12px;line-height:1.15}
 #build button small{font-size:11px;opacity:.75}
 #build button.on{box-shadow:0 0 0 2px var(--accent) inset}
 #toasts{position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:min(92vw,460px)}
-.toast{padding:10px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);font-size:14px;box-shadow:0 6px 18px rgba(120,30,70,.2);animation:tin .25s ease-out}
+.toast{padding:10px 14px;border-radius:12px;background:var(--glass);border:1.5px solid var(--line);font-size:15px;box-shadow:0 6px 18px rgba(90,30,30,.2);animation:tin .25s ease-out}
 .toast.good{border-color:#22a06b}
 .toast.bad{border-color:#d13b3b}
 @keyframes tin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 #debug{position:fixed;left:8px;bottom:8px;z-index:40;background:rgba(0,0,0,.7);color:#eaffea;font:12px/1.4 monospace;padding:8px;border-radius:8px;max-width:90vw;white-space:pre-wrap;pointer-events:none}
-@media (max-width:700px){.stat .long{display:none}.stat .short{display:inline}.stat span{font-size:10px}.stats{order:3;flex:1 0 100%;gap:14px;padding-top:2px}.brand span{display:none}#hud{padding:6px 8px}#toasts{top:124px}#build button small{display:none}}
+@media (max-width:700px){.stat .long{display:none}.stat .short{display:inline}.stat span{font-size:11px}.stats{order:3;flex:1 0 100%;gap:14px;padding-top:2px}.brand span{display:none}#hud{padding:6px 8px}#toasts{top:124px}#build button small{display:none}}
 </style>
 <script data-goatcounter="https://furkiozknn.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -122,6 +126,7 @@ h2{font-size:22px;color:var(--head)}
 
 <div id="toasts" aria-live="polite"></div>
 <div id="tile" class="glass hidden" role="dialog"></div>
+<div id="coach" class="coach glass hidden" role="status"></div>
 <nav id="build" class="glass hidden" aria-label="build"></nav>
 <div id="debug" class="hidden"></div>
 
@@ -208,8 +213,8 @@ const DECOR = ['cypress', 'plane', 'lantern', 'bench'];
 const TOOLS = ['path', 'bed', 'pool', 'cypress', 'plane', 'lantern', 'bench', 'erase'];
 const BULB_PRICE = 6, FLOWER_PRICE = 11, PACK_PRICE = 20, BED_LIMIT = 260;
 const PAL = [
-  { tr: 'Kırmızı', en: 'Red', col: 0xc8284a }, { tr: 'Pembe', en: 'Pink', col: 0xf08ab4 },
-  { tr: 'Beyaz', en: 'White', col: 0xfaf4ea }, { tr: 'Sarı', en: 'Yellow', col: 0xf6d24a },
+  { tr: 'Kırmızı', en: 'Red', col: 0xe63946 }, { tr: 'Pembe', en: 'Pink', col: 0xf4a6c1 },
+  { tr: 'Beyaz', en: 'White', col: 0xfaf4ea }, { tr: 'Sarı', en: 'Yellow', col: 0xffd166 },
   { tr: 'Mor', en: 'Purple', col: 0x7a3fa0 }, { tr: 'Turuncu', en: 'Orange', col: 0xf28a3a },
   { tr: 'Bordo', en: 'Maroon', col: 0x6e1630 }, { tr: 'Krem', en: 'Cream', col: 0xf3e3b5 },
   { tr: 'Gül-mor', en: 'Rose-violet', col: 0xc05aa8 }, { tr: 'Ateş', en: 'Ember', col: 0xe0562b }
@@ -262,7 +267,10 @@ const STR = {
     newVariety: 'Yeni çeşit bulundu:', newSeed: 'Melez tohum:', maniaRise: 'Bir çeşidin fiyatı fırlıyor!',
     maniaCrash: 'Lale çılgınlığı çöktü: fiyatlar düştü.', welcome: 'Bahçe hazır. İlk soğanlarınızı dikin.',
     seasonStart: 'Yeni mevsim başladı: bahçe genişledi.', blocked: 'Burada yapılamaz.', lockedTile: 'Bu parsel henüz açık değil.',
-    endless: 'Sonsuz bahçe modu: şenlik her 30 günde.', bulbNoneSel: 'Seçili yatak yok.'
+    endless: 'Sonsuz bahçe modu: şenlik her 30 günde.', bulbNoneSel: 'Seçili yatak yok.',
+    coachSelect: 'Başlamak için bir yatağa tıklayın, sonra soğan dikin.',
+    coachWait: 'Soğanlar filizleniyor. Çeşmenin yanındaki yataklar kendiliğinden sulanır.',
+    coachCut: 'Bir lale açtı: üstüne tıklayıp Kes’e basın.'
   },
   en: {
     title: 'Lale Bahçesi', sub: 'Build a palace tulip garden in the Ottoman Tulip Era.',
@@ -301,7 +309,10 @@ const STR = {
     newVariety: 'New variety found:', newSeed: 'Hybrid seed:', maniaRise: 'One variety’s price is soaring!',
     maniaCrash: 'Tulip mania crashed: prices fell.', welcome: 'The garden is ready. Plant your first bulbs.',
     seasonStart: 'A new season began: the garden grew.', blocked: 'Not possible here.', lockedTile: 'This plot is not open yet.',
-    endless: 'Endless garden: a festival every 30 days.', bulbNoneSel: 'No bed selected.'
+    endless: 'Endless garden: a festival every 30 days.', bulbNoneSel: 'No bed selected.',
+    coachSelect: 'Click a bed to start, then plant a bulb in it.',
+    coachWait: 'Bulbs are sprouting. Beds next to the fountain water themselves.',
+    coachCut: 'A tulip is in bloom: click it and press Cut.'
   }
 };
 
@@ -315,7 +326,7 @@ const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 const isPhone = matchMedia('(pointer:coarse)').matches || innerWidth < 700;
-const cfg = Object.assign({ master: 0.8, music: 0.6, sfx: 0.8, lang: 'tr', quality: isPhone ? 'low' : 'high', mPrev: 0.6, sPrev: 0.8 }, load(KEY_S) || {});
+const cfg = Object.assign({ master: 0.8, music: 0.6, sfx: 0.8, lang: /^tr/i.test(navigator.language || '') ? 'tr' : 'en', quality: isPhone ? 'low' : 'high', mPrev: 0.6, sPrev: 0.8 }, load(KEY_S) || {});
 if (qs.has('lang')) cfg.lang = qs.get('lang') === 'en' ? 'en' : 'tr';
 if (FLAG.low) cfg.quality = 'low';
 const T = k => (STR[cfg.lang] && STR[cfg.lang][k]) || STR.en[k] || k;
@@ -345,13 +356,15 @@ function makeTiles() {
     const tl = a[y * N + x];
     if (kind === 'pool') tl.t = T_POOL; else tl.d = kind;
   }
+  // four starting beds in front of the fountain, so the first bulb can be planted at once
+  for (const [x, y] of [[6, 9], [7, 9], [8, 9], [9, 9]]) a[y * N + x].t = T_BED;
   return a;
 }
 function newState() {
   return {
     season: 1, day: 1, clock: 0, akce: 50, rot: 0, bulbs: { [START_VARIETY]: 6 }, flowers: [],
     discovered: [], market: {}, mania: null, tiles: makeTiles(), endless: false, ended: false, won: false,
-    stats: { blooms: 0, bred: 0 }, lastFest: null
+    stats: { blooms: 0, bred: 0 }, lastFest: null, coached: false
   };
 }
 const tileAt = (x, y) => S.tiles[y * N + x];
@@ -434,6 +447,7 @@ function harvestAt(x, y) {
   if (!bloom(tl)) return false;
   S.flowers.push({ v: tl.pl.v, q: tl.pl.q });
   S.stats.blooms++;
+  S.coached = true;
   tl.pl.c = true;
   sfx('pick'); markDirty(); return true;
 }
@@ -625,12 +639,12 @@ const LOW = cfg.quality === 'low';
 renderer.shadowMap.enabled = !LOW;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 const scene = new THREE.Scene();
-const SKY_DAY = new THREE.Color(0xc4ecfa), SKY_DUSK = new THREE.Color(0xf4b6a0), SKY_NIGHT = new THREE.Color(0x1c2446);
+const SKY_DAY = new THREE.Color(0xcdeaf8), SKY_DUSK = new THREE.Color(0xf6b8a2), SKY_NIGHT = new THREE.Color(0x1d2b4f);
 scene.background = SKY_DAY.clone();
 scene.fog = new THREE.Fog(SKY_DAY.clone(), 30, 80);
 const cam = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
-const hemi = new THREE.HemisphereLight(0xfffaf0, 0xcfe9a6, 1.5); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xfff4e0, 2.0);
+const hemi = new THREE.HemisphereLight(0xfff8ee, 0x8fc77a, 1.6); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffe6bd, 2.1);
 sun.castShadow = !LOW;
 sun.shadow.mapSize.set(1024, 1024);
 Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 1, far: 60 });
@@ -645,19 +659,22 @@ const M = {
   bench: new THREE.MeshLambertMaterial({ color: 0x9b6b43 }), water: new THREE.MeshLambertMaterial({ color: 0x5ec6d9 }),
   turtle: new THREE.MeshLambertMaterial({ color: 0x6b8e4e }),
   candle: new THREE.MeshLambertMaterial({ color: 0xfff2c2, emissive: 0xffd27a, emissiveIntensity: 0.2 }),
-  marble: new THREE.MeshLambertMaterial({ color: 0xfff3dc }), wall: new THREE.MeshLambertMaterial({ color: 0xf7eedb }),
-  roof: new THREE.MeshLambertMaterial({ color: 0xf19bc3 }), sea: new THREE.MeshLambertMaterial({ color: 0x86d6ea }),
+  marble: new THREE.MeshLambertMaterial({ color: 0xedeae2 }), wall: new THREE.MeshLambertMaterial({ color: 0xf7f3ea }),
+  plinth: new THREE.MeshLambertMaterial({ color: 0xc9a06e }),
+  roof: new THREE.MeshLambertMaterial({ color: 0xe63946 }), sea: new THREE.MeshLambertMaterial({ color: 0x6ca0dc }),
   fountainWater: new THREE.MeshLambertMaterial({ color: 0x9fe3f0, emissive: 0x2b7f99, emissiveIntensity: 0.3 }),
   stem: new THREE.MeshLambertMaterial(), gold: new THREE.MeshLambertMaterial({ color: 0xffd76a }),
   cream: new THREE.MeshLambertMaterial({ color: 0xfff7e6 }), tulipCup: new THREE.MeshLambertMaterial()
 };
 const sea = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M.sea);
-sea.rotation.x = -Math.PI / 2; sea.position.y = -0.24; scene.add(sea);
+sea.rotation.x = -Math.PI / 2; sea.position.y = -1.1; scene.add(sea);
 
 // ground tiles: one instanced mesh, colour per tile
 const tileMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.98, 0.12, 0.98), new THREE.MeshLambertMaterial(), N * N);
 tileMesh.receiveShadow = true; scene.add(tileMesh);
-const TC = { grass: new THREE.Color(0xc2e889), path: new THREE.Color(0xf6e8c8), bed: new THREE.Color(0x9a6a44), bedWet: new THREE.Color(0x6b4628), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xfff3dc) };
+const TC = { grass: new THREE.Color(0x6fb35f), path: new THREE.Color(0xf2f0ea), bed: new THREE.Color(0x8a5a3c), bedWet: new THREE.Color(0x5a3620), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xedeae2) };
+// lawn tint per season: spring fresh, summer deep, autumn gold-olive, winter frosted sage
+const SEASON_GRASS = [0x6fb35f, 0x4f9e4a, 0x9aa64a, 0x8fb8a0].map(c => new THREE.Color(c));
 const dm = new THREE.Object3D();
 function place(mesh, i, x, y, z, sx = 1, sy = 1, sz = 1, ry = 0) {
   dm.position.set(x, y, z); dm.rotation.set(0, ry, 0); dm.scale.set(sx, sy, sz); dm.updateMatrix();
@@ -665,11 +682,22 @@ function place(mesh, i, x, y, z, sx = 1, sy = 1, sz = 1, ry = 0) {
 }
 const wxOf = x => x - N / 2 + 0.5;
 
+// rounded square slab with soft corners, extruded downward from y = 0 to y = -depth
+function roundedSlab(size, r, depth) {
+  const h = size / 2 - r, e = size / 2, s = new THREE.Shape();
+  s.moveTo(-h, -e); s.lineTo(h, -e); s.quadraticCurveTo(e, -e, e, -h); s.lineTo(e, h);
+  s.quadraticCurveTo(e, e, h, e); s.lineTo(-h, e); s.quadraticCurveTo(-e, e, -e, h); s.lineTo(-e, -h);
+  s.quadraticCurveTo(-e, -e, -h, -e);
+  return new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false, curveSegments: 6 }).rotateX(-Math.PI / 2);
+}
 // walls, base and kiosk: rebuilt for each season
 const terraceGroup = new THREE.Group(); scene.add(terraceGroup);
 function buildTerrace() {
   while (terraceGroup.children.length) terraceGroup.remove(terraceGroup.children[0]);
   const gs = GS[S.season - 1];
+  // sandstone plinth under the marble terrace: the garden reads as a diorama floating on the Bosphorus
+  const plinth = new THREE.Mesh(roundedSlab(gs + 1.6, 0.5, 0.6), M.plinth);
+  plinth.position.y = -0.8; plinth.receiveShadow = true; plinth.castShadow = !LOW; terraceGroup.add(plinth);
   const base = new THREE.Mesh(new THREE.BoxGeometry(gs + 0.6, 0.2, gs + 0.6), M.marble);
   base.position.y = -0.1; base.receiveShadow = true; terraceGroup.add(base);
   const h = 0.9, t = 0.28, len = gs + 0.6;
@@ -691,6 +719,8 @@ const basin = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.6, 0.4, 24), M.ma
 const pool = new THREE.Mesh(new THREE.CylinderGeometry(1.35, 1.35, 0.04, 24), M.fountainWater); pool.position.y = 0.3; fountain.add(pool);
 const column = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 1.4, 10), M.marble); column.position.y = 0.8; fountain.add(column);
 const spout = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 8), M.fountainWater); spout.position.y = 1.55; fountain.add(spout);
+// a marble step under the basin, so the fountain reads as a tiered Ottoman fountain
+const step = new THREE.Mesh(new THREE.CylinderGeometry(1.95, 2.0, 0.16, 24), M.marble); step.position.y = 0.02; step.receiveShadow = true; fountain.add(step);
 fountain.position.y = 0.06; scene.add(fountain);
 
 // shared decor geometry
@@ -699,14 +729,18 @@ const G = {
   ico: new THREE.IcosahedronGeometry(0.85, 0), pole: new THREE.CylinderGeometry(0.05, 0.06, 1.7, 6),
   glow: new THREE.BoxGeometry(0.36, 0.36, 0.36), seat: new THREE.BoxGeometry(0.9, 0.1, 0.32),
   leg: new THREE.BoxGeometry(0.08, 0.3, 0.28), disk: new THREE.CylinderGeometry(0.42, 0.42, 0.05, 16),
-  turtle: new THREE.SphereGeometry(0.26, 8, 6), candle: new THREE.CylinderGeometry(0.06, 0.06, 0.22, 6)
+  turtle: new THREE.SphereGeometry(0.26, 8, 6), candle: new THREE.CylinderGeometry(0.06, 0.06, 0.22, 6),
+  lanternCap: new THREE.ConeGeometry(0.3, 0.26, 4)
 };
 function makeDecor(kind) {
   const g = new THREE.Group();
   const add = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.castShadow = !LOW; m.receiveShadow = true; g.add(m); return m; };
-  if (kind === 'cypress') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.cone, M.cypress, 0, 1.9, 0); }
-  if (kind === 'plane') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.ico, M.plane, 0, 1.6, 0); add(G.ico, M.planeLight, 0.4, 2.1, 0.1, 0.6, 0.6, 0.6); }
-  if (kind === 'lantern') { add(G.pole, M.bark, 0, 0.85, 0); add(G.glow, M.lantern, 0, 1.8, 0); }
+  // cypress: two tiers so the silhouette reads as a slim flame-shaped tree
+  if (kind === 'cypress') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.cone, M.cypress, 0, 1.9, 0); add(G.cone, M.cypress, 0, 2.55, 0, 0.62, 0.7, 0.62); }
+  // plane: three crowns in two greens, the light one on top
+  if (kind === 'plane') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.ico, M.plane, 0, 1.6, 0); add(G.ico, M.plane, -0.35, 1.9, -0.2, 0.55, 0.55, 0.55); add(G.ico, M.planeLight, 0.4, 2.1, 0.1, 0.6, 0.6, 0.6); }
+  // lantern: a glowing box under a small red cap
+  if (kind === 'lantern') { add(G.pole, M.bark, 0, 0.85, 0); add(G.glow, M.lantern, 0, 1.8, 0); add(G.lanternCap, M.roof, 0, 2.1, 0); }
   if (kind === 'bench') { add(G.seat, M.bench, 0, 0.42, 0); add(G.leg, M.bench, -0.36, 0.2, 0); add(G.leg, M.bench, 0.36, 0.2, 0); }
   if (kind === 'pool') {
     add(G.disk, M.water, 0, 0.03, 0);
@@ -786,14 +820,32 @@ const butterflies = [0, 1, 2].map(i => {
   g.userData = { wl, wr, cx: (Math.random() - 0.5) * 8, cz: (Math.random() - 0.5) * 8, r: 2 + Math.random() * 2, sp: 0.3 + Math.random() * 0.3, ph: Math.random() * 6 };
   scene.add(g); return g;
 });
+// bees: small striped bodies that circle the beds at different heights
+const beeBody = new THREE.SphereGeometry(0.075, 7, 5), beeStripe = new THREE.SphereGeometry(0.05, 6, 4);
+const M_BEE = new THREE.MeshLambertMaterial({ color: 0xffd166 }), M_STRIPE = new THREE.MeshLambertMaterial({ color: 0x2b2118 });
+const bees = [0, 1, 2].map(i => {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(beeBody, M_BEE), stripe = new THREE.Mesh(beeStripe, M_STRIPE);
+  stripe.position.x = 0.04; stripe.scale.set(0.8, 1, 1); g.add(body, stripe);
+  g.userData = { r: 3 + i * 1.2, sp: 0.55 + i * 0.15, ph: i * 2.1, cy: 1.1 + i * 0.3 };
+  scene.add(g); return g;
+});
+// fountain spray: droplets leave the spout, arc outwards and fall back into the basin (local to the fountain)
+const SPRAY = LOW ? 16 : 36, sprayPos = new Float32Array(SPRAY * 3);
+const sprayGeo = new THREE.BufferGeometry(); sprayGeo.setAttribute('position', new THREE.BufferAttribute(sprayPos, 3));
+const spray = new THREE.Points(sprayGeo, new THREE.PointsMaterial({ map: softSprite(), size: 0.2, color: 0xe6fbff, transparent: true, depthWrite: false, alphaTest: 0.02 }));
+fountain.add(spray);
 
 /* ---------- world rebuild (only when dirty) ---------- */
 function rebuildWorld() {
   dirty = false;
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
     const i = y * N + x, tl = S.tiles[i], on = inPlay(x, y);
-    place(tileMesh, i, wxOf(x), 0, wxOf(y), on ? 1 : 0.0001, 1, on ? 1 : 0.0001);
-    let col = TC.grass;
+    // beds stand a little higher than paths and lawn, like raised earth beds with a marble edge
+    const lift = tl.t === T_BED ? 1.9 : 1;
+    place(tileMesh, i, wxOf(x), 0, wxOf(y), on ? 1 : 0.0001, on ? lift : 1, on ? 1 : 0.0001);
+    // every lawn tile gets a small, fixed brightness shift so the lawn does not read as one flat sheet
+    let col = SEASON_GRASS[S.season - 1].clone().multiplyScalar(0.94 + 0.06 * ((x * 7 + y * 13) % 5) / 4);
     if (tl.t === T_PATH) col = TC.path;
     else if (tl.t === T_BED) col = TC.bed.clone().lerp(TC.bedWet, clamp(tl.w, 0, 1));
     else if (tl.t === T_POOL) col = TC.pool;
@@ -861,9 +913,19 @@ function updateVisuals(time) {
   hemi.intensity = 1.0 + 0.6 * e - 0.5 * night;
   skyTmp.copy(SKY_DAY).lerp(SKY_DUSK, dusk).lerp(SKY_NIGHT, night);
   scene.background.copy(skyTmp); scene.fog.color.copy(skyTmp);
-  M.lantern.emissiveIntensity = 0.2 + 1.6 * night;
+  M.lantern.emissiveIntensity = 0.2 + 1.6 * night + 0.05 * Math.sin(time * 9);
   M.candle.emissiveIntensity = 0.2 + 1.6 * night;
   spout.scale.y = 1 + 0.12 * Math.sin(time * 4);
+  for (let i = 0; i < SPRAY; i++) {
+    const ph = (time * 0.9 + i / SPRAY) % 1, a = i * 2.39996, r = 0.12 + 0.9 * ph;   // golden-angle spread
+    sprayPos[i * 3] = Math.cos(a) * r; sprayPos[i * 3 + 1] = 1.5 + 0.9 * ph - 1.9 * ph * ph; sprayPos[i * 3 + 2] = Math.sin(a) * r;
+  }
+  sprayGeo.attributes.position.needsUpdate = true;
+  for (const b of bees) {
+    const u = b.userData, a = time * u.sp + u.ph;
+    b.position.set(Math.cos(a) * u.r, u.cy + Math.sin(a * 3) * 0.15, Math.sin(a) * u.r);
+    b.rotation.y = -a;
+  }
   const pa = petalGeo.attributes.position.array;
   for (let i = 0; i < PETALS; i++) {
     pa[i * 3] += 0.004 + 0.003 * Math.sin(time + i);
@@ -1020,6 +1082,17 @@ function renderHUD() {
     const cost = COST[t] ? `<small>${COST[t]} ak.</small>` : '<small>&nbsp;</small>';
     return `<button data-tool="${t}" class="${tool === t ? 'on' : ''}" aria-pressed="${tool === t}">${T('tool' + t[0].toUpperCase() + t.slice(1))}${cost}</button>`;
   }).join('');
+  renderCoach();
+}
+// one short hint until the first tulip is cut; hidden while a tile panel is open
+function renderCoach() {
+  const el = $('coach');
+  let key = null;
+  if (game && S && overlay === null && !sel && !S.coached) {
+    key = S.tiles.some(t => bloom(t)) ? 'coachCut' : S.tiles.some(t => t.pl) ? 'coachWait' : 'coachSelect';
+  }
+  el.classList.toggle('hidden', !key);
+  if (key) el.textContent = T(key);
 }
 function renderTile() {
   const panel = $('tile');
