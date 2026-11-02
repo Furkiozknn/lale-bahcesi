@@ -716,6 +716,8 @@ const basin = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.6, 0.4, 24), M.ma
 const pool = new THREE.Mesh(new THREE.CylinderGeometry(1.35, 1.35, 0.04, 24), M.fountainWater); pool.position.y = 0.3; fountain.add(pool);
 const column = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 1.4, 10), M.marble); column.position.y = 0.8; fountain.add(column);
 const spout = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 8), M.fountainWater); spout.position.y = 1.55; fountain.add(spout);
+// a marble step under the basin, so the fountain reads as a tiered Ottoman fountain
+const step = new THREE.Mesh(new THREE.CylinderGeometry(1.95, 2.0, 0.16, 24), M.marble); step.position.y = 0.02; step.receiveShadow = true; fountain.add(step);
 fountain.position.y = 0.06; scene.add(fountain);
 
 // shared decor geometry
@@ -724,14 +726,18 @@ const G = {
   ico: new THREE.IcosahedronGeometry(0.85, 0), pole: new THREE.CylinderGeometry(0.05, 0.06, 1.7, 6),
   glow: new THREE.BoxGeometry(0.36, 0.36, 0.36), seat: new THREE.BoxGeometry(0.9, 0.1, 0.32),
   leg: new THREE.BoxGeometry(0.08, 0.3, 0.28), disk: new THREE.CylinderGeometry(0.42, 0.42, 0.05, 16),
-  turtle: new THREE.SphereGeometry(0.26, 8, 6), candle: new THREE.CylinderGeometry(0.06, 0.06, 0.22, 6)
+  turtle: new THREE.SphereGeometry(0.26, 8, 6), candle: new THREE.CylinderGeometry(0.06, 0.06, 0.22, 6),
+  lanternCap: new THREE.ConeGeometry(0.3, 0.26, 4)
 };
 function makeDecor(kind) {
   const g = new THREE.Group();
   const add = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.castShadow = !LOW; m.receiveShadow = true; g.add(m); return m; };
-  if (kind === 'cypress') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.cone, M.cypress, 0, 1.9, 0); }
-  if (kind === 'plane') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.ico, M.plane, 0, 1.6, 0); add(G.ico, M.planeLight, 0.4, 2.1, 0.1, 0.6, 0.6, 0.6); }
-  if (kind === 'lantern') { add(G.pole, M.bark, 0, 0.85, 0); add(G.glow, M.lantern, 0, 1.8, 0); }
+  // cypress: two tiers so the silhouette reads as a slim flame-shaped tree
+  if (kind === 'cypress') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.cone, M.cypress, 0, 1.9, 0); add(G.cone, M.cypress, 0, 2.55, 0, 0.62, 0.7, 0.62); }
+  // plane: three crowns in two greens, the light one on top
+  if (kind === 'plane') { add(G.trunk, M.bark, 0, 0.55, 0); add(G.ico, M.plane, 0, 1.6, 0); add(G.ico, M.plane, -0.35, 1.9, -0.2, 0.55, 0.55, 0.55); add(G.ico, M.planeLight, 0.4, 2.1, 0.1, 0.6, 0.6, 0.6); }
+  // lantern: a glowing box under a small red cap
+  if (kind === 'lantern') { add(G.pole, M.bark, 0, 0.85, 0); add(G.glow, M.lantern, 0, 1.8, 0); add(G.lanternCap, M.roof, 0, 2.1, 0); }
   if (kind === 'bench') { add(G.seat, M.bench, 0, 0.42, 0); add(G.leg, M.bench, -0.36, 0.2, 0); add(G.leg, M.bench, 0.36, 0.2, 0); }
   if (kind === 'pool') {
     add(G.disk, M.water, 0, 0.03, 0);
