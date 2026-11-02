@@ -81,6 +81,7 @@ h2{font-size:22px;color:var(--head)}
 /* bottom panels */
 #tile{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:9;width:min(92vw,420px);padding:12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
 #tile .head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#coach{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:9;width:min(92vw,460px);padding:10px 14px;font-size:15px;text-align:center;pointer-events:none}
 #build{position:fixed;left:8px;right:8px;bottom:30px;z-index:9;display:flex;gap:6px;padding:6px;overflow-x:auto;justify-content:center}
 #build button{flex:none;display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 8px;font-size:12px;line-height:1.15}
 #build button small{font-size:11px;opacity:.75}
@@ -122,6 +123,7 @@ h2{font-size:22px;color:var(--head)}
 
 <div id="toasts" aria-live="polite"></div>
 <div id="tile" class="glass hidden" role="dialog"></div>
+<div id="coach" class="coach glass hidden" role="status"></div>
 <nav id="build" class="glass hidden" aria-label="build"></nav>
 <div id="debug" class="hidden"></div>
 
@@ -262,7 +264,10 @@ const STR = {
     newVariety: 'Yeni çeşit bulundu:', newSeed: 'Melez tohum:', maniaRise: 'Bir çeşidin fiyatı fırlıyor!',
     maniaCrash: 'Lale çılgınlığı çöktü: fiyatlar düştü.', welcome: 'Bahçe hazır. İlk soğanlarınızı dikin.',
     seasonStart: 'Yeni mevsim başladı: bahçe genişledi.', blocked: 'Burada yapılamaz.', lockedTile: 'Bu parsel henüz açık değil.',
-    endless: 'Sonsuz bahçe modu: şenlik her 30 günde.', bulbNoneSel: 'Seçili yatak yok.'
+    endless: 'Sonsuz bahçe modu: şenlik her 30 günde.', bulbNoneSel: 'Seçili yatak yok.',
+    coachSelect: 'Başlamak için bir yatağa tıklayın, sonra soğan dikin.',
+    coachWait: 'Soğanlar filizleniyor. Çeşmenin yanındaki yataklar kendiliğinden sulanır.',
+    coachCut: 'Bir lale açtı: üstüne tıklayıp Kes’e basın.'
   },
   en: {
     title: 'Lale Bahçesi', sub: 'Build a palace tulip garden in the Ottoman Tulip Era.',
@@ -301,7 +306,10 @@ const STR = {
     newVariety: 'New variety found:', newSeed: 'Hybrid seed:', maniaRise: 'One variety’s price is soaring!',
     maniaCrash: 'Tulip mania crashed: prices fell.', welcome: 'The garden is ready. Plant your first bulbs.',
     seasonStart: 'A new season began: the garden grew.', blocked: 'Not possible here.', lockedTile: 'This plot is not open yet.',
-    endless: 'Endless garden: a festival every 30 days.', bulbNoneSel: 'No bed selected.'
+    endless: 'Endless garden: a festival every 30 days.', bulbNoneSel: 'No bed selected.',
+    coachSelect: 'Click a bed to start, then plant a bulb in it.',
+    coachWait: 'Bulbs are sprouting. Beds next to the fountain water themselves.',
+    coachCut: 'A tulip is in bloom: click it and press Cut.'
   }
 };
 
@@ -345,13 +353,15 @@ function makeTiles() {
     const tl = a[y * N + x];
     if (kind === 'pool') tl.t = T_POOL; else tl.d = kind;
   }
+  // four starting beds in front of the fountain, so the first bulb can be planted at once
+  for (const [x, y] of [[6, 9], [7, 9], [8, 9], [9, 9]]) a[y * N + x].t = T_BED;
   return a;
 }
 function newState() {
   return {
     season: 1, day: 1, clock: 0, akce: 50, rot: 0, bulbs: { [START_VARIETY]: 6 }, flowers: [],
     discovered: [], market: {}, mania: null, tiles: makeTiles(), endless: false, ended: false, won: false,
-    stats: { blooms: 0, bred: 0 }, lastFest: null
+    stats: { blooms: 0, bred: 0 }, lastFest: null, coached: false
   };
 }
 const tileAt = (x, y) => S.tiles[y * N + x];
@@ -434,6 +444,7 @@ function harvestAt(x, y) {
   if (!bloom(tl)) return false;
   S.flowers.push({ v: tl.pl.v, q: tl.pl.q });
   S.stats.blooms++;
+  S.coached = true;
   tl.pl.c = true;
   sfx('pick'); markDirty(); return true;
 }
@@ -1020,6 +1031,17 @@ function renderHUD() {
     const cost = COST[t] ? `<small>${COST[t]} ak.</small>` : '<small>&nbsp;</small>';
     return `<button data-tool="${t}" class="${tool === t ? 'on' : ''}" aria-pressed="${tool === t}">${T('tool' + t[0].toUpperCase() + t.slice(1))}${cost}</button>`;
   }).join('');
+  renderCoach();
+}
+// one short hint until the first tulip is cut; hidden while a tile panel is open
+function renderCoach() {
+  const el = $('coach');
+  let key = null;
+  if (game && S && overlay === null && !sel && !S.coached) {
+    key = S.tiles.some(t => bloom(t)) ? 'coachCut' : S.tiles.some(t => t.pl) ? 'coachWait' : 'coachSelect';
+  }
+  el.classList.toggle('hidden', !key);
+  if (key) el.textContent = T(key);
 }
 function renderTile() {
   const panel = $('tile');
