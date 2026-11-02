@@ -15,7 +15,7 @@
     "Three.js r170",
     "Web Audio API"
   ],
-  "version": null,
+  "version": "2.0.0",
   "license": "MIT",
   "topics": [
     "browser-game",
@@ -25,19 +25,20 @@
     "claude-code",
     "claude-game-arena"
   ],
-  "summary": "Cosy 3D tulip garden builder in the Ottoman Tulip Era, built by Claude Haiku 5.5 · Lale Devri'nde sakin bir 3D lale bahçesi kurma oyunu, Claude Haiku 5.5 yaptı",
+  "summary": "Cosy 3D Tulip Era garden builder, redesigned as a sunlit sandstone diorama with a garden-scroll UI, built by Claude Haiku 5.5 · Lale Devri'nde 3D bahçe kurma oyunu, güneşli kumtaşı diorama ve bahçe parşömeni arayüzüyle yeniden tasarlandı, Claude Haiku 5.5 yaptı",
   "key_features": [
-    "Plant, water and cut tulips on a walled palace terrace by the Bosphorus",
-    "Breed hybrids from neighbouring blooms: colour, petal shape and pattern mix the parents'",
-    "A bazaar where prices rise and crash, especially during a tulip mania",
-    "Build paths, beds, a turtle pool, cypress and plane trees, lanterns and benches; the garden grows each season",
-    "30-day seasons end in a festival; win the final one with three stars and at least 20 varieties"
+    "Plant bulbs, water and cut the blooms; two tulips blooming side by side breed a new variety (colour, petal shape, pattern)",
+    "Redesign: a sandstone diorama plinth with raised beds, tiered cypresses and planes, a stepped fountain, bees and lantern glow",
+    "Redesign: parchment garden-scroll panels with tulip-flourish corners on every screen; the garden starts with four beds and a one-line coach",
+    "A bazaar with tulip-mania price swings and a festival every 30 days scoring variety, colour harmony, symmetry and decoration",
+    "Measured after the redesign: 60 fps at 1280x720, 57-61 draw calls in the ?auto run, zero JS errors across every season"
   ],
   "media": {
     "hero": "docs/gameplay.png",
     "screenshots": [
       "docs/card.jpg",
       "docs/gameplay.png",
+      "docs/redesign-before-after.png",
       "docs/title.png",
       "docs/festival.png",
       "docs/phone-gameplay.png"
@@ -72,8 +73,9 @@
     "primary_link": "https://furkiozknn.github.io/lale-bahcesi/"
   },
   "provenance": {
-    "generated_at": "2026-10-27",
+    "generated_at": "2026-10-28",
     "generator": "hand-written",
-    "rule": "mechanical fields read from the repository; editorial fields hand-written from the README, index.html and the video-studio analiz.md; no field is generated from a guess"
+    "rule": "mechanical fields read from the repository; editorial fields hand-written from the README, index.html and the video-studio analiz.md; no field is generated from a guess",
+    "note": "visual redesign 2026-11-02"
   }
 }

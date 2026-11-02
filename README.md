@@ -13,7 +13,7 @@
 <p align="center"><b>A cosy 3D garden builder set in the Ottoman Tulip Era: plant tulip bulbs on a walled palace terrace by the Bosphorus, breed new varieties, sell at the bazaar and win the Sultan's tulip festival.</b></p>
 
 <p align="center">
-  <img src="docs/gameplay.gif" width="640" alt="Lale Bahçesi gameplay: tulips blooming around the fountain">
+  <img src="docs/gameplay.gif" width="640" alt="Lale Bahçesi gameplay after the redesign: the sandstone garden diorama with tulip beds, the stepped fountain and the garden-scroll UI">
 </p>
 
 <p align="center"><b>Play online: <a href="https://furkiozknn.github.io/lale-bahcesi/">https://furkiozknn.github.io/lale-bahcesi/</a></b> (desktop and phone, no install)</p>
