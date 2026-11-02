@@ -7,27 +7,30 @@
 <meta name="description" content="Lale Bahçesi: a 3D tulip garden builder in the Ottoman Tulip Era. Plant, water, breed and win the Sultan's festival. Built with Three.js and Web Audio.">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script>
 <style>
-:root{--accent:#BE185D;--accent-hi:#f472b6;--ink:#3b1d2c;--paper:#fff6f8;--glass:rgba(255,246,250,.84);--line:rgba(190,24,93,.28);--focus:#f59e0b;--mut:#7a4a62;--sky:#cfe9f2;--gold:#f5c34b;--head:#BE185D}
+:root{--accent:#B3262F;--accent-hi:#E63946;--ink:#3a1f1c;--paper:#fff6e6;--glass:rgba(255,246,230,.93);--line:rgba(179,38,47,.32);--focus:#f59e0b;--mut:#6e4b3e;--sky:#cdeaf8;--gold:#f5c34b;--head:#8E1B24;--leaf:#3A7D44;
+  --corner:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath d='M2 28C2 14 10 8 16 2C22 8 28 14 28 28' fill='none' stroke='%233A7D44' stroke-width='1.6'/%3E%3Cpath d='M16 2C12 6 10 10 10 14C13 11 14 10 16 10C18 10 19 11 22 14C22 10 20 6 16 2Z' fill='%23E63946'/%3E%3Ccircle cx='16' cy='18' r='2.4' fill='%23FFD166'/%3E%3C/svg%3E")}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#d7f0fa;overflow:hidden}
+html,body{margin:0;height:100%;background:var(--sky);overflow:hidden}
 body{font:15px/1.4 system-ui,"Segoe UI",Roboto,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-button{font:inherit;color:inherit;min-height:44px;min-width:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.55);cursor:pointer;touch-action:manipulation}
-button:hover{background:rgba(255,255,255,.9)}
+button{font:inherit;color:inherit;min-height:44px;min-width:44px;padding:8px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fffaf0;cursor:pointer;touch-action:manipulation;box-shadow:0 2px 0 rgba(142,27,36,.18)}
+button:hover{background:#fff}
+button:active{transform:translateY(1px);box-shadow:none}
 button:disabled{opacity:.45;cursor:default}
-button.primary{background:var(--accent);border-color:transparent;color:#fff;font-weight:700}
-button.on{background:rgba(190,24,93,.18);border-color:var(--accent)}
+button.primary{background:linear-gradient(180deg,#c93b47,var(--accent));border-color:transparent;color:#fff;font-weight:700;box-shadow:0 3px 0 #7a1820}
+button.on{background:rgba(179,38,47,.16);border-color:var(--accent)}
 button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 input[type=range]{width:100%;min-height:44px;accent-color:var(--accent)}
 .hidden{display:none!important}
-.glass{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(120,30,70,.18)}
-.screen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(255,240,246,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:auto}
-#scr-title{background:linear-gradient(180deg,rgba(207,233,242,.1),rgba(255,236,244,.85))}
-.panel{width:100%;max-width:640px;padding:20px;display:flex;flex-direction:column;gap:14px;max-height:100%;overflow:auto;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(120,30,70,.18)}
+.glass{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 10px 28px rgba(90,30,30,.2)}
+.screen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(255,244,226,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:auto}
+#scr-title{background:linear-gradient(180deg,rgba(205,234,248,.15),rgba(255,240,220,.88))}
+/* garden-scroll panel: parchment, a tulip flourish in each corner and a rolled-edge inset line */
+.panel{width:100%;max-width:640px;padding:22px;display:flex;flex-direction:column;gap:14px;max-height:100%;overflow:auto;background:var(--corner) no-repeat 10px 10px/30px 30px,var(--corner) no-repeat right 10px top 10px/30px 30px,var(--corner) no-repeat left 10px bottom 10px/30px 30px,var(--corner) no-repeat right 10px bottom 10px/30px 30px,var(--paper);border:1.5px solid var(--line);border-radius:14px;box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5px rgba(179,38,47,.28),0 14px 34px rgba(90,30,30,.22)}
 .panel>*{flex-shrink:0}
 .panel.wide{max-width:920px}
 h1,h2{margin:0;font-weight:800;letter-spacing:.02em}
-h1{font-size:clamp(38px,9vw,64px);color:var(--head);font-family:Georgia,"Times New Roman",serif}
+h1{font-size:clamp(38px,9vw,64px);color:var(--head);font-family:Georgia,"Times New Roman",serif;text-shadow:0 2px 0 #fff6e6}
 h2{font-size:22px;color:var(--head)}
 .center{text-align:center;align-items:center}
 .logo{width:96px;height:96px;margin:0 auto}
@@ -79,7 +82,7 @@ h2{font-size:22px;color:var(--head)}
 .ibtn svg{width:22px;height:22px;fill:currentColor}
 .ibtn.txt{font-weight:800;font-size:13px}
 /* bottom panels */
-#tile{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:9;width:min(92vw,420px);padding:12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+#tile{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:9;width:min(92vw,420px);padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:15px;background:var(--corner) no-repeat right 8px top 8px/24px 24px,var(--glass)}
 #tile .head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 #coach{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:9;width:min(92vw,460px);padding:10px 14px;font-size:15px;text-align:center;pointer-events:none}
 #build{position:fixed;left:8px;right:8px;bottom:30px;z-index:9;display:flex;gap:6px;padding:6px;overflow-x:auto;justify-content:center}
@@ -87,7 +90,7 @@ h2{font-size:22px;color:var(--head)}
 #build button small{font-size:11px;opacity:.75}
 #build button.on{box-shadow:0 0 0 2px var(--accent) inset}
 #toasts{position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:min(92vw,460px)}
-.toast{padding:10px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);font-size:14px;box-shadow:0 6px 18px rgba(120,30,70,.2);animation:tin .25s ease-out}
+.toast{padding:10px 14px;border-radius:12px;background:var(--glass);border:1.5px solid var(--line);font-size:15px;box-shadow:0 6px 18px rgba(90,30,30,.2);animation:tin .25s ease-out}
 .toast.good{border-color:#22a06b}
 .toast.bad{border-color:#d13b3b}
 @keyframes tin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
