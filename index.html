@@ -656,14 +656,15 @@ const M = {
   bench: new THREE.MeshLambertMaterial({ color: 0x9b6b43 }), water: new THREE.MeshLambertMaterial({ color: 0x5ec6d9 }),
   turtle: new THREE.MeshLambertMaterial({ color: 0x6b8e4e }),
   candle: new THREE.MeshLambertMaterial({ color: 0xfff2c2, emissive: 0xffd27a, emissiveIntensity: 0.2 }),
-  marble: new THREE.MeshLambertMaterial({ color: 0xfff3dc }), wall: new THREE.MeshLambertMaterial({ color: 0xf7eedb }),
+  marble: new THREE.MeshLambertMaterial({ color: 0xedeae2 }), wall: new THREE.MeshLambertMaterial({ color: 0xf7f3ea }),
+  plinth: new THREE.MeshLambertMaterial({ color: 0xc9a06e }),
   roof: new THREE.MeshLambertMaterial({ color: 0xe63946 }), sea: new THREE.MeshLambertMaterial({ color: 0x6ca0dc }),
   fountainWater: new THREE.MeshLambertMaterial({ color: 0x9fe3f0, emissive: 0x2b7f99, emissiveIntensity: 0.3 }),
   stem: new THREE.MeshLambertMaterial(), gold: new THREE.MeshLambertMaterial({ color: 0xffd76a }),
   cream: new THREE.MeshLambertMaterial({ color: 0xfff7e6 }), tulipCup: new THREE.MeshLambertMaterial()
 };
 const sea = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M.sea);
-sea.rotation.x = -Math.PI / 2; sea.position.y = -0.24; scene.add(sea);
+sea.rotation.x = -Math.PI / 2; sea.position.y = -1.1; scene.add(sea);
 
 // ground tiles: one instanced mesh, colour per tile
 const tileMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.98, 0.12, 0.98), new THREE.MeshLambertMaterial(), N * N);
@@ -678,11 +679,22 @@ function place(mesh, i, x, y, z, sx = 1, sy = 1, sz = 1, ry = 0) {
 }
 const wxOf = x => x - N / 2 + 0.5;
 
+// rounded square slab with soft corners, extruded downward from y = 0 to y = -depth
+function roundedSlab(size, r, depth) {
+  const h = size / 2 - r, e = size / 2, s = new THREE.Shape();
+  s.moveTo(-h, -e); s.lineTo(h, -e); s.quadraticCurveTo(e, -e, e, -h); s.lineTo(e, h);
+  s.quadraticCurveTo(e, e, h, e); s.lineTo(-h, e); s.quadraticCurveTo(-e, e, -e, h); s.lineTo(-e, -h);
+  s.quadraticCurveTo(-e, -e, -h, -e);
+  return new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false, curveSegments: 6 }).rotateX(-Math.PI / 2);
+}
 // walls, base and kiosk: rebuilt for each season
 const terraceGroup = new THREE.Group(); scene.add(terraceGroup);
 function buildTerrace() {
   while (terraceGroup.children.length) terraceGroup.remove(terraceGroup.children[0]);
   const gs = GS[S.season - 1];
+  // sandstone plinth under the marble terrace: the garden reads as a diorama floating on the Bosphorus
+  const plinth = new THREE.Mesh(roundedSlab(gs + 1.6, 0.5, 0.6), M.plinth);
+  plinth.position.y = -0.8; plinth.receiveShadow = true; plinth.castShadow = !LOW; terraceGroup.add(plinth);
   const base = new THREE.Mesh(new THREE.BoxGeometry(gs + 0.6, 0.2, gs + 0.6), M.marble);
   base.position.y = -0.1; base.receiveShadow = true; terraceGroup.add(base);
   const h = 0.9, t = 0.28, len = gs + 0.6;
@@ -805,7 +817,9 @@ function rebuildWorld() {
   dirty = false;
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
     const i = y * N + x, tl = S.tiles[i], on = inPlay(x, y);
-    place(tileMesh, i, wxOf(x), 0, wxOf(y), on ? 1 : 0.0001, 1, on ? 1 : 0.0001);
+    // beds stand a little higher than paths and lawn, like raised earth beds with a marble edge
+    const lift = tl.t === T_BED ? 1.9 : 1;
+    place(tileMesh, i, wxOf(x), 0, wxOf(y), on ? 1 : 0.0001, on ? lift : 1, on ? 1 : 0.0001);
     // every lawn tile gets a small, fixed brightness shift so the lawn does not read as one flat sheet
     let col = SEASON_GRASS[S.season - 1].clone().multiplyScalar(0.94 + 0.06 * ((x * 7 + y * 13) % 5) / 4);
     if (tl.t === T_PATH) col = TC.path;
