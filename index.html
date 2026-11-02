@@ -210,8 +210,8 @@ const DECOR = ['cypress', 'plane', 'lantern', 'bench'];
 const TOOLS = ['path', 'bed', 'pool', 'cypress', 'plane', 'lantern', 'bench', 'erase'];
 const BULB_PRICE = 6, FLOWER_PRICE = 11, PACK_PRICE = 20, BED_LIMIT = 260;
 const PAL = [
-  { tr: 'Kırmızı', en: 'Red', col: 0xc8284a }, { tr: 'Pembe', en: 'Pink', col: 0xf08ab4 },
-  { tr: 'Beyaz', en: 'White', col: 0xfaf4ea }, { tr: 'Sarı', en: 'Yellow', col: 0xf6d24a },
+  { tr: 'Kırmızı', en: 'Red', col: 0xe63946 }, { tr: 'Pembe', en: 'Pink', col: 0xf4a6c1 },
+  { tr: 'Beyaz', en: 'White', col: 0xfaf4ea }, { tr: 'Sarı', en: 'Yellow', col: 0xffd166 },
   { tr: 'Mor', en: 'Purple', col: 0x7a3fa0 }, { tr: 'Turuncu', en: 'Orange', col: 0xf28a3a },
   { tr: 'Bordo', en: 'Maroon', col: 0x6e1630 }, { tr: 'Krem', en: 'Cream', col: 0xf3e3b5 },
   { tr: 'Gül-mor', en: 'Rose-violet', col: 0xc05aa8 }, { tr: 'Ateş', en: 'Ember', col: 0xe0562b }
@@ -636,12 +636,12 @@ const LOW = cfg.quality === 'low';
 renderer.shadowMap.enabled = !LOW;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 const scene = new THREE.Scene();
-const SKY_DAY = new THREE.Color(0xc4ecfa), SKY_DUSK = new THREE.Color(0xf4b6a0), SKY_NIGHT = new THREE.Color(0x1c2446);
+const SKY_DAY = new THREE.Color(0xcdeaf8), SKY_DUSK = new THREE.Color(0xf6b8a2), SKY_NIGHT = new THREE.Color(0x1d2b4f);
 scene.background = SKY_DAY.clone();
 scene.fog = new THREE.Fog(SKY_DAY.clone(), 30, 80);
 const cam = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
-const hemi = new THREE.HemisphereLight(0xfffaf0, 0xcfe9a6, 1.5); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xfff4e0, 2.0);
+const hemi = new THREE.HemisphereLight(0xfff8ee, 0x8fc77a, 1.6); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffe6bd, 2.1);
 sun.castShadow = !LOW;
 sun.shadow.mapSize.set(1024, 1024);
 Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 1, far: 60 });
@@ -657,7 +657,7 @@ const M = {
   turtle: new THREE.MeshLambertMaterial({ color: 0x6b8e4e }),
   candle: new THREE.MeshLambertMaterial({ color: 0xfff2c2, emissive: 0xffd27a, emissiveIntensity: 0.2 }),
   marble: new THREE.MeshLambertMaterial({ color: 0xfff3dc }), wall: new THREE.MeshLambertMaterial({ color: 0xf7eedb }),
-  roof: new THREE.MeshLambertMaterial({ color: 0xf19bc3 }), sea: new THREE.MeshLambertMaterial({ color: 0x86d6ea }),
+  roof: new THREE.MeshLambertMaterial({ color: 0xe63946 }), sea: new THREE.MeshLambertMaterial({ color: 0x6ca0dc }),
   fountainWater: new THREE.MeshLambertMaterial({ color: 0x9fe3f0, emissive: 0x2b7f99, emissiveIntensity: 0.3 }),
   stem: new THREE.MeshLambertMaterial(), gold: new THREE.MeshLambertMaterial({ color: 0xffd76a }),
   cream: new THREE.MeshLambertMaterial({ color: 0xfff7e6 }), tulipCup: new THREE.MeshLambertMaterial()
@@ -668,7 +668,9 @@ sea.rotation.x = -Math.PI / 2; sea.position.y = -0.24; scene.add(sea);
 // ground tiles: one instanced mesh, colour per tile
 const tileMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.98, 0.12, 0.98), new THREE.MeshLambertMaterial(), N * N);
 tileMesh.receiveShadow = true; scene.add(tileMesh);
-const TC = { grass: new THREE.Color(0xc2e889), path: new THREE.Color(0xf6e8c8), bed: new THREE.Color(0x9a6a44), bedWet: new THREE.Color(0x6b4628), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xfff3dc) };
+const TC = { grass: new THREE.Color(0x6fb35f), path: new THREE.Color(0xf2f0ea), bed: new THREE.Color(0x8a5a3c), bedWet: new THREE.Color(0x5a3620), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xedeae2) };
+// lawn tint per season: spring fresh, summer deep, autumn gold-olive, winter frosted sage
+const SEASON_GRASS = [0x6fb35f, 0x4f9e4a, 0x9aa64a, 0x8fb8a0].map(c => new THREE.Color(c));
 const dm = new THREE.Object3D();
 function place(mesh, i, x, y, z, sx = 1, sy = 1, sz = 1, ry = 0) {
   dm.position.set(x, y, z); dm.rotation.set(0, ry, 0); dm.scale.set(sx, sy, sz); dm.updateMatrix();
@@ -804,7 +806,8 @@ function rebuildWorld() {
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
     const i = y * N + x, tl = S.tiles[i], on = inPlay(x, y);
     place(tileMesh, i, wxOf(x), 0, wxOf(y), on ? 1 : 0.0001, 1, on ? 1 : 0.0001);
-    let col = TC.grass;
+    // every lawn tile gets a small, fixed brightness shift so the lawn does not read as one flat sheet
+    let col = SEASON_GRASS[S.season - 1].clone().multiplyScalar(0.94 + 0.06 * ((x * 7 + y * 13) % 5) / 4);
     if (tl.t === T_PATH) col = TC.path;
     else if (tl.t === T_BED) col = TC.bed.clone().lerp(TC.bedWet, clamp(tl.w, 0, 1));
     else if (tl.t === T_POOL) col = TC.pool;
