@@ -93,6 +93,23 @@ the best festival score under `arena.lale-bahcesi.best`. Turkish is the default 
 
 </details>
 
+## Redesign (2026-11)
+
+**Art direction:** a sunlit sandstone diorama floating on the Bosphorus: tulip red `#E63946`, pink `#F4A6C1`, marble
+`#EDEAE2`, lawn green `#6FB35F` (tinted per season) and sea blue `#6CA0DC`. The UI uses parchment garden-scroll panels
+with tulip-flourish corners.
+
+- **Changed:** diorama plinth and raised beds; tiered cypress and planes, capped lanterns, a stepped fountain; fountain
+  spray, bees and a flickering lantern glow; the garden-scroll UI on every screen.
+- **First minute:** the garden starts with four beds and a one-line coach, so the first bulb can be planted at once.
+- **Kept:** every level, season and star count, the bot, saves, flags and i18n. The mechanics did not change.
+- **Measured** (1280x720, this laptop, `?auto`, same sequence before and after): draw calls 42 → 57 at day 12 and
+  44 → 61 at day 22; triangles 4.3k → 4.9k at day 12. The game stays at 60 fps and far under the ~150-call budget.
+  Zero JS errors in the bot run, which covers every season and the end screen. The game loads no asset files, so
+  there is no separate `?noassets` run.
+
+![Before and after: the same garden on day 22, before on the left](docs/redesign-before-after.png)
+
 ## Screenshots
 
 <table>
