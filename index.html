@@ -817,6 +817,21 @@ const butterflies = [0, 1, 2].map(i => {
   g.userData = { wl, wr, cx: (Math.random() - 0.5) * 8, cz: (Math.random() - 0.5) * 8, r: 2 + Math.random() * 2, sp: 0.3 + Math.random() * 0.3, ph: Math.random() * 6 };
   scene.add(g); return g;
 });
+// bees: small striped bodies that circle the beds at different heights
+const beeBody = new THREE.SphereGeometry(0.075, 7, 5), beeStripe = new THREE.SphereGeometry(0.05, 6, 4);
+const M_BEE = new THREE.MeshLambertMaterial({ color: 0xffd166 }), M_STRIPE = new THREE.MeshLambertMaterial({ color: 0x2b2118 });
+const bees = [0, 1, 2].map(i => {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(beeBody, M_BEE), stripe = new THREE.Mesh(beeStripe, M_STRIPE);
+  stripe.position.x = 0.04; stripe.scale.set(0.8, 1, 1); g.add(body, stripe);
+  g.userData = { r: 3 + i * 1.2, sp: 0.55 + i * 0.15, ph: i * 2.1, cy: 1.1 + i * 0.3 };
+  scene.add(g); return g;
+});
+// fountain spray: droplets leave the spout, arc outwards and fall back into the basin (local to the fountain)
+const SPRAY = LOW ? 16 : 36, sprayPos = new Float32Array(SPRAY * 3);
+const sprayGeo = new THREE.BufferGeometry(); sprayGeo.setAttribute('position', new THREE.BufferAttribute(sprayPos, 3));
+const spray = new THREE.Points(sprayGeo, new THREE.PointsMaterial({ map: softSprite(), size: 0.2, color: 0xe6fbff, transparent: true, depthWrite: false, alphaTest: 0.02 }));
+fountain.add(spray);
 
 /* ---------- world rebuild (only when dirty) ---------- */
 function rebuildWorld() {
@@ -895,9 +910,19 @@ function updateVisuals(time) {
   hemi.intensity = 1.0 + 0.6 * e - 0.5 * night;
   skyTmp.copy(SKY_DAY).lerp(SKY_DUSK, dusk).lerp(SKY_NIGHT, night);
   scene.background.copy(skyTmp); scene.fog.color.copy(skyTmp);
-  M.lantern.emissiveIntensity = 0.2 + 1.6 * night;
+  M.lantern.emissiveIntensity = 0.2 + 1.6 * night + 0.05 * Math.sin(time * 9);
   M.candle.emissiveIntensity = 0.2 + 1.6 * night;
   spout.scale.y = 1 + 0.12 * Math.sin(time * 4);
+  for (let i = 0; i < SPRAY; i++) {
+    const ph = (time * 0.9 + i / SPRAY) % 1, a = i * 2.39996, r = 0.12 + 0.9 * ph;   // golden-angle spread
+    sprayPos[i * 3] = Math.cos(a) * r; sprayPos[i * 3 + 1] = 1.5 + 0.9 * ph - 1.9 * ph * ph; sprayPos[i * 3 + 2] = Math.sin(a) * r;
+  }
+  sprayGeo.attributes.position.needsUpdate = true;
+  for (const b of bees) {
+    const u = b.userData, a = time * u.sp + u.ph;
+    b.position.set(Math.cos(a) * u.r, u.cy + Math.sin(a * 3) * 0.15, Math.sin(a) * u.r);
+    b.rotation.y = -a;
+  }
   const pa = petalGeo.attributes.position.array;
   for (let i = 0; i < PETALS; i++) {
     pa[i * 3] += 0.004 + 0.003 * Math.sin(time + i);
