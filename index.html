@@ -677,10 +677,24 @@ const M = {
 const sea = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M.sea);
 sea.rotation.x = -Math.PI / 2; sea.position.y = -1.1; scene.add(sea);
 
-// ground tiles: one instanced mesh, colour per tile
-const tileMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.98, 0.12, 0.98), new THREE.MeshLambertMaterial(), N * N);
+// ground tiles: one instanced mesh, colour per tile, with vertex-colour AO and organic noise
+const tileGeo = new THREE.BoxGeometry(0.98, 0.12, 0.98, LOW ? 1 : 2, 1, LOW ? 1 : 2);
+{
+  const p = tileGeo.attributes.position, c = new Float32Array(p.count * 3);
+  for (let i = 0; i < p.count; i++) {
+    const vx = p.getX(i), vy = p.getY(i), vz = p.getZ(i);
+    const n = vy > 0 ? 0.94 + 0.08 * Math.sin(vx * 5.2 + vz * 3.7) * Math.cos(vx * 3.1 - vz * 6.3) : 0.78;
+    c[i * 3] = n * 1.01; c[i * 3 + 1] = n; c[i * 3 + 2] = n * 0.97;
+  }
+  tileGeo.setAttribute('color', new THREE.BufferAttribute(c, 3));
+}
+const tileMesh = new THREE.InstancedMesh(tileGeo, new THREE.MeshLambertMaterial({ vertexColors: true }), N * N);
 tileMesh.receiveShadow = true; scene.add(tileMesh);
-const TC = { grass: new THREE.Color(0x6fb35f), path: new THREE.Color(0xf2f0ea), bed: new THREE.Color(0x8a5a3c), bedWet: new THREE.Color(0x5a3620), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xedeae2) };
+// cheap ground variation: path/bed edge curbs and soil/grass/pebble decals (fewer in ?low, no extra pass)
+const curbMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.96, 0.045, 0.075), new THREE.MeshLambertMaterial(), N * N * 4);
+const decalMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.14, 0.18, 0.022, LOW ? 5 : 7), new THREE.MeshLambertMaterial(), N * N * (LOW ? 1 : 3));
+curbMesh.receiveShadow = decalMesh.receiveShadow = true; scene.add(curbMesh, decalMesh);
+const TC = { grass: new THREE.Color(0x6fb35f), grassPatch: new THREE.Color(0x589849), soilPatch: new THREE.Color(0x7c6846), path: new THREE.Color(0xf2f0ea), pathStone: new THREE.Color(0xdccbb4), curb: new THREE.Color(0xe3dac9), bed: new THREE.Color(0x8a5a3c), bedWet: new THREE.Color(0x5a3620), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xedeae2) };
 // lawn tint per season: spring fresh, summer deep, autumn gold-olive, winter frosted sage
 const SEASON_GRASS = [0x6fb35f, 0x4f9e4a, 0x9aa64a, 0x8fb8a0].map(c => new THREE.Color(c));
 const dm = new THREE.Object3D();
@@ -847,21 +861,54 @@ fountain.add(spray);
 /* ---------- world rebuild (only when dirty) ---------- */
 function rebuildWorld() {
   dirty = false;
+  let nCurb = 0, nDecal = 0;
+  const gBase = SEASON_GRASS[S.season - 1], dn = LOW ? 1 : 3;
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
-    const i = y * N + x, tl = S.tiles[i], on = inPlay(x, y);
-    // beds stand a little higher than paths and lawn, like raised earth beds with a marble edge
-    const lift = tl.t === T_BED ? 1.9 : 1;
-    place(tileMesh, i, wxOf(x), 0, wxOf(y), on ? 1 : 0.0001, on ? lift : 1, on ? 1 : 0.0001);
-    // every lawn tile gets a small, fixed brightness shift so the lawn does not read as one flat sheet
-    let col = SEASON_GRASS[S.season - 1].clone().multiplyScalar(0.94 + 0.06 * ((x * 7 + y * 13) % 5) / 4);
-    if (tl.t === T_PATH) col = TC.path;
-    else if (tl.t === T_BED) col = TC.bed.clone().lerp(TC.bedWet, clamp(tl.w, 0, 1));
+    const i = y * N + x, tl = S.tiles[i], on = inPlay(x, y), wx = wxOf(x), wz = wxOf(y);
+    const h = ((x * 37 + y * 59 + x * y * 13) % 17) / 16;
+    // beds stand higher than paths and lawn; subtle height jitter breaks flat coplanar horizons
+    const lift = tl.t === T_BED ? 1.9 : tl.t === T_PATH ? 1.08 : 0.96 + 0.08 * h;
+    place(tileMesh, i, wx, 0, wz, on ? 1 : 0.0001, on ? lift : 1, on ? 1 : 0.0001);
+    // per-tile colour variation across grass, paths and soil beds
+    let col = gBase.clone().lerp(TC.grassPatch, h * 0.35).multiplyScalar(0.92 + 0.12 * (((x * 7 + y * 13) % 5) / 4));
+    if (tl.t === T_PATH) col = TC.path.clone().lerp(TC.pathStone, h * 0.45);
+    else if (tl.t === T_BED) col = TC.bed.clone().lerp(TC.bedWet, clamp(tl.w, 0, 1)).multiplyScalar(0.94 + 0.1 * h);
     else if (tl.t === T_POOL) col = TC.pool;
     else if (tl.t === T_FOUNTAIN || tl.t === T_KIOSK) col = TC.marble;
     tileMesh.setColorAt(i, col);
+    if (!on) continue;
+    // path edges and raised-bed marble curbs along tile boundaries where surface type changes
+    if (tl.t === T_BED || tl.t === T_PATH) {
+      const cy = tl.t === T_BED ? 0.1 : 0.055;
+      for (const [dx, dy, ry] of [[0, -1, 0], [0, 1, 0], [-1, 0, Math.PI / 2], [1, 0, Math.PI / 2]]) {
+        const nx = x + dx, ny = y + dy;
+        const nType = inPlay(nx, ny) ? S.tiles[ny * N + nx].t : -1;
+        if (nType !== tl.t && (tl.t === T_BED || nType === T_GRASS)) {
+          place(curbMesh, nCurb, wx + dx * 0.455, cy, wz + dy * 0.455, 1, tl.t === T_BED ? 1.35 : 0.85, 1, ry);
+          curbMesh.setColorAt(nCurb++, tl.t === T_BED ? TC.marble : TC.curb);
+        }
+      }
+    }
+    // small decals: clover/soil patches on lawn, flagstone pebbles on paths, humus clods on beds
+    if (tl.t === T_GRASS || tl.t === T_PATH || tl.t === T_BED) {
+      const dy = tl.t === T_BED ? 0.115 : tl.t === T_PATH ? 0.066 : 0.058;
+      for (let k = 0; k < dn; k++) {
+        const s1 = ((i * 31 + k * 53 + 11) % 29) / 29, s2 = ((i * 67 + k * 19 + 7) % 31) / 31;
+        const ox = (s1 - 0.5) * 0.62, oz = (s2 - 0.5) * 0.62, sc = 0.65 + 0.75 * ((s1 + s2) * 0.5);
+        place(decalMesh, nDecal, wx + ox, dy, wz + oz, sc, 1, sc * (0.8 + 0.4 * s1), s2 * Math.PI);
+        const dCol = tl.t === T_GRASS
+          ? (k === 1 ? TC.soilPatch.clone().lerp(gBase, 0.55) : gBase.clone().multiplyScalar(k === 0 ? 0.84 : 1.1))
+          : tl.t === T_PATH ? TC.pathStone.clone().multiplyScalar(0.92 + 0.14 * s1)
+          : col.clone().multiplyScalar(0.82 + 0.12 * s2);
+        decalMesh.setColorAt(nDecal++, dCol);
+      }
+    }
   }
-  tileMesh.instanceMatrix.needsUpdate = true;
-  if (tileMesh.instanceColor) tileMesh.instanceColor.needsUpdate = true;
+  curbMesh.count = nCurb; decalMesh.count = nDecal;
+  for (const m of [tileMesh, curbMesh, decalMesh]) {
+    m.instanceMatrix.needsUpdate = true;
+    if (m.instanceColor) m.instanceColor.needsUpdate = true;
+  }
   rebuildDecor();
   buildTerrace();
   renderTile();
