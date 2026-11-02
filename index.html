@@ -326,7 +326,7 @@ const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 const isPhone = matchMedia('(pointer:coarse)').matches || innerWidth < 700;
-const cfg = Object.assign({ master: 0.8, music: 0.6, sfx: 0.8, lang: 'tr', quality: isPhone ? 'low' : 'high', mPrev: 0.6, sPrev: 0.8 }, load(KEY_S) || {});
+const cfg = Object.assign({ master: 0.8, music: 0.6, sfx: 0.8, lang: /^tr/i.test(navigator.language || '') ? 'tr' : 'en', quality: isPhone ? 'low' : 'high', mPrev: 0.6, sPrev: 0.8 }, load(KEY_S) || {});
 if (qs.has('lang')) cfg.lang = qs.get('lang') === 'en' ? 'en' : 'tr';
 if (FLAG.low) cfg.quality = 'low';
 const T = k => (STR[cfg.lang] && STR[cfg.lang][k]) || STR.en[k] || k;
