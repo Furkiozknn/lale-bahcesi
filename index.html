@@ -922,42 +922,61 @@ const cupCol = PAL.map(p => new THREE.Color(p.col));
 const skyTmp = new THREE.Color();
 const cnt = { stem: 0, cup: [0, 0, 0], flame: 0, edge: 0 };
 const cupLight = PAL.map(p => new THREE.Color(p.col).lerp(new THREE.Color(0xffffff), 0.25));
+// static lookup tables hoisted to avoid per-frame array allocations in updateTulips
+const STEM_H = [0.3, 0.55, 0.95, 1.05, 0.6];
+const LEAF_S = [0.5, 0.8, 1, 1, 0.8];
+const EDGE_SCALE = [1, 0.35, 0.2];
 function updateTulips(time) {
   // only planted tiles get an instance slot; mesh.count stops the GPU drawing empty slots
   cnt.stem = 0; cnt.cup[0] = cnt.cup[1] = cnt.cup[2] = 0; cnt.flame = 0; cnt.edge = 0;
-  each((tl, x, y) => {
-    const p = tl.pl;
-    if (!p) return;
-    const i = y * N + x, wx = wxOf(x), wz = wxOf(y);
-    const st = stageOf(p), d = dec(p.v);
-    const sway = Math.sin(time * 1.3 + i) * (st >= 2 ? 0.035 : 0.012);
-    const stemH = [0.3, 0.55, 0.95, 1.05, 0.6][st];
-    const cupS = [0, 0, 0.5, 1.15 + 0.25 * clamp(p.q, 0, 1), 0.45][st];
-    const leafS = [0.5, 0.8, 1, 1, 0.8][st];
-    const top = 0.06 + stemH;
-    const k = cnt.stem++;
-    place(stemMesh, k, wx + sway, 0.06, wz, 1, stemH, 1);
-    stemMesh.setColorAt(k, st <= 1 ? stemDry : stemGreen);
-    place(leafMesh, k, wx, 0.06, wz, leafS, leafS, leafS);
-    if (cupS > 0.001) {
-      const c = cnt.cup[d.s]++;
-      const cy = top - 0.03 * cupS;
-      place(cupOuter[d.s], c, wx + sway, cy, wz, cupS, cupS, cupS);
-      place(cupInner[d.s], c, wx + sway, cy, wz, cupS, cupS, cupS);
-      const col = st === 4 ? wiltCol : cupCol[d.c];
-      cupOuter[d.s].setColorAt(c, col);
-      cupInner[d.s].setColorAt(c, st === 4 ? wiltCol : cupLight[d.c]);
-      const topY = cy + CUP_TOP[d.s] * cupS;
-      if (st !== 4 && d.p === 1) place(flameMesh, cnt.flame++, wx + sway, topY, wz, cupS, cupS, cupS);
-      if (st !== 4 && d.p === 2) place(edgeMesh, cnt.edge++, wx + sway, topY - 0.02, wz, cupS * [1, 0.35, 0.2][d.s], cupS, cupS * [1, 0.35, 0.2][d.s]);
+  const o = unlockedOff(), e = N - o;
+  for (let y = o; y < e; y++) {
+    for (let x = o; x < e; x++) {
+      const tl = S.tiles[y * N + x], p = tl.pl;
+      if (!p) continue;
+      const i = y * N + x, wx = wxOf(x), wz = wxOf(y);
+      const st = stageOf(p);
+      // inline variety decode to avoid allocating temporary {c,s,p} objects per frame
+      const v = p.v, dc = Math.floor(v / 9), ds = Math.floor((v % 9) / 3), dp = v % 3;
+      const sway = Math.sin(time * 1.3 + i) * (st >= 2 ? 0.035 : 0.012);
+      const stemH = STEM_H[st];
+      const cupS = st < 2 ? 0 : st === 2 ? 0.5 : st === 3 ? 1.15 + 0.25 * clamp(p.q, 0, 1) : 0.45;
+      const leafS = LEAF_S[st];
+      const top = 0.06 + stemH;
+      const k = cnt.stem++;
+      place(stemMesh, k, wx + sway, 0.06, wz, 1, stemH, 1);
+      stemMesh.setColorAt(k, st <= 1 ? stemDry : stemGreen);
+      place(leafMesh, k, wx, 0.06, wz, leafS, leafS, leafS);
+      if (cupS > 0.001) {
+        const c = cnt.cup[ds]++;
+        const cy = top - 0.03 * cupS;
+        place(cupOuter[ds], c, wx + sway, cy, wz, cupS, cupS, cupS);
+        place(cupInner[ds], c, wx + sway, cy, wz, cupS, cupS, cupS);
+        const col = st === 4 ? wiltCol : cupCol[dc];
+        cupOuter[ds].setColorAt(c, col);
+        cupInner[ds].setColorAt(c, st === 4 ? wiltCol : cupLight[dc]);
+        const topY = cy + CUP_TOP[ds] * cupS;
+        if (st !== 4 && dp === 1) place(flameMesh, cnt.flame++, wx + sway, topY, wz, cupS, cupS, cupS);
+        if (st !== 4 && dp === 2) {
+          const es = cupS * EDGE_SCALE[ds];
+          place(edgeMesh, cnt.edge++, wx + sway, topY - 0.02, wz, es, cupS, es);
+        }
+      }
     }
-  });
+  }
   stemMesh.count = cnt.stem;
   leafMesh.count = cnt.stem;
-  cupOuter.forEach((m, s) => { m.count = cnt.cup[s]; });
-  cupInner.forEach((m, s) => { m.count = cnt.cup[s]; });
+  for (let s = 0; s < 3; s++) {
+    cupOuter[s].count = cnt.cup[s];
+    cupInner[s].count = cnt.cup[s];
+  }
   flameMesh.count = cnt.flame; edgeMesh.count = cnt.edge;
-  for (const m of tulipMeshes) { m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; }
+  for (const m of tulipMeshes) {
+    if (m.count > 0) {
+      m.instanceMatrix.needsUpdate = true;
+      if (m.instanceColor) m.instanceColor.needsUpdate = true;
+    }
+  }
 }
 function updateVisuals(time) {
   const dayT = S ? (S.clock / DAY_SEC) % 1 : 0.1;
@@ -1042,6 +1061,7 @@ cvs.addEventListener('pointerdown', e => {
     drag = { x: e.clientX, y: e.clientY, moved: 0, tile: pickTile(e.clientX, e.clientY) };
     if (game && overlay === null && tool && drag.tile) applyTool(drag.tile);
   } else if (ptrs.size === 2) {
+    drag = null; // cancel single-finger tap/drag when pinch begins to avoid accidental tile select on lift
     const [a, b] = [...ptrs.values()]; pinchD = Math.hypot(a.x - b.x, a.y - b.y);
   }
 });
@@ -1053,6 +1073,7 @@ cvs.addEventListener('pointermove', e => {
   const prev = ptrs.get(e.pointerId);
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2) {
+    drag = null;
     const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
     if (pinchD > 0) dist = clamp(dist * pinchD / d, 9, 30);
     pinchD = d; return;
