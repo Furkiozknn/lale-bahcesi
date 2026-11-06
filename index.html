@@ -14,97 +14,727 @@
 <meta property="og:image:height" content="540">
 <meta name="twitter:card" content="summary_large_image">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--accent:#B3262F;--accent-hi:#E63946;--ink:#3a1f1c;--paper:#fff6e6;--glass:rgba(255,246,230,.93);--line:rgba(179,38,47,.32);--focus:#b45309;--mut:#5c3d32;--sky:#cdeaf8;--gold:#f5c34b;--head:#8E1B24;--leaf:#3A7D44;
-  --corner:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath d='M2 28C2 14 10 8 16 2C22 8 28 14 28 28' fill='none' stroke='%233A7D44' stroke-width='1.6'/%3E%3Cpath d='M16 2C12 6 10 10 10 14C13 11 14 10 16 10C18 10 19 11 22 14C22 10 20 6 16 2Z' fill='%23E63946'/%3E%3Ccircle cx='16' cy='18' r='2.4' fill='%23FFD166'/%3E%3C/svg%3E")}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--sky);overflow:hidden}
-body{font:15px/1.4 system-ui,"Segoe UI",Roboto,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none}
-#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-button{font:inherit;color:inherit;min-height:44px;min-width:44px;padding:8px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fffaf0;cursor:pointer;touch-action:manipulation;box-shadow:0 2px 0 rgba(142,27,36,.18)}
-button:hover{background:#fff}
-button:active{transform:translateY(1px);box-shadow:none}
-button:disabled{opacity:.45;cursor:default}
-button.primary{background:linear-gradient(180deg,#c93b47,var(--accent));border-color:transparent;color:#fff;font-weight:700;box-shadow:0 3px 0 #7a1820}
-button.on{background:rgba(179,38,47,.16);border-color:var(--accent)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-input[type=range]{width:100%;min-height:44px;accent-color:var(--accent)}
-.hidden{display:none!important}
-.glass{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 10px 28px rgba(90,30,30,.2)}
-.screen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(255,244,226,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:auto}
-#scr-title{background:linear-gradient(180deg,rgba(205,234,248,.15),rgba(255,240,220,.88))}
-/* garden-scroll panel: parchment, a tulip flourish in each corner and a rolled-edge inset line */
-.panel{width:100%;max-width:640px;padding:22px;display:flex;flex-direction:column;gap:14px;max-height:100%;overflow:auto;background:var(--corner) no-repeat 10px 10px/30px 30px,var(--corner) no-repeat right 10px top 10px/30px 30px,var(--corner) no-repeat left 10px bottom 10px/30px 30px,var(--corner) no-repeat right 10px bottom 10px/30px 30px,var(--paper);border:1.5px solid var(--line);border-radius:14px;box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5px rgba(179,38,47,.28),0 14px 34px rgba(90,30,30,.22)}
-.panel>*{flex-shrink:0}
-.panel.wide{max-width:920px}
-h1,h2{margin:0;font-weight:800;letter-spacing:.02em}
-h1{font-size:clamp(38px,9vw,64px);color:var(--head);font-family:Georgia,"Times New Roman",serif;text-shadow:0 2px 0 #fff6e6}
-h2{font-size:22px;color:var(--head)}
-.center{text-align:center;align-items:center}
-.logo{width:96px;height:96px;margin:0 auto}
-.muted{font-size:14px;margin:0;color:var(--mut)}
-.btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.row>label{min-width:110px}
-.seg{display:flex;gap:6px}
-.seg button{flex:1}
-.howto{margin:0;padding-left:20px;text-align:left;font-size:14px;display:flex;flex-direction:column;gap:6px}
-.foot{position:fixed;left:0;right:0;bottom:6px;text-align:center;font-size:12px;z-index:21;pointer-events:none;color:var(--ink)}
-.foot span{display:inline-block;padding:2px 10px;border-radius:10px;background:var(--glass);border:1px solid var(--line)}
-.foot a{pointer-events:auto;color:var(--accent)}
-#title-best{font-size:14px;margin:0}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 16px;font-variant-numeric:tabular-nums}
-.stats-grid div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:4px 0}
-.bars{display:flex;flex-direction:column;gap:8px;width:100%}
-.bar{display:grid;grid-template-columns:minmax(100px,1fr) 2fr 44px;gap:10px;align-items:center;font-size:14px;width:100%}
-.track{height:12px;border-radius:6px;background:rgba(190,24,93,.16);overflow:hidden}
-.fill{height:100%;background:linear-gradient(90deg,#f472b6,var(--accent))}
-.stars{display:flex;justify-content:center;gap:10px}
-.stars svg{width:56px;height:56px}
-.stars svg.off{opacity:.22}
-.big{font-size:56px;font-weight:900;color:var(--accent);text-align:center;line-height:1;font-variant-numeric:tabular-nums}
-.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.card{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:10px;border-radius:14px;font-size:13px}
-.card svg{width:54px;height:72px}
-.card b{font-size:13px}
-.card small{opacity:.8;font-size:11px}
-.card.unk{opacity:.5}
-.list{display:flex;flex-direction:column;gap:8px}
-.item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.4)}
-.item small{opacity:.8}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chips button{font-size:13px;min-height:44px}
-/* HUD */
-#hud{position:fixed;left:8px;right:8px;top:8px;z-index:8;display:flex;align-items:center;gap:10px;padding:6px 10px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--accent);white-space:nowrap;font-family:Georgia,serif}
-.brand svg{width:30px;height:30px}
-.stats{display:flex;gap:16px;flex:1;justify-content:center;flex-wrap:wrap}
-.stat{display:flex;flex-direction:column;align-items:center;line-height:1.15}
-.stat span{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.06em}
-.stat .short{display:none}
-.stat b{font-size:17px;font-variant-numeric:tabular-nums}
-.tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.ibtn{min-width:44px;min-height:44px;padding:6px;display:grid;place-items:center;border-radius:12px}
-.ibtn{background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.ibtn.on{background:var(--accent);color:#fff;border-color:transparent}
-.ibtn svg{width:22px;height:22px;fill:currentColor}
-.ibtn.txt{font-weight:800;font-size:13px}
-/* bottom panels (#coach offset above #tile so they never stack) */
-#tile{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:9;width:min(92vw,420px);padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:15px;background:var(--corner) no-repeat right 8px top 8px/24px 24px,var(--glass)}
-#tile .head{display:flex;justify-content:space-between;align-items:center;gap:8px}
-#coach{position:fixed;left:50%;transform:translateX(-50%);bottom:224px;z-index:9;width:min(92vw,460px);padding:10px 14px;font-size:15px;text-align:center;pointer-events:none}
-#build{position:fixed;left:8px;right:8px;bottom:30px;z-index:9;display:flex;gap:6px;padding:6px;overflow-x:auto;justify-content:center}
-#build button{flex:none;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 8px;font-size:12px;line-height:1.15}
-#build button small{font-size:11px;opacity:.75}
-#build button.on{box-shadow:0 0 0 2px var(--accent) inset}
-#toasts{position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:min(92vw,460px)}
-.toast{padding:10px 14px;border-radius:12px;background:var(--glass);border:1.5px solid var(--line);font-size:15px;box-shadow:0 6px 18px rgba(90,30,30,.2);animation:tin .25s ease-out}
-.toast.good{border-color:#22a06b}
-.toast.bad{border-color:#d13b3b}
-@keyframes tin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.toast{animation:none}}
-#debug{position:fixed;left:8px;bottom:8px;z-index:40;background:rgba(0,0,0,.7);color:#eaffea;font:12px/1.4 monospace;padding:8px;border-radius:8px;max-width:90vw;white-space:pre-wrap;pointer-events:none}
-@media (max-width:700px){.stat .long{display:none}.stat .short{display:inline}.stat span{font-size:11px}.stats{order:3;flex:1 0 100%;gap:14px;padding-top:2px}.brand span{display:none}#hud{padding:6px 8px}#toasts{top:124px}#build button small{display:none}}
+/* ==========================================================================
+   Lale Bahçesi - Imperial Ottoman Tulip Era Design System
+   Palace Sandstone, Iznik Ceramic Floral Harmony, Divan Manuscript Calligraphy
+   ========================================================================== */
+:root {
+  /* Core Palette */
+  --accent: #BE185D;            /* Lale Kırmızısı / Tulip Crimson */
+  --accent-hi: #E11D48;         /* Canlı Lale / Bright Crimson */
+  --accent-hover: #9D174D;      /* Koyu Lale / Deep Velvet Crimson */
+  --accent-glow: rgba(190, 24, 93, 0.32);
+  --gold: #F4C34B;              /* Has Altın / Imperial Gold Leaf */
+  --gold-light: #FDE68A;        /* Açık Varak / Soft Gold Glow */
+  --gold-dark: #B45309;         /* Eskitme Varak / Antique Gold */
+  --ink: #3B1D2C;               /* Mürdüm / Divan Aubergine Ink */
+  --ink-light: #5A3648;         /* Açık Mürdüm / Secondary Text */
+  --mut: #785A66;               /* Mat Metin / Subdued Caption */
+  --paper: #FFF9F0;             /* Ahar Kağıdı / Manuscript Parchment */
+  --paper-card: #FFFFFF;        /* İç Kart / Crisp Parchment Card */
+  --marble: #EDEAE2;            /* Marmara Mermeri / Terrace Sandstone */
+  --sky: #cdeaf8;               /* Boğaziçi Sabah Göğü / Bosphorus Morning */
+  --leaf: #2D6A4F;              /* Saray Servisi / Cypress Green */
+  --leaf-light: #52B788;        /* Taze Yaprak / Fresh Foliage */
+  --bosphorus: #2B6CB0;         /* İznik Çini Mavisi / Bosphorus Azure */
+  --water-drop: #0284C7;        /* Sulama Mavisi / Water Crystal */
+  
+  /* Borders & Rules */
+  --line: rgba(59, 29, 44, 0.16);
+  --line-gold: rgba(244, 195, 75, 0.45);
+  --line-accent: rgba(190, 24, 93, 0.28);
+  
+  /* Glass Surfaces */
+  --glass: rgba(255, 250, 242, 0.94);
+  --glass-hud: rgba(255, 251, 245, 0.92);
+  --focus: #B45309;
+  
+  /* Elevation Shadows */
+  --shadow-sm: 0 2px 6px rgba(59, 29, 44, 0.08);
+  --shadow-md: 0 8px 24px rgba(59, 29, 44, 0.16);
+  --shadow-lg: 0 16px 40px rgba(59, 29, 44, 0.24);
+  
+  /* Authentic Ottoman Tezhip / Rumi Corner Ornament (pure SVG) */
+  --corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='M2 34 C 2 16, 16 2, 34 2' fill='none' stroke='%23C8A050' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M6 34 C 6 20, 20 6, 34 6' fill='none' stroke='%23BE185D' stroke-width='1' stroke-opacity='0.6'/%3E%3Ccircle cx='34' cy='2' r='2.2' fill='%23F4C34B'/%3E%3Ccircle cx='2' cy='34' r='2.2' fill='%23F4C34B'/%3E%3Cpath d='M8 28 C 12 18, 18 12, 28 8 C 24 18, 18 24, 8 28 Z' fill='%23BE185D' fill-opacity='0.22'/%3E%3Cpath d='M16 16 C 12 10, 8 6, 2 2 C 6 8, 10 12, 16 16 Z' fill='%23F4C34B' fill-opacity='0.45'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--sky); overflow: hidden; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ink);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Manuscript Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(59, 29, 44, 0.05); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(190, 24, 93, 0.35); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::selection { background: var(--gold-light); color: var(--ink); }
+
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+/* Interactive Controls & Buttons */
+button {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 13.5px;
+  color: inherit;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: #FFFDF9;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 2px 0 rgba(59, 29, 44, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.12s ease;
+}
+button:hover {
+  background: #FFFFFF;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 rgba(59, 29, 44, 0.15);
+}
+button:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Primary Imperial Button (Royal Seal CTA) */
+button.primary {
+  background: linear-gradient(180deg, #D81B60, var(--accent));
+  border-color: #9D174D;
+  color: #FFFFFF;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 3px 0 #700F36, 0 4px 14px var(--accent-glow);
+}
+button.primary:hover {
+  background: linear-gradient(180deg, #E11D48, #BE185D);
+  border-color: var(--gold);
+  box-shadow: 0 4px 0 #700F36, 0 6px 18px rgba(190, 24, 93, 0.45);
+}
+button.primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #700F36;
+}
+
+button.on {
+  background: rgba(190, 24, 93, 0.12);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+button:focus-visible, input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+input[type=range] {
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+
+/* Modal Scaffolding */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(59, 29, 44, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow-y: auto;
+  animation: screenFade 0.2s ease-out;
+}
+@keyframes screenFade { from { opacity: 0; } to { opacity: 1; } }
+
+#scr-title {
+  background: radial-gradient(circle at 50% 30%, rgba(255, 246, 230, 0.95), rgba(205, 234, 248, 0.75));
+}
+
+/* Garden Scroll Panel - Imperial Tezhip Frame */
+.panel {
+  width: 100%;
+  max-width: 620px;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 94vh;
+  overflow-y: auto;
+  background: var(--corner) no-repeat 10px 10px / 32px 32px,
+              var(--corner) no-repeat right 10px top 10px / 32px 32px,
+              var(--corner) no-repeat left 10px bottom 10px / 32px 32px,
+              var(--corner) no-repeat right 10px bottom 10px / 32px 32px,
+              linear-gradient(180deg, #FFFFFF, var(--paper));
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 4px var(--paper),
+              inset 0 0 0 5.5px var(--line-gold),
+              var(--shadow-lg);
+  position: relative;
+  animation: panelPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes panelPop {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.panel > * { flex-shrink: 0; }
+.panel.wide { max-width: 900px; }
+
+/* Typography */
+h1, h2, h3, .brand {
+  margin: 0;
+  font-family: 'Cinzel Decorative', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+h1 {
+  font-size: clamp(34px, 7vw, 54px);
+  color: var(--accent);
+  line-height: 1.15;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.8), 0 3px 6px rgba(190, 24, 93, 0.15);
+}
+h2 {
+  font-size: clamp(20px, 4vw, 24px);
+  color: var(--ink);
+  line-height: 1.25;
+}
+.center { text-align: center; align-items: center; }
+.logo { width: 96px; height: 96px; margin: 0 auto 2px; filter: drop-shadow(0 4px 10px rgba(190, 24, 93, 0.2)); }
+.muted { font-size: 14px; margin: 0; color: var(--mut); }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.row > label { min-width: 120px; font-weight: 600; color: var(--ink-light); }
+.seg { display: flex; gap: 6px; }
+.seg button { flex: 1; min-height: 40px; }
+
+/* Title Screen How-to 4-Step Cards */
+.howto {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+  counter-reset: step;
+  width: 100%;
+}
+.howto li {
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px 12px 44px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--ink);
+  box-shadow: 0 2px 5px rgba(59, 29, 44, 0.04);
+}
+.howto li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px var(--accent-glow);
+}
+
+/* Footer Banner */
+.foot {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  text-align: center;
+  font-size: 12px;
+  z-index: 5;
+  pointer-events: none;
+  color: var(--mut);
+  transition: opacity 0.25s ease;
+}
+.foot span {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 10px;
+  background: var(--glass);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.foot a { pointer-events: auto; color: var(--accent); text-decoration: none; font-weight: 600; }
+.foot a:hover { text-decoration: underline; }
+
+/* When game HUD is active, hide the arena footer banner so it never overlaps the build dock */
+#hud:not(.hidden) ~ .foot { opacity: 0; pointer-events: none; }
+
+#title-best {
+  font-size: 13.5px;
+  margin: 4px 0 0;
+  color: var(--ink-light);
+}
+#title-best span {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(244, 195, 75, 0.2);
+  border: 1px solid var(--line-gold);
+  font-weight: 600;
+}
+
+/* Stats Grids & Scores */
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 16px; font-variant-numeric: tabular-nums; }
+.stats-grid div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding: 6px 0; }
+.stats-grid div span { color: var(--mut); }
+.stats-grid div b { color: var(--ink); font-weight: 700; }
+
+.bars { display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 6px 0; }
+.bar { display: grid; grid-template-columns: minmax(110px, 1fr) 2fr 48px; gap: 10px; align-items: center; font-size: 13.5px; width: 100%; }
+.bar .bar-lbl { font-weight: 600; color: var(--ink-light); }
+.bar .bar-val { font-weight: 700; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+.track { height: 12px; border-radius: 6px; background: rgba(59, 29, 44, 0.08); overflow: hidden; border: 1px solid rgba(59, 29, 44, 0.06); }
+.track.mini { height: 8px; border-radius: 4px; }
+.fill { height: 100%; background: linear-gradient(90deg, #F4C34B, var(--accent)); border-radius: 6px; transition: width 0.3s ease; }
+.fill.blue { background: linear-gradient(90deg, #38BDF8, #0284C7); }
+
+.stars { display: flex; justify-content: center; gap: 12px; margin: 4px 0; }
+.star-icon { width: 52px; height: 52px; filter: drop-shadow(0 2px 6px rgba(244, 195, 75, 0.35)); }
+.star-icon.off { filter: none; opacity: 0.3; }
+
+.score-display { text-align: center; margin: 4px 0; }
+.big { font-size: 58px; font-weight: 800; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; font-family: 'Cinzel Decorative', serif; }
+.score-lbl { font-size: 13px; color: var(--mut); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+.record-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; background: var(--gold); color: #78350F; font-size: 11px; font-weight: 800; }
+
+/* Herbarium Catalogue & Bazaar Cards */
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; max-height: 65vh; overflow-y: auto; padding: 4px; }
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  text-align: center;
+  padding: 12px 8px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--paper-card);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--line-gold); }
+.card svg { width: 44px; height: 60px; }
+.card b { font-size: 12.5px; color: var(--ink); line-height: 1.25; }
+.card small { color: var(--mut); font-size: 11px; }
+.card.unk { opacity: 0.55; background: rgba(245, 240, 230, 0.5); border-style: dashed; }
+
+.list { display: flex; flex-direction: column; gap: 8px; max-height: 65vh; overflow-y: auto; padding: 4px; }
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--paper-card);
+  box-shadow: 0 1px 4px rgba(59, 29, 44, 0.04);
+}
+.item-info { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.item small { color: var(--mut); }
+.price-tag { font-weight: 700; color: var(--gold-dark); background: rgba(244, 195, 75, 0.18); padding: 2px 8px; border-radius: 8px; }
+.section-divider { display: flex; align-items: center; gap: 10px; margin: 10px 0 2px; }
+.section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--line-gold); }
+.section-divider span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-dark); }
+.featured-pack { background: linear-gradient(135deg, #FFFDF5, #FEF3C7); border-color: var(--gold); box-shadow: 0 4px 14px rgba(244, 195, 75, 0.25); }
+.block-hint { display: block; font-size: 11.5px; color: var(--gold-dark); margin-top: 2px; }
+.baz-akce-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; background: rgba(244, 195, 75, 0.2); border: 1px solid var(--line-gold); font-size: 14px; font-weight: 600; }
+.rate-badge { display: inline-block; padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 700; background: rgba(59, 29, 44, 0.06); }
+.rate-badge.high { background: rgba(34, 197, 94, 0.15); color: #15803D; }
+.rate-badge.low { background: rgba(239, 68, 68, 0.15); color: #B91C1C; }
+.mania-pulse { background: linear-gradient(90deg, #F59E0B, #EF4444); color: #fff; animation: pulseMania 1s infinite alternate; }
+@keyframes pulseMania { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { font-size: 13px; min-height: 44px; padding: 6px 12px; border-radius: 10px; background: #fff; }
+.bulb-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); flex-shrink: 0; }
+.chip-count { color: var(--accent); margin-left: 4px; }
+
+/* ==========================================================================
+   HUD Layout - Structured Imperial Header
+   ========================================================================== */
+#hud {
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  top: 10px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  background: var(--glass-hud);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md), inset 0 0 0 1px var(--line-gold);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.brand .brand-logo { width: 28px; height: 28px; filter: drop-shadow(0 2px 4px var(--accent-glow)); }
+
+.stats {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(59, 29, 44, 0.04);
+}
+.stat .stat-ico { display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
+.stat .stat-text { display: flex; flex-direction: column; line-height: 1.1; }
+.stat span.long, .stat span.short {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mut);
+}
+.stat span.short { display: none; }
+.stat b { font-size: 15px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.tools { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
+.ibtn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #FFFDF9;
+  border: 1.5px solid var(--line);
+  color: var(--ink);
+  transition: all 0.15s ease;
+}
+.ibtn:hover { background: #FFFFFF; border-color: var(--accent); transform: translateY(-1px); }
+.ibtn:active { transform: translateY(1px); }
+.ibtn.on { background: var(--accent); color: #fff; border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.ibtn svg { width: 20px; height: 20px; fill: currentColor; }
+.ibtn.txt { font-weight: 800; font-size: 12.5px; }
+
+/* ==========================================================================
+   Tile Inspector Dialog & Imperial Coach Banner
+   ========================================================================== */
+#tile {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 88px;
+  z-index: 12;
+  width: min(94vw, 420px);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+  background: var(--corner) no-repeat right 8px top 8px / 28px 28px,
+              linear-gradient(180deg, #FFFFFF, var(--paper));
+  border: 1.5px solid var(--accent);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(59, 29, 44, 0.28), inset 0 0 0 1px var(--line-gold);
+  animation: tilePop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes tilePop {
+  from { opacity: 0; transform: translate(-50%, 8px) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+#tile .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+#tile .head b { font-family: 'Cinzel Decorative', serif; font-size: 16px; color: var(--accent); }
+.kind-tag { display: inline-block; padding: 2px 10px; border-radius: 12px; background: rgba(59, 29, 44, 0.08); font-size: 11.5px; font-weight: 700; color: var(--ink-light); }
+.tile-close-btn { min-width: 32px; min-height: 32px; padding: 0; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; font-weight: 800; color: var(--mut); }
+
+.soil-status { display: flex; align-items: center; gap: 10px; }
+.moist-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 11.5px; font-weight: 700; }
+.moist-pill.ok { background: rgba(2, 132, 199, 0.15); color: #0369A1; }
+.moist-pill.dry { background: rgba(239, 68, 68, 0.15); color: #B91C1C; }
+
+.flower-header { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.flower-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.stage-tag { font-size: 11.5px; font-weight: 600; color: var(--leaf); }
+.aphid-alert { padding: 6px 10px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #991B1B; font-size: 12.5px; }
+
+.action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.action-row button { flex: 1 1 calc(50% - 4px); min-height: 44px; font-weight: 600; }
+.harvest-pulse { animation: harvestGlow 1.2s infinite alternate; }
+@keyframes harvestGlow {
+  from { box-shadow: 0 3px 0 #700F36, 0 0 6px var(--accent-glow); }
+  to { box-shadow: 0 3px 0 #700F36, 0 0 18px rgba(244, 195, 75, 0.8); }
+}
+
+/* Coach Advisor Banner - Bostancıbaşı Fermanı */
+#coach {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 88px;
+  z-index: 11;
+  width: min(92vw, 480px);
+  padding: 12px 18px;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--ink);
+  background: linear-gradient(135deg, rgba(255, 250, 240, 0.96), rgba(253, 243, 227, 0.95));
+  border: 1.5px solid var(--gold-dark);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md), inset 0 0 0 1px rgba(244, 195, 75, 0.4);
+  pointer-events: none;
+  animation: coachFade 0.25s ease-out;
+}
+#coach::before { content: '📜 '; font-size: 16px; }
+@keyframes coachFade { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* ==========================================================================
+   Bottom Build Dock - Garden Architect Toolbar
+   ========================================================================== */
+#build {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  max-width: min(96vw, 780px);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-md), inset 0 0 0 1px var(--line-gold);
+}
+#build::-webkit-scrollbar { display: none; }
+
+#build button {
+  flex: 0 0 auto;
+  min-width: 58px;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+  background: #FFFDF9;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 2px 0 rgba(59, 29, 44, 0.08);
+}
+#build button small { font-size: 10px; font-weight: 600; color: var(--mut); opacity: 0.9; }
+#build button:hover { background: #FFFFFF; border-color: var(--accent); transform: translateY(-2px); }
+#build button.on {
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold), 0 4px 14px var(--accent-glow);
+  transform: translateY(-2px);
+}
+#build button.on small { color: var(--gold-light); opacity: 1; }
+
+/* Build Button Tool SVG Icons via CSS ::before */
+#build button::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#build button[data-tool="path"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Crect x='3' y='3' width='8' height='8' rx='1'/%3E%3Crect x='13' y='3' width='8' height='8' rx='1'/%3E%3Crect x='3' y='13' width='8' height='8' rx='1'/%3E%3Crect x='13' y='13' width='8' height='8' rx='1'/%3E%3C/svg%3E"); }
+#build button[data-tool="bed"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Cpath d='M3 18h18M5 14h14M7 10h10'/%3E%3Ccircle cx='12' cy='5' r='2.5' fill='%23BE185D' stroke='none'/%3E%3C/svg%3E"); }
+#build button[data-tool="pool"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Cellipse cx='12' cy='12' rx='9' ry='6'/%3E%3Cellipse cx='12' cy='12' rx='5' ry='3' stroke='%232B6CB0'/%3E%3C/svg%3E"); }
+#build button[data-tool="cypress"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232D6A4F'%3E%3Cpath d='M12 2 C10 7 8 13 8 18 L16 18 C16 13 14 7 12 2 Z'/%3E%3Crect x='11' y='18' width='2' height='4' fill='%2378350F'/%3E%3C/svg%3E"); }
+#build button[data-tool="plane"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Cpath d='M12 18v3M9 18h6M12 4a5 5 0 0 0-5 5 5 5 0 0 0-2 4 5 5 0 0 0 5 5h8a5 5 0 0 0 5-5 5 5 0 0 0-2-4 5 5 0 0 0-5-5 5 5 0 0 0-4 0z' fill='%2352B788' fill-opacity='0.5'/%3E%3C/svg%3E"); }
+#build button[data-tool="lantern"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Cpath d='M12 2v3M8 8l4-3 4 3v7l-4 3-4-3V8z' fill='%23F4C34B' fill-opacity='0.6'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%23E11D48' stroke='none'/%3E%3C/svg%3E"); }
+#build button[data-tool="bench"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Cpath d='M4 11h16M5 7h14M6 7v8M18 7v8M4 17l2-2h12l2 2'/%3E%3C/svg%3E"); }
+#build button[data-tool="erase"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BE185D' stroke-width='2.2'%3E%3Cpath d='M18 6L6 18M6 6l12 12' stroke-linecap='round'/%3E%3C/svg%3E"); }
+
+#build button.on::before {
+  filter: brightness(0) invert(1);
+}
+
+/* ==========================================================================
+   Toasts & Debug
+   ========================================================================== */
+#toasts {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  width: min(92vw, 440px);
+}
+.toast {
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--line);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  animation: toastIn 0.22s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toast.good { border-color: #22c55e; color: #15803D; background: rgba(240, 253, 244, 0.95); }
+.toast.bad { border-color: #ef4444; color: #B91C1C; background: rgba(254, 242, 242, 0.95); }
+.toast.info { border-color: var(--line-gold); color: var(--ink); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-8px) scale(0.96); } to { opacity: 1; transform: none; } }
+
+#debug {
+  position: fixed;
+  left: 8px;
+  bottom: 8px;
+  z-index: 40;
+  background: rgba(20, 10, 15, 0.85);
+  color: #A7F3D0;
+  font: 11px/1.4 'Consolas', monospace;
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 90vw;
+  white-space: pre-wrap;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Responsive Adaptations (Mobile & Small Screens)
+   ========================================================================== */
+@media (max-width: 760px) {
+  #hud {
+    padding: 6px 10px;
+    gap: 8px;
+  }
+  .brand span { display: none; } /* keep only imperial tulip logo */
+  .brand { padding: 0; }
+  .stats {
+    gap: 6px;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+  .stat {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+  .stat span.long, .stat span.short { display: none !important; } /* icons speak cleanly */
+  .stat b { font-size: 13.5px; }
+  .tools { gap: 4px; }
+  .ibtn { min-width: 40px; min-height: 40px; padding: 4px; }
+  #toasts { top: 70px; }
+  #coach, #tile { bottom: 84px; }
+}
+
+@media (max-width: 480px) {
+  .howto { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .grid-cards { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  #build button { min-width: 52px; min-height: 48px; padding: 4px 6px; font-size: 11px; }
+  .stat { padding: 4px 6px; }
+  .stat b { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>
 <script data-goatcounter="https://furkiozknn.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -113,23 +743,57 @@ h2{font-size:22px;color:var(--head)}
 
 <header id="hud" class="glass hidden">
   <div class="brand">
-    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4c-5 4-7 9-7 14h14c0-5-2-10-7-14z" fill="#BE185D"/><path d="M9 18c0 4 3 7 7 7s7-3 7-7z" fill="#f472b6"/><rect x="15" y="25" width="2" height="5" fill="#4d7c3a"/></svg>
-    <span data-t="title"></span>
+    <svg viewBox="0 0 32 32" class="brand-logo" aria-hidden="true">
+      <path d="M16 2 C12 7 8 13 8 19 C8 24 11.5 27.5 16 27.5 C20.5 27.5 24 24 24 19 C24 13 20 7 16 2 Z" fill="#BE185D"/>
+      <path d="M16 2 C14.5 8 13.5 14 14.5 20 C15 23 15.5 26 16 27.5 C16.5 26 17 23 17.5 20 C18.5 14 17.5 8 16 2 Z" fill="#F4C34B"/>
+      <path d="M16 27.5 L16 31" stroke="#2D6A4F" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <span data-t="title">Lale Bahçesi</span>
   </div>
   <div class="stats">
-    <div class="stat"><span class="long" data-t="season"></span><span class="short" data-t="seasonS"></span><b id="h-season">1</b></div>
-    <div class="stat"><span class="long" data-t="day"></span><span class="short" data-t="dayS"></span><b id="h-day">1/30</b></div>
-    <div class="stat"><span class="long" data-t="akce"></span><span class="short" data-t="akceS"></span><b id="h-akce">50</b></div>
-    <div class="stat"><span class="long" data-t="varieties"></span><span class="short" data-t="varS"></span><b id="h-var">0/20</b></div>
-    <div class="stat"><span class="long" data-t="beauty"></span><span class="short" data-t="beautyS"></span><b id="h-beauty">0</b></div>
+    <div class="stat stat-calendar">
+      <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><rect x="2.5" y="3.5" width="15" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 7.5h15M6 1.5v4M14 1.5v4" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <div class="stat-text">
+        <span class="long" data-t="season"></span><span class="short" data-t="seasonS"></span>
+        <b id="h-season">1</b>
+      </div>
+    </div>
+    <div class="stat stat-day">
+      <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 5.5v4.5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+      <div class="stat-text">
+        <span class="long" data-t="day"></span><span class="short" data-t="dayS"></span>
+        <b id="h-day">1/30</b>
+      </div>
+    </div>
+    <div class="stat stat-akce">
+      <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="8" fill="#F4C34B" stroke="#B45309" stroke-width="1.4"/><circle cx="10" cy="10" r="5.5" fill="none" stroke="#D97706" stroke-width="0.7" stroke-dasharray="1 1"/><path d="M7 10.5c1-1.5 2.5-2 4-1M8 8c1 2 2.5 3 4 2M9 5v10" stroke="#78350F" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+      <div class="stat-text">
+        <span class="long" data-t="akce"></span><span class="short" data-t="akceS"></span>
+        <b id="h-akce">50</b>
+      </div>
+    </div>
+    <div class="stat stat-var">
+      <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M10 2 C7.5 5.5 5 9.5 5 13.5 C5 16.5 7.2 18.5 10 18.5 C12.8 18.5 15 16.5 15 13.5 C15 9.5 12.5 5.5 10 2 Z" fill="#BE185D"/><path d="M10 2 C9 6 8.5 10 9 14 C9.5 16.5 9.8 18 10 18.5 C10.2 18 10.5 16.5 11 14 C11.5 10 11 6 10 2 Z" fill="#F4C34B"/></svg></span>
+      <div class="stat-text">
+        <span class="long" data-t="varieties"></span><span class="short" data-t="varS"></span>
+        <b id="h-var">0/20</b>
+      </div>
+    </div>
+    <div class="stat stat-beauty">
+      <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><polygon points="10,1.5 12.5,7 18.5,7.5 14,11.5 15.5,17.5 10,14 4.5,17.5 6,11.5 1.5,7.5 7.5,7" fill="#F4C34B" stroke="#B45309" stroke-width="1"/></svg></span>
+      <div class="stat-text">
+        <span class="long" data-t="beauty"></span><span class="short" data-t="beautyS"></span>
+        <b id="h-beauty">0</b>
+      </div>
+    </div>
   </div>
   <div class="tools">
-    <button class="ibtn txt" id="b-speed" data-t="speed" aria-label="speed">1x</button>
-    <button class="ibtn" id="b-pause" aria-label="pause"><svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
-    <button class="ibtn" id="b-cat" aria-label="catalogue"><svg viewBox="0 0 24 24"><path d="M5 3h12v18H5zM7 5v14h8V5zM3 5h2v14H3z"/></svg></button>
-    <button class="ibtn" id="b-bazaar" aria-label="bazaar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M9 9h6M9 12h6M9 15h4" stroke="currentColor" stroke-width="1.8"/></svg></button>
-    <button class="ibtn" id="b-sound" aria-label="sound"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8c2 2 2 6 0 8" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
-    <button class="ibtn txt" id="b-lang" aria-label="language">TR</button>
+    <button class="ibtn txt" id="b-speed" data-t="speed" aria-label="speed" title="Hız / Speed (T)">1x</button>
+    <button class="ibtn" id="b-pause" aria-label="pause" title="Duraklat / Pause (P/Esc)"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg></button>
+    <button class="ibtn" id="b-cat" aria-label="catalogue" title="Katalog / Catalogue (C)"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M8 7h8M8 11h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    <button class="ibtn" id="b-bazaar" aria-label="bazaar" title="Bazar / Bazaar (B)"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 9l2-5h14l2 5v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0V9z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M5 11v9h14v-9M9 20v-5h6v5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg></button>
+    <button class="ibtn" id="b-sound" aria-label="sound" title="Ses / Audio (M/X)"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M11 5L6 9H2v6h4l5 4V5z" stroke="currentColor" stroke-width="1.8" fill="currentColor" stroke-linejoin="round"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></button>
+    <button class="ibtn txt" id="b-lang" aria-label="language" title="Dil / Language (L)">TR</button>
   </div>
 </header>
 
@@ -142,13 +806,21 @@ h2{font-size:22px;color:var(--head)}
 <section id="scr-title" class="screen hidden">
   <div class="panel center">
     <svg class="logo" viewBox="0 0 96 96" aria-hidden="true">
-      <circle cx="48" cy="48" r="46" fill="#fff6f8" stroke="#BE185D" stroke-width="2"/>
-      <path d="M48 16c-14 11-20 25-20 38h40c0-13-6-27-20-38z" fill="#BE185D"/>
-      <path d="M30 46c0 9 8 16 18 16s18-7 18-16z" fill="#f472b6"/>
-      <path d="M48 62v20" stroke="#4d7c3a" stroke-width="3"/>
-      <path d="M48 74c-8-2-12-6-12-10 6 0 10 3 12 10zM48 74c8-2 12-6 12-10-6 0-10 3-12 10z" fill="#6fa84e"/>
+      <circle cx="48" cy="48" r="46" fill="#FFFBF5" stroke="#B45309" stroke-width="1.8"/>
+      <circle cx="48" cy="48" r="42" fill="none" stroke="#F4C34B" stroke-width="1.2" stroke-dasharray="3 1.5"/>
+      <circle cx="48" cy="48" r="38" fill="#FDFBF7" stroke="#BE185D" stroke-width="0.8" stroke-opacity="0.5"/>
+      <circle cx="48" cy="7" r="1.8" fill="#F4C34B"/>
+      <circle cx="48" cy="89" r="1.8" fill="#F4C34B"/>
+      <circle cx="7" cy="48" r="1.8" fill="#F4C34B"/>
+      <circle cx="89" cy="48" r="1.8" fill="#F4C34B"/>
+      <path d="M48 14 C33 24 26 40 26 56 C26 67 36 74 48 74 C60 74 70 67 70 56 C70 40 63 24 48 14 Z" fill="#BE185D"/>
+      <path d="M48 14 C41 28 38 42 41 57 C43 66 45 71 48 74 C51 71 53 66 55 57 C58 42 55 28 48 14 Z" fill="#F4C34B"/>
+      <path d="M48 20 C42 32 40 45 42 58 C44 65 46 69 48 72 C50 69 52 65 54 58 C56 45 54 32 48 20 Z" fill="#E11D48"/>
+      <path d="M48 74 L48 84" stroke="#2D6A4F" stroke-width="3" stroke-linecap="round"/>
+      <path d="M48 79 C40 76 34 70 34 64 C41 64 46 70 48 79 Z" fill="#52B788"/>
+      <path d="M48 79 C56 76 62 70 62 64 C55 64 50 70 48 79 Z" fill="#52B788"/>
     </svg>
-    <h1 data-t="title"></h1>
+    <h1 data-t="title">Lale Bahçesi</h1>
     <p class="muted" data-t="sub"></p>
     <ul class="howto">
       <li data-t="how1"></li><li data-t="how2"></li><li data-t="how3"></li><li data-t="how4"></li>
@@ -1121,20 +1793,27 @@ ringSel.position.y = 0.1; ringSel.visible = false; scene.add(ringSel);
 
 /* ---------- UI rendering ---------- */
 const SVG = {
-  star: '<svg viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9.5 9,9" fill="#f5c34b" stroke="#BE185D" stroke-width="0.8"/></svg>',
-  starOff: '<svg viewBox="0 0 24 24" class="off"><polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9.5 9,9" fill="#999" /></svg>'
+  star: '<svg viewBox="0 0 24 24" class="star-icon on"><polygon points="12,1.5 15.2,8.5 22.5,9.2 17,14.3 18.8,21.5 12,17.6 5.2,21.5 7,14.3 1.5,9.2 8.8,8.5" fill="#F4C34B" stroke="#B45309" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+  starOff: '<svg viewBox="0 0 24 24" class="star-icon off"><polygon points="12,1.5 15.2,8.5 22.5,9.2 17,14.3 18.8,21.5 12,17.6 5.2,21.5 7,14.3 1.5,9.2 8.8,8.5" fill="#E5DFD5" stroke="#B5ADA3" stroke-width="1.2" stroke-linejoin="round"/></svg>'
 };
 function flowerSVG(v) {
   const d = dec(v);
   const known = S && S.discovered.includes(v);
-  if (!known) return '<svg viewBox="0 0 36 50"><text x="18" y="32" text-anchor="middle" font-size="22" fill="#999">?</text></svg>';
+  if (!known) {
+    return `<svg viewBox="0 0 40 54" class="tulip-svg"><circle cx="20" cy="27" r="21" fill="rgba(59,29,44,0.04)"/><path d="M20 10 C14 16 11 24 11 32 C11 38 15 42 20 42 C25 42 29 38 29 32 C29 24 26 16 20 10 Z" fill="#D8D1C7" opacity="0.6"/><path d="M20 42 L20 50" stroke="#B8B0A4" stroke-width="2.2" stroke-linecap="round"/><text x="20" y="31" text-anchor="middle" font-family="'Cinzel Decorative', Georgia, serif" font-weight="700" font-size="14" fill="#8C8275">?</text></svg>`;
+  }
   const col = '#' + PAL[d.c].col.toString(16).padStart(6, '0');
-  const shape = d.s === 0 ? '<circle cx="18" cy="16" r="11" fill="' + col + '"/>'
-    : d.s === 1 ? '<ellipse cx="18" cy="16" rx="8.5" ry="13" fill="' + col + '"/>'
-    : '<path d="M18 2 L27 30 Q18 36 9 30 Z" fill="' + col + '"/>';
-  const pat = d.p === 1 ? '<path d="M18 9 L18 22" stroke="#ffd76a" stroke-width="2.4" stroke-linecap="round"/>'
-    : d.p === 2 ? '<circle cx="18" cy="16" r="11" fill="none" stroke="#fff7e6" stroke-width="2.4"/>' : '';
-  return `<svg viewBox="0 0 36 50">${shape}${pat}<path d="M18 30 L18 48" stroke="#4d7c3a" stroke-width="2.4"/></svg>`;
+  const shape = d.s === 0
+    ? `<circle cx="20" cy="18" r="12" fill="${col}"/>`
+    : d.s === 1
+      ? `<ellipse cx="20" cy="18" rx="9" ry="14" fill="${col}"/>`
+      : `<path d="M20 4 C15 12 11 20 11 28 C11 34 15 37 20 37 C25 37 29 34 29 28 C29 20 25 12 20 4 Z" fill="${col}"/>`;
+  const pat = d.p === 1
+    ? `<path d="M20 10 L20 25" stroke="#F4C34B" stroke-width="2.6" stroke-linecap="round"/><circle cx="20" cy="10" r="1.5" fill="#FFF"/>`
+    : d.p === 2
+      ? `<circle cx="20" cy="18" r="11" fill="none" stroke="#FFF7E6" stroke-width="2.2"/>`
+      : '';
+  return `<svg viewBox="0 0 40 54" class="tulip-svg">${shape}${pat}<path d="M20 32 L20 50" stroke="#2D6A4F" stroke-width="2.6" stroke-linecap="round"/><path d="M20 43 C15 41 12 37 12 33 C16 33 19 37 20 43 Z" fill="#52B788"/></svg>`;
 }
 function kindName(tl) {
   if (tl.t === T_BED) return T('kBed');
@@ -1178,36 +1857,51 @@ function renderTile() {
   const tl = tileAt(sel.x, sel.y);
   ringSel.visible = true; ringSel.position.x = wxOf(sel.x); ringSel.position.z = wxOf(sel.y);
   panel.classList.remove('hidden');
-  let html = `<div class="head"><b>${T('tile')} ${sel.x - unlockedOff() + 1}·${sel.y - unlockedOff() + 1}</b><span>${kindName(tl)}</span></div>`;
+  let html = `<div class="head"><b>${T('tile')} ${sel.x - unlockedOff() + 1}·${sel.y - unlockedOff() + 1}</b><span class="kind-tag">${kindName(tl)}</span><button data-act="close" class="tile-close-btn" aria-label="close">✕</button></div>`;
   if (tl.d) html += `<div class="row"><button data-act="rotate">${T('rotate')}</button></div>`;
   if (tl.t === T_BED && !tl.pl) {
     const opts = Object.keys(S.bulbs).filter(v => S.bulbs[v] > 0);
-    html += `<div>${T('empty')}</div>`;
-    html += opts.length ? `<div>${T('plantPick')}</div><div class="chips">` + opts.map(v => `<button data-act="plant" data-v="${v}">${nameOf(Number(v))} ×${S.bulbs[v]}</button>`).join('') + '</div>' : `<div class="muted">${T('noBulbs')}</div>`;
+    const moistPct = Math.round(tl.w * 100);
+    html += `<div class="soil-status"><span class="moist-pill ${tl.w > 0.15 ? 'ok' : 'dry'}">💧 ${moistPct}%</span><span class="muted">${T('empty')}</span></div>`;
+    html += opts.length ? `<div style="font-size:12.5px;font-weight:700;color:var(--ink-light);margin-top:2px;">${T('plantPick')}</div><div class="chips">` + opts.map(v => {
+      const col = '#' + PAL[dec(Number(v)).c].col.toString(16).padStart(6, '0');
+      return `<button data-act="plant" data-v="${v}"><span class="bulb-dot" style="background:${col}"></span>${nameOf(Number(v))} <b class="chip-count">×${S.bulbs[v]}</b></button>`;
+    }).join('') + '</div>' : `<div class="muted">${T('noBulbs')}</div>`;
   }
   if (tl.t === T_BED && tl.pl) {
     const p = tl.pl, st = stageOf(p);
-    html += `<div><b>${nameOf(p.v)}</b> · ${T('stage' + st)}</div>`;
-    html += `<div class="row"><button data-act="water">${T('water')}</button>`;
-    if (bloom(tl)) html += `<button data-act="harvest" class="primary">${T('harvest')}</button>`;
-    html += `<button data-act="lift">${T('lift')}</button>`;
-    if (tl.pe) html += `<button data-act="clean">${T('clean')}</button>`;
+    const moistPct = Math.round(tl.w * 100);
+    const col = '#' + PAL[dec(p.v).c].col.toString(16).padStart(6, '0');
+    html += `<div class="flower-header"><span class="bulb-dot" style="background:${col}"></span><div class="flower-meta"><b>${nameOf(p.v)}</b><div class="stage-tag">🌱 ${T('stage' + st)}</div></div><span class="moist-pill ${tl.w > 0.15 ? 'ok' : 'dry'}">💧 ${moistPct}%</span></div>`;
+    if (tl.pe) html += `<div class="aphid-alert">🐛 <b>${T('aphids')}</b></div>`;
+    html += `<div class="action-row"><button data-act="water" title="${T('water')}">💧 ${T('water')}</button>`;
+    if (bloom(tl)) html += `<button data-act="harvest" class="primary harvest-pulse" title="${T('harvest')}">✂️ ${T('harvest')}</button>`;
+    html += `<button data-act="lift" title="${T('lift')}">🌱 ${T('lift')}</button>`;
+    if (tl.pe) html += `<button data-act="clean" title="${T('clean')}">🧹 ${T('clean')}</button>`;
     html += '</div>';
   }
   panel.innerHTML = html;
 }
 function renderBazaar() {
   if (!S) return;
-  $('baz-akce').textContent = `${T('akce')}: ${S.akce}`;
+  $('baz-akce').innerHTML = `<span class="baz-akce-pill"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#F4C34B" stroke="#B45309" stroke-width="1.4"/><circle cx="10" cy="10" r="5.5" fill="none" stroke="#D97706" stroke-width="0.7" stroke-dasharray="1 1"/><path d="M7 10.5c1-1.5 2.5-2 4-1M8 8c1 2 2.5 3 4 2M9 5v10" stroke="#78350F" stroke-width="1.2" stroke-linecap="round"/></svg><b>${S.akce}</b> akçe</span>`;
   const bulbs = Object.keys(S.bulbs).filter(v => S.bulbs[v] > 0);
-  let h = `<div class="item"><b>${T('buyPack')}</b><button data-b="pack" class="primary">${T('buyPack').split('(')[0].trim()}</button></div>`;
-  h += `<h2>${T('bulbsTitle')}</h2>`;
-  h += bulbs.length ? bulbs.map(v => `<div class="item"><span>${nameOf(Number(v))} ×${S.bulbs[v]} <small>${sellPrice(Number(v), 0, false)} ak.</small></span><button data-b="bulb" data-v="${v}">${T('sellOne')}</button></div>`).join('') : `<div class="muted">${T('noBulbs')}</div>`;
-  h += `<h2>${T('flowersTitle')}</h2>`;
-  h += S.flowers.length ? `<div class="item"><span>${S.flowers.length} ×</span><button data-b="sellall" class="primary">${T('sellAll')}</button></div>` : `<div class="muted">${T('flowersNone')}</div>`;
-  h += `<h2>${T('marketTitle')}</h2>`;
+  let h = `<div class="item featured-pack"><div><b>${T('buyPack')}</b><small class="block-hint">3 adet melez/nadir soğan</small></div><button data-b="pack" class="primary">${T('buyPack').split('(')[0].trim()}</button></div>`;
+  h += `<div class="section-divider"><span>${T('bulbsTitle')}</span></div>`;
+  h += bulbs.length ? bulbs.map(v => {
+    const col = '#' + PAL[dec(Number(v)).c].col.toString(16).padStart(6, '0');
+    return `<div class="item"><div class="item-info"><span class="bulb-dot" style="background:${col}"></span><span>${nameOf(Number(v))} ×${S.bulbs[v]}</span> <small class="price-tag">${sellPrice(Number(v), 0, false)} ak.</small></div><button data-b="bulb" data-v="${v}">${T('sellOne')}</button></div>`;
+  }).join('') : `<div class="muted">${T('noBulbs')}</div>`;
+  h += `<div class="section-divider"><span>${T('flowersTitle')}</span></div>`;
+  const totalCutVal = S.flowers.reduce((acc, f) => acc + sellPrice(f.v, f.q, true), 0);
+  h += S.flowers.length ? `<div class="item"><div class="item-info"><span>${S.flowers.length} × ${T('flowersTitle')}</span><small class="price-tag">+${totalCutVal} ak.</small></div><button data-b="sellall" class="primary">${T('sellAll')}</button></div>` : `<div class="muted">${T('flowersNone')}</div>`;
+  h += `<div class="section-divider"><span>${T('marketTitle')}</span></div>`;
   const top = S.discovered.slice().sort((a, b) => (S.market[b] ?? 1) - (S.market[a] ?? 1)).slice(0, 5);
-  h += top.length ? top.map(v => `<div class="item"><span>${nameOf(v)}</span><small>x${(S.market[v] ?? 1).toFixed(2)}${S.mania && S.mania.v === v ? ' · ' + T('mania') : ''}</small></div>`).join('') : `<div class="muted">-</div>`;
+  h += top.length ? top.map(v => {
+    const rate = (S.market[v] ?? 1).toFixed(2);
+    const isMania = S.mania && S.mania.v === v;
+    return `<div class="item"><div class="item-info"><span>${nameOf(v)}</span></div><span class="rate-badge ${isMania ? 'mania-pulse' : rate >= 1.2 ? 'high' : rate <= 0.8 ? 'low' : ''}">×${rate}${isMania ? ' · 🔥 ' + T('mania') : ''}</span></div>`;
+  }).join('') : `<div class="muted">-</div>`;
   $('baz-body').innerHTML = h;
 }
 function renderCat() {
@@ -1217,7 +1911,7 @@ function renderCat() {
   for (let v = 0; v < 90; v++) {
     const known = S.discovered.includes(v);
     const d = dec(v);
-    h += `<div class="card ${known ? '' : 'unk'}" style="background:rgba(255,255,255,.5)">${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : ''}</small></div>`;
+    h += `<div class="card ${known ? '' : 'unk'}">${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : '???'}</small></div>`;
   }
   $('cat-body').innerHTML = h;
 }
@@ -1225,11 +1919,13 @@ function renderFest() {
   const f = S.lastFest;
   const last = f.season === 4;
   const stars = [1, 2, 3].map(k => (k <= f.stars ? SVG.star : SVG.starOff)).join('');
-  const bar = (label, v, max) => `<div class="bar"><span>${label}</span><div class="track"><div class="fill" style="width:${Math.round(v / max * 100)}%"></div></div><span>${v}</span></div>`;
+  const bar = (label, v, max) => `<div class="bar"><span class="bar-lbl">${label}</span><div class="track"><div class="fill" style="width:${Math.round(v / max * 100)}%"></div></div><span class="bar-val">${v}/${max}</span></div>`;
   $('fest-body').innerHTML = `
-    <h2>${T('festTitle')} · ${f.season}</h2>
-    <div class="big">${f.score}</div>
-    <div class="muted">${T('score')}${f.record ? ' · <b>' + T('newRecord') + '</b>' : ''}</div>
+    <h2>${T('festTitle')} · ${f.season}. ${T('season')}</h2>
+    <div class="score-display">
+      <div class="big">${f.score}</div>
+      <div class="score-lbl">${T('score')}${f.record ? ' · <span class="record-badge">' + T('newRecord') + '</span>' : ''}</div>
+    </div>
     <div class="stars">${stars}</div>
     <div class="bars">
       ${bar(T('partVar'), f.parts.variety, 35)}${bar(T('partHarm'), f.parts.harmony, 25)}
@@ -1249,7 +1945,7 @@ function renderEnd() {
   const best = load(KEY_BEST) || {};
   $('end-body').innerHTML = `
     <h2>${S.won ? T('winTitle') : T('loseTitle')}</h2>
-    <p class="muted">${S.won ? T('winText') : T('loseText')}</p>
+    <p class="muted" style="line-height:1.45;margin:4px 0 8px;">${S.won ? T('winText') : T('loseText')}</p>
     <div class="stars">${[1, 2, 3].map(k => (k <= f.stars ? SVG.star : SVG.starOff)).join('')}</div>
     <div class="stats-grid">
       <div><span>${T('score')}</span><b>${f.score}</b></div>
@@ -1257,7 +1953,7 @@ function renderEnd() {
       <div><span>${T('statBlooms')}</span><b>${S.stats.blooms}</b></div>
       <div><span>${T('statBred')}</span><b>${S.stats.bred}</b></div>
     </div>
-    <p class="muted">${T('best')}: ${best.score ?? 0}</p>
+    <p class="muted" style="margin:6px 0;">🏆 ${T('best')}: <b>${best.score ?? 0}</b></p>
     <div class="btns">
       <button class="primary" id="b-end-again">${T('again')}</button>
       <button id="b-end-endless">${T('endlessBtn')}</button>
@@ -1269,7 +1965,7 @@ function renderEnd() {
 }
 function renderTitle() {
   const best = load(KEY_BEST);
-  $('title-best').textContent = best ? `${T('best')}: ${best.score} · ${best.stars}★${best.varieties ? ' · ' + best.varieties + ' ' + T('varieties').toLowerCase() : ''}` : T('bestNone');
+  $('title-best').innerHTML = best ? `<span>🏆 ${T('best')}: <b>${best.score}</b> · ${best.stars}★${best.varieties ? ' · ' + best.varieties + ' ' + T('varieties').toLowerCase() : ''}</span>` : `<span>${T('bestNone')}</span>`;
   $('b-cont').classList.toggle('hidden', !load(KEY_SAVE) || (load(KEY_SAVE) && load(KEY_SAVE).ended));
 }
 function syncSettings() {
@@ -1442,6 +2138,7 @@ $('build').addEventListener('click', e => {
 $('tile').addEventListener('click', e => {
   const r = e.target.closest('button[data-act]'); if (!r || !sel) return;
   const a = r.dataset.act, x = sel.x, y = sel.y;
+  if (a === 'close') { sel = null; renderTile(); return; }
   let ok = false;
   if (a === 'plant') ok = plantAt(x, y, Number(r.dataset.v));
   if (a === 'water') ok = waterAt(x, y);
