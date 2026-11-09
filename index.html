@@ -729,11 +729,42 @@ h2 {
   .stat b { font-size: 13px; }
 }
 
+/* Şükûfe Şenliği jury cards */
+.jury { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; text-align: left; }
+.juror {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--paper-card);
+  box-shadow: var(--shadow-sm);
+  animation: jurorIn 0.3s ease-out both;
+  animation-delay: calc(var(--i, 0) * 0.12s);
+}
+.juror.fav { border-color: var(--gold); box-shadow: 0 4px 14px rgba(244, 195, 75, 0.28); background: linear-gradient(135deg, #FFFFFF, #FFFBEB); }
+@keyframes jurorIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.juror-head { display: flex; align-items: center; gap: 8px; }
+.juror-head div { flex: 1; display: flex; flex-direction: column; line-height: 1.2; }
+.juror-head small { color: var(--mut); font-size: 11.5px; }
+.juror-badge { width: 30px; height: 30px; border-radius: 50%; color: #fff; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px var(--gold-light); flex-shrink: 0; }
+.juror-score { font-family: 'Cinzel Decorative', Georgia, serif; font-weight: 700; font-size: 20px; color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.juror-score small { font-size: 11px; color: var(--mut); }
+.juror p { margin: 0; font-size: 12.5px; line-height: 1.35; }
+.juror .j-good { color: #15803D; }
+.juror .j-tip { color: var(--ink-light); }
+.jury-reward { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.jury-reward span { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; background: rgba(244, 195, 75, 0.2); border: 1px solid var(--line-gold); font-size: 13px; font-weight: 600; }
+#fest-body > .btns { position: sticky; bottom: -24px; align-self: stretch; margin: 0 -24px -24px; padding: 12px 24px 16px; background: linear-gradient(180deg, rgba(255, 249, 240, 0), var(--paper) 35%); }
+@media (max-width: 480px) { .jury { grid-template-columns: 1fr; } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+  .juror { animation: none !important; }
 }
 </style>
 <script data-goatcounter="https://furkiozknn.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -874,7 +905,7 @@ h2 {
 </section>
 
 <section id="scr-fest" class="screen hidden">
-  <div class="panel center" style="max-width:600px" id="fest-body"></div>
+  <div class="panel center" style="max-width:720px" id="fest-body"></div>
 </section>
 
 <section id="scr-end" class="screen hidden">
@@ -910,6 +941,12 @@ const NAMED = {
 };
 // colour mixes when two parents of different colours cross
 const MIX = { '0,2': 1, '0,3': 5, '2,3': 7, '1,4': 8, '0,4': 6, '0,5': 9, '3,5': 9, '1,2': 1, '2,4': 8, '2,7': 7, '1,3': 7 };
+// Şükûfe Şenliği jury: four visitors with their own taste; the favourite (score >= 7) gives a bulb [variety, count]
+const JURY = [
+  { id: 'nakkas', col: 0x2b6cb0, gift: [73, 1] }, { id: 'sukufe', col: 0xbe185d, gift: [88, 1] },
+  { id: 'mimar', col: 0xb45309, gift: [23, 1] }, { id: 'bostanci', col: 0x2d6a4f, gift: [27, 2] }
+];
+const REP_TIERS = [0, 40, 90, 150], REP_BONUS = 0.05, PRIZE_PER_POINT = 2;
 const STR = {
   tr: {
     title: 'Lale Bahçesi', sub: 'Osmanlı Lale Devri’nde bir saray bahçesi kurun.',
@@ -933,7 +970,31 @@ const STR = {
     kFountain: 'Çeşme', kKiosk: 'Köşk', kDecor: 'Süs', empty: 'Boş', sellAll: 'Hepsini sat', sellOne: 'Sat',
     bulbsTitle: 'Soğanlar', flowersTitle: 'Kesik çiçekler', flowersNone: 'Kesik çiçek yok',
     buyPack: 'Soğan paketi al (20 akçe)', marketTitle: 'Piyasa', mania: 'Lale çılgınlığı!',
-    festTitle: 'Mevsim şenliği', score: 'Puan', stars: 'Yıldız', newRecord: 'Yeni rekor!',
+    festTitle: 'Şükûfe Şenliği', score: 'Puan',
+    juryTitle: 'Jüri', juryPrize: 'Jüri ödülü: +{n} akçe', rep: 'İtibar', repBonus: 'kesik çiçek +%{n}',
+    juryGift: 'Gözde jüri hediyesi:', repUp: 'İtibar yükseldi:',
+    tier0: 'Acemi bahçıvan', tier1: 'Usta bahçıvan', tier2: 'Saray şükûfecisi', tier3: 'Sultan’ın gözdesi',
+    j_nakkas: 'Nakkaş', j_nakkasR: 'renk uyumu', j_sukufe: 'Şükûfezen', j_sukufeR: 'nadir çeşitler',
+    j_mimar: 'Mimar', j_mimarR: 'düzen ve simetri', j_bostanci: 'Bostancıbaşı', j_bostanciR: 'bitki sağlığı',
+    jg_pal: 'Paletiniz {n} renkte, tam kararında.', jg_pair: 'Komşu lalelerin %{n}’i birbirine yakışıyor.',
+    jg_bloom: '{n} açık çiçek: bahçe şenlik gibi.', jg_kinds: '{n} ayrı çeşit sergilendi.',
+    jg_rare: '{n} nadir çeşit gözümü aldı.', jg_named: 'İsimli bir saray lalesi gördüm!',
+    jg_sym: 'Çeşmenin iki yanı %{n} ayna gibi.', jg_reach: 'Yatakların %{n}’ine yoldan ulaşılıyor.',
+    jg_decor: '{n} çeşit süs bahçeye derinlik katıyor.', jg_health: 'Bitkiler %{n} sağlıklı.',
+    jg_pests: 'Hiç yaprak biti yok.', jg_water: 'Bütün yataklar nemli.',
+    jt_pal: 'Paletinizde {n} renk var: 2-4 renk göze en hoş gelir.',
+    jt_pair: 'Komşu lalelerin yalnız %{n}’i uyumlu: aynı ya da karışan renkleri yan yana dikin.',
+    jt_bloom: 'Yalnız {n} açık çiçek vardı: dikimi şenliğe (30. gün) açacak şekilde zamanlayın.',
+    jt_kinds: 'Yalnız {n} çeşit sergilendi: 6 farklı çeşit hedefleyin.',
+    jt_rare: '{n} nadir çeşit: Lale-i rumi, alevli ve kenarlı laleler ilgimi çeker.',
+    jt_named: 'İsimli bir çeşit (ör. Sultan Beyazı) melezleyip sergileyin.',
+    jt_sym: 'Çeşmenin iki yanı yalnız %{n} eş: sol ve sağı ayna gibi düzenleyin.',
+    jt_reach: 'Yatakların yalnız %{n}’i yola bitişik: ziyaretçiler için yol döşeyin.',
+    jt_decor: 'Yalnız {n} çeşit süs: servi, çınar, fener, bank ve havuzu karıştırın.',
+    jt_health: 'Bitki sağlığı %{n}: solan ve hasta bitkileri söküp yenileyin.',
+    jt_pests: '{n} yatakta yaprak biti var: temizleyin.', jt_water: '{n} yatak kuru: şenlikten önce sulayın.',
+    jt_noshow: 'Şenlikte açık ya da tomurcuk lale yoktu.', jt_noplant: 'Bahçede bakılacak bitki yoktu.',
+    jt_perfect: 'Kusur bulamadım.', stars: 'Yıldız', newRecord: 'Yeni rekor!',
     partVar: 'Çeşitlilik', partHarm: 'Renk uyumu', partSym: 'Çeşme simetrisi', partDecor: 'Süsleme',
     statBlooms: 'Kesilen çiçek', statVar: 'Çeşit', statAkce: 'Akçe', statBred: 'Melez tohum',
     nextSeason: 'Sonraki mevsim', endlessBtn: 'Sonsuz bahçe', again: 'Yeniden oyna',
@@ -975,7 +1036,31 @@ const STR = {
     kFountain: 'Fountain', kKiosk: 'Kiosk', kDecor: 'Decor', empty: 'Empty', sellAll: 'Sell all', sellOne: 'Sell',
     bulbsTitle: 'Bulbs', flowersTitle: 'Cut flowers', flowersNone: 'No cut flowers',
     buyPack: 'Buy bulb pack (20 akçe)', marketTitle: 'Market', mania: 'Tulip mania!',
-    festTitle: 'Season festival', score: 'Score', stars: 'Stars', newRecord: 'New record!',
+    festTitle: 'Blossom Festival (Şükûfe Şenliği)', score: 'Score',
+    juryTitle: 'Jury', juryPrize: 'Jury prize: +{n} akçe', rep: 'Reputation', repBonus: 'cut flowers +{n}%',
+    juryGift: 'Favourite juror’s gift:', repUp: 'Reputation rose:',
+    tier0: 'Novice gardener', tier1: 'Master gardener', tier2: 'Palace florist', tier3: 'Sultan’s favourite',
+    j_nakkas: 'Miniature painter', j_nakkasR: 'colour harmony', j_sukufe: 'Tulip connoisseur', j_sukufeR: 'rare varieties',
+    j_mimar: 'Architect', j_mimarR: 'layout and symmetry', j_bostanci: 'Head gardener', j_bostanciR: 'plant health',
+    jg_pal: 'A palette of {n} colours, just right.', jg_pair: '{n}% of neighbouring tulips suit each other.',
+    jg_bloom: '{n} open blooms: a true festival.', jg_kinds: '{n} different varieties on show.',
+    jg_rare: '{n} rare varieties caught my eye.', jg_named: 'I saw a named palace tulip!',
+    jg_sym: 'The two sides of the fountain mirror {n}%.', jg_reach: '{n}% of beds can be reached from a path.',
+    jg_decor: '{n} kinds of decor give the garden depth.', jg_health: 'Plants are {n}% healthy.',
+    jg_pests: 'No aphids anywhere.', jg_water: 'Every bed is moist.',
+    jt_pal: 'Your palette has {n} colours: 2-4 colours please the eye most.',
+    jt_pair: 'Only {n}% of neighbours match: plant the same or blending colours side by side.',
+    jt_bloom: 'Only {n} open blooms: time plantings to bloom for the festival (day 30).',
+    jt_kinds: 'Only {n} varieties on show: aim for 6 different ones.',
+    jt_rare: '{n} rare varieties: needle (Rumi), flamed and edged tulips interest me.',
+    jt_named: 'Breed and show a named variety (e.g. Sultan’s White).',
+    jt_sym: 'The fountain sides match only {n}%: mirror left and right.',
+    jt_reach: 'Only {n}% of beds touch a path: lay paths for the visitors.',
+    jt_decor: 'Only {n} kinds of decor: mix cypress, plane, lantern, bench and pool.',
+    jt_health: 'Plant health {n}%: lift wilted and sick plants and replant.',
+    jt_pests: 'Aphids on {n} beds: clean them.', jt_water: '{n} beds are dry: water before the festival.',
+    jt_noshow: 'No tulips in bud or bloom at the festival.', jt_noplant: 'There were no plants to inspect.',
+    jt_perfect: 'Nothing to fault.', stars: 'Stars', newRecord: 'New record!',
     partVar: 'Variety', partHarm: 'Colour harmony', partSym: 'Fountain symmetry', partDecor: 'Decoration',
     statBlooms: 'Cut flowers', statVar: 'Varieties', statAkce: 'Akçe', statBred: 'Hybrid seeds',
     nextSeason: 'Next season', endlessBtn: 'Endless garden', again: 'Play again',
@@ -1011,6 +1096,8 @@ const cfg = Object.assign({ master: 0.8, music: 0.6, sfx: 0.8, lang: /^tr/i.test
 if (qs.has('lang')) cfg.lang = qs.get('lang') === 'en' ? 'en' : 'tr';
 if (FLAG.low) cfg.quality = 'low';
 const T = k => (STR[cfg.lang] && STR[cfg.lang][k]) || STR.en[k] || k;
+const Tn = (k, n) => T(k).replace('{n}', n);
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const saveCfg = () => store(KEY_S, cfg);
 const dec = v => ({ c: Math.floor(v / 9), s: Math.floor((v % 9) / 3), p: v % 3 });
 const nameOf = v => {
@@ -1045,7 +1132,7 @@ function newState() {
   return {
     season: 1, day: 1, clock: 0, akce: 50, rot: 0, bulbs: { [START_VARIETY]: 6 }, flowers: [],
     discovered: [], market: {}, mania: null, tiles: makeTiles(), endless: false, ended: false, won: false,
-    stats: { blooms: 0, bred: 0 }, lastFest: null, coached: false
+    stats: { blooms: 0, bred: 0 }, lastFest: null, coached: false, rep: 0, festPending: false
   };
 }
 const tileAt = (x, y) => S.tiles[y * N + x];
@@ -1080,7 +1167,7 @@ function breed(a, b) {
 }
 function sellPrice(v, q, flower) {
   const m = S.market[v] ?? 1;
-  return Math.round((flower ? FLOWER_PRICE * (0.7 + 0.6 * q) : BULB_PRICE) * rarityOf(v) * m);
+  return Math.round((flower ? FLOWER_PRICE * (0.7 + 0.6 * q) * (1 + REP_BONUS * repTier()) : BULB_PRICE) * rarityOf(v) * m);
 }
 
 /* ---------- actions (shared by player and bot) ---------- */
@@ -1281,6 +1368,87 @@ function beauty() {
   return { score, parts, seen: seen.size };
 }
 function starsFor(score) { return score >= 85 ? 3 : score >= 65 ? 2 : score >= 40 ? 1 : 0; }
+
+/* ---------- Şükûfe Şenliği: the jury walks the garden (pure: reads only tiles and season, no randomness) ---------- */
+const repTier = () => { let t = 0; REP_TIERS.forEach((v, i) => { if (((S && S.rep) || 0) >= v) t = i; }); return t; };
+// each juror weighs three things; r is 0..1, w the points it can give, n the number quoted back to the player
+function juror(id, parts, fallback) {
+  const score = Math.round(parts.reduce((s, p) => s + p.w * p.r, 0));
+  if (fallback) return { id, score, good: null, tip: fallback, n: 0 };
+  const best = parts.reduce((a, p) => (p.r > a.r ? p : a));
+  const worst = parts.reduce((a, p) => (p.w * (1 - p.r) > a.w * (1 - a.r) ? p : a));
+  const lost = worst.w * (1 - worst.r);
+  return { id, score, good: best.r >= 0.6 ? best.k : null, gn: best.n, tip: lost >= 0.5 ? worst.k : 'perfect', n: worst.n };
+}
+function juryOf(st) {
+  const o = (N - GS[st.season - 1]) / 2, e = N - o;
+  const at = (x, y) => st.tiles[y * N + x];
+  const inside = (x, y) => x >= o && y >= o && x < e && y < e;
+  const shown = tl => tl.pl && !tl.pl.c && (stageOf(tl.pl) === 2 || stageOf(tl.pl) === 3);
+  let blooms = 0, plants = 0, hSum = 0, aphid = 0, dry = 0, wilted = 0, beds = 0, reach = 0, pairs = 0, good = 0, feat = 0, match = 0;
+  const colours = new Set(), vars = new Set(), kinds = new Set();
+  for (let y = o; y < e; y++) for (let x = o; x < e; x++) {
+    const tl = at(x, y);
+    if (tl.d) kinds.add(tl.d);
+    if (tl.t === T_POOL) kinds.add('pool');
+    if (tl.t === T_BED) {
+      beds++;
+      if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => inside(x + dx, y + dy) && [T_PATH, T_FOUNTAIN, T_KIOSK].includes(at(x + dx, y + dy).t))) reach++;
+    }
+    if (tl.pl && !tl.pl.c) {
+      plants++; hSum += clamp(tl.pl.h, 0, 1);
+      if (tl.pe) aphid++;
+      if (tl.w <= 0.15) dry++;
+      if (stageOf(tl.pl) === 4) wilted++;
+    }
+    if (shown(tl)) {
+      const c = dec(tl.pl.v).c;
+      vars.add(tl.pl.v); colours.add(c);
+      if (stageOf(tl.pl) === 3) blooms++;
+      for (const [dx, dy] of [[1, 0], [0, 1]]) {
+        if (!inside(x + dx, y + dy) || !shown(at(x + dx, y + dy))) continue;
+        const c2 = dec(at(x + dx, y + dy).pl.v).c;
+        pairs++;
+        if (c2 === c || MIX[Math.min(c, c2) + ',' + Math.max(c, c2)] !== undefined) good++;
+      }
+    }
+    // the architect compares built features with their mirror across the fountain axis (fountain and kiosk are fixed)
+    if (x < N / 2) {
+      const b = at(N - 1 - x, y);
+      const sig = t => (t.t === T_FOUNTAIN || t.t === T_KIOSK ? '' : (t.t === T_GRASS ? '' : t.t) + (t.d || '') + (t.pl ? ':' + dec(t.pl.v).c : ''));
+      const sa = sig(tl), sb = sig(b);
+      if (sa || sb) { feat++; if (sa === sb) match++; }
+    }
+  }
+  const nc = colours.size, rare = [...vars].filter(v => NAMED[v] || dec(v).s === 2 || dec(v).p > 0);
+  const rarePts = [...vars].reduce((s, v) => s + (NAMED[v] ? 2 : 0) + (dec(v).s === 2 ? 1 : 0) + (dec(v).p > 0 ? 0.5 : 0), 0);
+  const named = [...vars].filter(v => NAMED[v]).length;
+  const pct = r => Math.round(r * 100);
+  const noShow = vars.size ? null : 'noshow';
+  const jurors = [
+    juror('nakkas', [
+      { k: 'pal', w: 4, r: nc === 0 ? 0 : nc === 1 ? 0.5 : nc <= 4 ? 1 : nc === 5 ? 0.6 : 0.25, n: nc },
+      { k: 'pair', w: 4, r: pairs ? good / pairs : 0, n: pct(pairs ? good / pairs : 0) },
+      { k: 'bloom', w: 2, r: Math.min(blooms / 10, 1), n: blooms }
+    ], noShow),
+    juror('sukufe', [
+      { k: 'kinds', w: 4, r: Math.min(vars.size / 6, 1), n: vars.size },
+      { k: 'rare', w: 4, r: Math.min(rarePts / 4, 1), n: rare.length },
+      { k: 'named', w: 2, r: named ? 1 : 0, n: named }
+    ], noShow),
+    juror('mimar', [
+      { k: 'sym', w: 5, r: feat ? match / feat : 0, n: pct(feat ? match / feat : 0) },
+      { k: 'reach', w: 3, r: beds ? reach / beds : 0, n: pct(beds ? reach / beds : 0) },
+      { k: 'decor', w: 2, r: Math.min(kinds.size / 4, 1), n: kinds.size }
+    ]),
+    juror('bostanci', [
+      { k: 'health', w: 4, r: plants ? hSum / plants * (1 - wilted / plants) : 0, n: pct(plants ? hSum / plants * (1 - wilted / plants) : 0) },
+      { k: 'pests', w: 3, r: plants ? 1 - aphid / plants : 0, n: aphid },
+      { k: 'water', w: 3, r: plants ? 1 - dry / plants : 0, n: dry }
+    ], plants ? null : 'noplant')
+  ];
+  return { total: jurors.reduce((s, j) => s + j.score, 0), jurors };
+}
 function openFestival() {
   const b = beauty();
   const stars = starsFor(b.score);
@@ -1288,11 +1456,24 @@ function openFestival() {
   const record = b.score > best.score;
   if (record) store(KEY_BEST, { score: b.score, stars });
   S.lastFest = { season: S.season, score: b.score, stars, parts: b.parts, varieties: S.discovered.length, blooms: S.stats.blooms, akce: S.akce, record };
+  // the jury's verdict feeds the economy: prize akçe, reputation (cut flowers sell higher per tier) and a gift bulb
+  const jury = juryOf(S), tierBefore = repTier();
+  const fav = jury.jurors.reduce((a, r) => (r.score > a.score ? r : a));
+  const g = JURY.find(j => j.id === fav.id).gift;
+  const gift = fav.score >= 7 ? { v: g[0], n: g[1] } : null;
+  const prize = jury.total * PRIZE_PER_POINT;
+  S.akce += prize;
+  S.rep = (S.rep || 0) + jury.total;
+  if (gift) S.bulbs[gift.v] = (S.bulbs[gift.v] || 0) + gift.n;
+  S.lastFest.jury = { ...jury, fav: fav.id, prize, rep: S.rep, tier: repTier(), gift };
+  S.festPending = true;
+  if (repTier() > tierBefore) toast(`${T('repUp')} ${T('tier' + repTier())}`, 'good');
   sfx('fest');
   renderFest();
   show('fest');
 }
 function festContinue() {
+  S.festPending = false;
   if (S.season < 4) {
     S.season++; S.day = 1; S.stats.blooms = 0; S.mania = null;
     setupSeason(); toast(T('seasonStart'), 'good'); show(null); saveGame(); return;
@@ -1525,6 +1706,19 @@ const bees = [0, 1, 2].map(i => {
   g.userData = { r: 3 + i * 1.2, sp: 0.55 + i * 0.15, ph: i * 2.1, cy: 1.1 + i * 0.3 };
   scene.add(g); return g;
 });
+// festival jury: four robed visitors with a white kavuk walk round the fountain while the festival screen is open
+const visitors = new THREE.Group(); visitors.visible = false; scene.add(visitors);
+{
+  const robeGeo = new THREE.ConeGeometry(0.2, 0.62, 8), headGeo = new THREE.SphereGeometry(0.1, 8, 6), hatGeo = new THREE.CylinderGeometry(0.1, 0.12, 0.15, 8);
+  const skin = new THREE.MeshLambertMaterial({ color: 0xe8c4a0 });
+  for (const j of JURY) {
+    const g = new THREE.Group();
+    for (const [geo, mat, y] of [[robeGeo, new THREE.MeshLambertMaterial({ color: j.col }), 0.31], [headGeo, skin, 0.7], [hatGeo, M.cream, 0.83]]) {
+      const m = new THREE.Mesh(geo, mat); m.position.y = y; m.castShadow = !LOW; g.add(m);
+    }
+    visitors.add(g);
+  }
+}
 // fountain spray: droplets leave the spout, arc outwards and fall back into the basin (local to the fountain)
 const SPRAY = LOW ? 16 : 36, sprayPos = new Float32Array(SPRAY * 3);
 const sprayGeo = new THREE.BufferGeometry(); sprayGeo.setAttribute('position', new THREE.BufferAttribute(sprayPos, 3));
@@ -1687,6 +1881,12 @@ function updateVisuals(time) {
     b.rotation.y = -a + Math.PI / 2;
     u.wl.rotation.y = Math.sin(time * 14) * 0.9; u.wr.rotation.y = -Math.sin(time * 14) * 0.9;
   }
+  visitors.visible = overlay === 'fest';
+  if (visitors.visible) visitors.children.forEach((g, i) => {
+    const a = (REDUCED ? 0.4 : time * 0.22) + i * Math.PI / 2;
+    g.position.set(Math.cos(a) * 2.9, 0.12 + (REDUCED ? 0 : Math.abs(Math.sin(time * 6 + i)) * 0.04), Math.sin(a) * 2.9);
+    g.rotation.y = -a;
+  });
   updateTulips(time);
 }
 
@@ -1937,8 +2137,29 @@ function renderFest() {
       <div><span>${T('statAkce')}</span><b>${f.akce}</b></div>
       <div><span>${T('statBred')}</span><b>${S.stats.bred}</b></div>
     </div>
+    ${f.jury ? renderJury(f.jury) : ''}
     <div class="btns"><button class="primary" id="b-fest-next">${last ? (S.endless ? T('endlessBtn') : T('stars')) : T('nextSeason')}</button></div>`;
   $('b-fest-next').onclick = () => festContinue();
+}
+function renderJury(j) {
+  const hex = c => '#' + c.toString(16).padStart(6, '0');
+  const cards = j.jurors.map((r, i) => {
+    const info = JURY.find(x => x.id === r.id);
+    return `<div class="juror${r.id === j.fav ? ' fav' : ''}" style="--i:${i}" data-juror="${r.id}">
+      <div class="juror-head"><span class="juror-badge" style="background:${hex(info.col)}" aria-hidden="true">${T('j_' + r.id)[0]}</span><div><b>${T('j_' + r.id)}</b><small>${T('j_' + r.id + 'R')}</small></div><span class="juror-score">${r.score}<small>/10</small></span></div>
+      <div class="track mini"><div class="fill" style="width:${r.score * 10}%"></div></div>
+      ${r.good ? `<p class="j-good">+ ${Tn('jg_' + r.good, r.gn)}</p>` : ''}
+      <p class="j-tip">→ ${Tn('jt_' + r.tip, r.n)}</p>
+    </div>`;
+  }).join('');
+  const tier = j.tier || 0;
+  return `<div class="section-divider" style="width:100%"><span>${T('juryTitle')} · ${j.total}/40</span></div>
+    <div class="jury-reward">
+      <span>🪙 ${Tn('juryPrize', j.prize)}</span>
+      <span>🏅 ${T('rep')}: <b>${j.rep}</b> · ${T('tier' + tier)}${tier ? ' (' + Tn('repBonus', Math.round(tier * REP_BONUS * 100)) + ')' : ''}</span>
+      ${j.gift ? `<span>🎁 ${T('juryGift')} ${nameOf(j.gift.v)} ×${j.gift.n}</span>` : ''}
+    </div>
+    <div class="jury">${cards}</div>`;
 }
 function renderEnd() {
   const f = S.lastFest;
@@ -2027,7 +2248,11 @@ function newGame() {
 function continueGame() {
   const s = load(KEY_SAVE);
   if (!s || s.ended) return newGame();
-  S = s; sel = null; tool = null; game = true; setupSeason(); show(null);
+  S = s; sel = null; tool = null; game = true;
+  if (typeof S.rep !== 'number') S.rep = 0;   // saves from before the jury have no reputation yet
+  setupSeason();
+  // a save taken while the festival screen was open goes back to that screen, so the reward is not paid twice
+  if (S.festPending && S.lastFest && S.lastFest.jury) { renderFest(); show('fest'); } else show(null);
 }
 function togglePause() {
   if (!game) return;
@@ -2260,7 +2485,8 @@ function updateDebug() {
 
 /* ---------- boot ---------- */
 window.lale = {
-  get state() { return S ? { season: S.season, day: S.day, akce: S.akce, varieties: S.discovered.length, beauty: beauty().score, endless: S.endless, ended: S.ended, won: S.won, overlay, bulbs: Object.values(S.bulbs).reduce((a, b) => a + b, 0), blooms: S.stats.blooms, bred: S.stats.bred, lastFest: S.lastFest } : null; },
+  get state() { return S ? { season: S.season, day: S.day, akce: S.akce, varieties: S.discovered.length, beauty: beauty().score, endless: S.endless, ended: S.ended, won: S.won, overlay, bulbs: Object.values(S.bulbs).reduce((a, b) => a + b, 0), blooms: S.stats.blooms, bred: S.stats.bred, lastFest: S.lastFest, rep: S.rep || 0, repTier: repTier() } : null; },
+  get jury() { return S ? juryOf(S) : null; },
   get errors() { return errors.slice(); },
   get garden() { if (!S) return null; const c = { beds: 0, planted: 0, stages: [0, 0, 0, 0, 0], cut: 0, pool: 0, decor: 0 }; for (const t of S.tiles) { if (t.t === T_BED) c.beds++; if (t.t === T_POOL) c.pool++; if (t.d) c.decor++; if (t.pl) { c.planted++; c.stages[stageOf(t.pl)]++; if (t.pl.c) c.cut++; } } return c; },
   assets: 'none (procedural only)',
