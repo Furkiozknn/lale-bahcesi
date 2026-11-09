@@ -1473,10 +1473,23 @@ const rnd = () => {
 };
 const saveCfg = () => store(KEY_S, cfg);
 const dec = v => ({ c: Math.floor(v / 9), s: Math.floor((v % 9) / 3), p: v % 3 });
+const DIVAN_ADJ = [
+  { tr: 'Maşukî', en: 'Beloved' }, { tr: 'Dil-âram', en: 'Heart-easing' },
+  { tr: 'Mihr-engiz', en: 'Sun-exciting' }, { tr: 'Cân-efzâ', en: 'Life-increasing' },
+  { tr: 'Behcetî', en: 'Joyful' }, { tr: 'Vâhidî', en: 'Unique' },
+  { tr: 'Nedîmî', en: 'Companion-like' }, { tr: 'Füzûnî', en: 'Abundant' },
+  { tr: 'Şâhidî', en: 'Beautiful' }, { tr: 'Rindî', en: 'Bohemian' },
+  { tr: 'Nâzenîn', en: 'Delicate' }, { tr: 'Cemâlî', en: 'Aesthetic' },
+  { tr: 'Âşıkane', en: 'Passionate' }, { tr: 'Munis', en: 'Friendly' },
+  { tr: 'Nev-res', en: 'Fresh-grown' }, { tr: 'Niyâzî', en: 'Devout' },
+  { tr: 'Şevkî', en: 'Joyous' }, { tr: 'Zihnî', en: 'Mindful' },
+  { tr: 'Ârifane', en: 'Wise' }, { tr: 'Pür-nur', en: 'Radiant' }
+];
 const nameOf = v => {
   if (NAMED[v]) return NAMED[v][cfg.lang];
   const d = dec(v);
-  return cfg.lang === 'tr' ? `${PAL[d.c].tr} ${SHAPE[d.s].tr} (${PATT[d.p].tr})` : `${PAL[d.c].en} ${SHAPE[d.s].en}, ${PATT[d.p].en}`;
+  const adj = DIVAN_ADJ[v % DIVAN_ADJ.length];
+  return cfg.lang === 'tr' ? `${adj.tr} ${SHAPE[d.s].tr}` : `${adj.en} ${SHAPE[d.s].en}`;
 };
 const rarityOf = v => NAMED[v] ? 2 : (dec(v).s === 2 ? 1.5 : 1);
 const errors = [];
