@@ -760,7 +760,7 @@ h2 {
 @keyframes pulseMania { from { transform: scale(1); } to { transform: scale(1.05); } }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chips button { font-size: 13px; min-height: 48px; min-width: 48px; padding: 8px 12px; border-radius: 10px; background: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.chips button { font-size: 13px; min-height: 44px; padding: 6px 12px; border-radius: 10px; background: #fff; }
 .bulb-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); flex-shrink: 0; }
 .chip-count { color: var(--accent); margin-left: 4px; }
 
@@ -890,7 +890,7 @@ h2 {
 .aphid-alert { padding: 6px 10px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #991B1B; font-size: 12.5px; }
 
 .action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
-.action-row button { flex: 1 1 calc(50% - 4px); min-height: 48px; min-width: 48px; font-weight: 600; }
+.action-row button { flex: 1 1 calc(50% - 4px); min-height: 44px; font-weight: 600; }
 .harvest-pulse { animation: harvestGlow 1.2s infinite alternate; }
 @keyframes harvestGlow {
   from { box-shadow: 0 3px 0 #700F36, 0 0 6px var(--accent-glow); }
@@ -1317,7 +1317,7 @@ const STR = {
     language: 'Dil', quality: 'Kalite', low: 'Düşük', high: 'Yüksek', fullscreen: 'Tam ekran', fsBtn: 'Aç / kapat',
     seasonS: 'Mev.', dayS: 'Gün', akceS: 'Akç.', varS: 'Çeş.', beautyS: 'Güz.',
     season: 'Mevsim', day: 'Gün', akce: 'Akçe', varieties: 'Çeşit', beauty: 'Güzellik', speed: 'Hız',
-    catalogue: 'Katalog', bazaar: 'Bazar', found: 'bulundu', unknown: 'Bilinmiyor', hybridReq: 'Gereken: {p1} + {p2}',
+    catalogue: 'Katalog', bazaar: 'Bazar', found: 'bulundu', unknown: 'Bilinmiyor',
     toolPath: 'Yol', toolBed: 'Yatak', toolPool: 'Havuz', toolCypress: 'Servi', toolPlane: 'Çınar',
     toolLantern: 'Fener', toolBench: 'Bank', toolErase: 'Sil',
     tile: 'Parsel', plantPick: 'Dikmek için soğan seçin:', noBulbs: 'Soğanınız yok. Bazardan paket alın.',
@@ -1386,7 +1386,7 @@ const STR = {
     language: 'Language', quality: 'Quality', low: 'Low', high: 'High', fullscreen: 'Fullscreen', fsBtn: 'Toggle',
     seasonS: 'Sea.', dayS: 'Day', akceS: 'Akç.', varS: 'Var.', beautyS: 'Bty.',
     season: 'Season', day: 'Day', akce: 'Akçe', varieties: 'Varieties', beauty: 'Beauty', speed: 'Speed',
-    catalogue: 'Catalogue', bazaar: 'Bazaar', found: 'found', unknown: 'Unknown', hybridReq: 'Requires: {p1} + {p2}',
+    catalogue: 'Catalogue', bazaar: 'Bazaar', found: 'found', unknown: 'Unknown',
     toolPath: 'Path', toolBed: 'Bed', toolPool: 'Pool', toolCypress: 'Cypress', toolPlane: 'Plane',
     toolLantern: 'Lantern', toolBench: 'Bench', toolErase: 'Erase',
     tile: 'Plot', plantPick: 'Pick a bulb to plant:', noBulbs: 'No bulbs. Buy a pack at the bazaar.',
@@ -1473,23 +1473,10 @@ const rnd = () => {
 };
 const saveCfg = () => store(KEY_S, cfg);
 const dec = v => ({ c: Math.floor(v / 9), s: Math.floor((v % 9) / 3), p: v % 3 });
-const DIVAN_ADJ = [
-  { tr: 'Maşukî', en: 'Beloved' }, { tr: 'Dil-âram', en: 'Heart-easing' },
-  { tr: 'Mihr-engiz', en: 'Sun-exciting' }, { tr: 'Cân-efzâ', en: 'Life-increasing' },
-  { tr: 'Behcetî', en: 'Joyful' }, { tr: 'Vâhidî', en: 'Unique' },
-  { tr: 'Nedîmî', en: 'Companion-like' }, { tr: 'Füzûnî', en: 'Abundant' },
-  { tr: 'Şâhidî', en: 'Beautiful' }, { tr: 'Rindî', en: 'Bohemian' },
-  { tr: 'Nâzenîn', en: 'Delicate' }, { tr: 'Cemâlî', en: 'Aesthetic' },
-  { tr: 'Âşıkane', en: 'Passionate' }, { tr: 'Munis', en: 'Friendly' },
-  { tr: 'Nev-res', en: 'Fresh-grown' }, { tr: 'Niyâzî', en: 'Devout' },
-  { tr: 'Şevkî', en: 'Joyous' }, { tr: 'Zihnî', en: 'Mindful' },
-  { tr: 'Ârifane', en: 'Wise' }, { tr: 'Pür-nur', en: 'Radiant' }
-];
 const nameOf = v => {
   if (NAMED[v]) return NAMED[v][cfg.lang];
   const d = dec(v);
-  const adj = DIVAN_ADJ[v % DIVAN_ADJ.length];
-  return cfg.lang === 'tr' ? `${adj.tr} ${SHAPE[d.s].tr}` : `${adj.en} ${SHAPE[d.s].en}`;
+  return cfg.lang === 'tr' ? `${PAL[d.c].tr} ${SHAPE[d.s].tr} (${PATT[d.p].tr})` : `${PAL[d.c].en} ${SHAPE[d.s].en}, ${PATT[d.p].en}`;
 };
 const rarityOf = v => NAMED[v] ? 2 : (dec(v).s === 2 ? 1.5 : 1);
 const errors = [];
@@ -2500,24 +2487,6 @@ function renderBazaar() {
   }).join('') : `<div class="muted">-</div>`;
   $('baz-body').innerHTML = h;
 }
-function getHybridParents(targetV) {
-  const targetColor = Math.floor(targetV / 9);
-  const targetShape = Math.floor((targetV % 9) / 3);
-  for (let c1 = 0; c1 < 10; c1++) {
-    for (let c2 = c1; c2 < 10; c2++) {
-      let mixed = c1 === c2 ? c1 : (MIX[c1 + ',' + c2] ?? c1);
-      if (mixed === targetColor) {
-        const p1 = c1 * 9;
-        const p2 = c2 * 9;
-        if (S.discovered.includes(p1) && S.discovered.includes(p2)) {
-          return [PAL[c1][cfg.lang], PAL[c2][cfg.lang]];
-        }
-      }
-    }
-  }
-  return [PAL[0][cfg.lang], PAL[3][cfg.lang]];
-}
-
 function renderCat() {
   if (!S) return;
   $('cat-count').textContent = `${S.discovered.length}/90 · ${T('found')}`;
@@ -2525,12 +2494,7 @@ function renderCat() {
   for (let v = 0; v < 90; v++) {
     const known = S.discovered.includes(v);
     const d = dec(v);
-    let hintText = '';
-    if (!known) {
-      const parents = getHybridParents(v);
-      hintText = T('hybridReq').replace('{p1}', parents[0]).replace('{p2}', parents[1]);
-    }
-    h += `<div class="card ${known ? '' : 'unk'}" ${!known ? 'title="' + hintText + '"' : ''}>${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : hintText}</small></div>`;
+    h += `<div class="card ${known ? '' : 'unk'}">${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : '???'}</small></div>`;
   }
   $('cat-body').innerHTML = h;
 }
