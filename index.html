@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Lale Bahçesi · Claude Game Arena</title>
+<meta name="arena-game" content="lale-bahcesi">
 <meta name="description" content="A cosy 3D garden builder in the Ottoman Tulip Era: plant bulbs on a sunlit sandstone diorama, breed new tulip varieties and win the Sultan's festival. Plays in the browser.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Lale Bahçesi · Tulip Garden">
@@ -1213,6 +1214,7 @@ h2 {
     <div class="btns">
       <button class="primary" id="b-play" data-t="play"></button>
       <button id="b-cont" data-t="cont"></button>
+      <button id="b-daily" class="hidden"></button>
       <button id="b-set-title" data-t="settings"></button>
     </div>
     <p id="title-best" class="muted"></p>
@@ -1238,6 +1240,7 @@ h2 {
     <div class="row"><label data-t="language" style="min-width:110px"></label><div class="seg"><button id="s-tr">Türkçe</button><button id="s-en">English</button></div></div>
     <div class="row"><label data-t="quality" style="min-width:110px"></label><div class="seg"><button id="s-low" data-t="low"></button><button id="s-high" data-t="high"></button></div></div>
     <div class="row"><label data-t="fullscreen" style="min-width:110px"></label><button id="s-full" data-t="fsBtn"></button></div>
+    <div class="row"><label data-t="a11y" style="min-width:110px"></label><button id="s-a11y" data-t="a11y"></button></div>
     <div class="btns"><button id="b-back" data-t="back"></button></div>
   </div>
 </section>
@@ -1366,7 +1369,10 @@ const STR = {
     endless: 'Sonsuz bahçe modu: şenlik her 30 günde.', bulbNoneSel: 'Seçili yatak yok.',
     coachSelect: 'Başlamak için bir yatağa tıklayın, sonra soğan dikin.',
     coachWait: 'Soğanlar filizleniyor. Çeşmenin yanındaki yataklar kendiliğinden sulanır.',
-    coachCut: 'Bir lale açtı: üstüne tıklayıp Kes’e basın.'
+    coachCut: 'Bir lale açtı: üstüne tıklayıp Kes’e basın.',
+    a11y: 'Erişilebilirlik', share: 'Paylaş', anotherGame: 'Başka oyun', daily: 'Günün Meydan Okuması',
+    dailyLine: 'seri {s} gün · en iyi {b}', dailyDone: 'bugün tamam', dailyWelcome: 'Günün bahçesi: toprak, ilk soğanlar ve pazar şansı herkese aynı.',
+    shareLine: '{n} puan · {st}★ · {v}/20 çeşit', awWin: 'Lale Bahçesi: Sultan’ın şenliği', awStars: 'Lale Bahçesi: üç yıldızlı şenlik', awAll: 'Lale Bahçesi: 20 çeşit'
   },
   en: {
     title: 'Lale Bahçesi', sub: 'Build a palace tulip garden in the Ottoman Tulip Era.',
@@ -1432,7 +1438,10 @@ const STR = {
     endless: 'Endless garden: a festival every 30 days.', bulbNoneSel: 'No bed selected.',
     coachSelect: 'Click a bed to start, then plant a bulb in it.',
     coachWait: 'Bulbs are sprouting. Beds next to the fountain water themselves.',
-    coachCut: 'A tulip is in bloom: click it and press Cut.'
+    coachCut: 'A tulip is in bloom: click it and press Cut.',
+    a11y: 'Accessibility', share: 'Share', anotherGame: 'Another game', daily: 'Daily challenge',
+    dailyLine: 'streak {s} days · best {b}', dailyDone: 'done today', dailyWelcome: 'Today’s garden: soil, first bulbs and market luck are the same for everyone.',
+    shareLine: '{n} points · {st}★ · {v}/20 varieties', awWin: 'Lale Bahçesi: the Sultan’s festival', awStars: 'Lale Bahçesi: a three-star festival', awAll: 'Lale Bahçesi: 20 varieties'
   }
 };
 
@@ -1451,7 +1460,17 @@ if (qs.has('lang')) cfg.lang = qs.get('lang') === 'en' ? 'en' : 'tr';
 if (FLAG.low) cfg.quality = 'low';
 const T = k => (STR[cfg.lang] && STR[cfg.lang][k]) || STR.en[k] || k;
 const Tn = (k, n) => T(k).replace('{n}', n);
-const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// arena-kit: the accessibility panel's "reduce motion" drives the same flag (its default already follows the OS setting)
+if (window.Arena) { REDUCED = !!Arena.settings.reducedMotion; Arena.on('settings', st => { REDUCED = !!st.reducedMotion; }); }
+// Simulation dice: a daily-challenge garden carries its own seeded generator in the save (S.seed, mulberry32),
+// so the same day plays out the same for everyone; every other garden (and old saves) keeps Math.random.
+const rnd = () => {
+  if (!S || S.seed == null) return Math.random();
+  S.seed = (S.seed + 0x6D2B79F5) >>> 0; let t = S.seed;
+  t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
 const saveCfg = () => store(KEY_S, cfg);
 const dec = v => ({ c: Math.floor(v / 9), s: Math.floor((v % 9) / 3), p: v % 3 });
 const nameOf = v => {
@@ -1467,9 +1486,9 @@ window.addEventListener('error', e => { errors.push(String(e.message)); });
 let S = null, game = false, overlay = null, dirty = true, sel = null, tool = null, hover = null, prevOverlay = null;
 let botAcc = 0, botDone = false;
 const START_VARIETY = 0;
-function makeTiles() {
+function makeTiles(r = Math.random) {
   const a = [];
-  for (let i = 0; i < N * N; i++) a.push({ t: T_GRASS, d: '', r: 0, s: 0.5 + Math.random() * 0.3, w: 0, pe: false, pl: null });
+  for (let i = 0; i < N * N; i++) a.push({ t: T_GRASS, d: '', r: 0, s: 0.5 + r() * 0.3, w: 0, pe: false, pl: null });
   for (const [x, y] of [[7, 7], [8, 7], [7, 8], [8, 8]]) a[y * N + x].t = T_FOUNTAIN;
   // the kiosk sits in the north-west corner on a 2x2 tile block (world centre -4, -4)
   for (const [x, y] of [[3, 3], [4, 3], [3, 4], [4, 4]]) a[y * N + x].t = T_KIOSK;
@@ -1507,16 +1526,17 @@ function sunAt(x, y) {
 function discover(v) {
   if (S.discovered.includes(v)) return;
   S.discovered.push(v);
+  if (S.discovered.length >= 20 && window.Arena && !FLAG.auto) Arena.award('lale-20', T('awAll'));
   toast(`${T('newVariety')} ${nameOf(v)}`, 'good');
   sfx('good');
 }
 function breed(a, b) {
   const da = dec(a), db = dec(b);
-  let c = da.c === db.c ? da.c : (MIX[[Math.min(da.c, db.c), Math.max(da.c, db.c)].join(',')] ?? (Math.random() < 0.5 ? da.c : db.c));
-  if (Math.random() < 0.12) c = Math.floor(Math.random() * 10);
-  let s = Math.random() < 0.5 ? da.s : db.s, p = Math.random() < 0.5 ? da.p : db.p;
-  if (Math.random() < 0.1) s = Math.floor(Math.random() * 3);
-  if (Math.random() < 0.1) p = Math.floor(Math.random() * 3);
+  let c = da.c === db.c ? da.c : (MIX[[Math.min(da.c, db.c), Math.max(da.c, db.c)].join(',')] ?? (rnd() < 0.5 ? da.c : db.c));
+  if (rnd() < 0.12) c = Math.floor(rnd() * 10);
+  let s = rnd() < 0.5 ? da.s : db.s, p = rnd() < 0.5 ? da.p : db.p;
+  if (rnd() < 0.1) s = Math.floor(rnd() * 3);
+  if (rnd() < 0.1) p = Math.floor(rnd() * 3);
   return c * 9 + s * 3 + p;
 }
 function sellPrice(v, q, flower) {
@@ -1578,7 +1598,7 @@ function liftAt(x, y) {
   if (!tl.pl) return false;
   const v = tl.pl.v;
   S.bulbs[v] = (S.bulbs[v] || 0) + 1;
-  if (Math.random() < 0.4) S.bulbs[v]++;
+  if (rnd() < 0.4) S.bulbs[v]++;
   tl.pl = null; tl.pe = false;
   sfx('dig'); toast(T('lifted'), 'info'); markDirty(); return true;
 }
@@ -1610,7 +1630,7 @@ function buyPack() {
   if (S.akce < PACK_PRICE) { toast(T('noMoney'), 'bad'); return false; }
   S.akce -= PACK_PRICE;
   for (let i = 0; i < 3; i++) {
-    const v = Math.floor(Math.random() * 8) * 9 + Math.floor(Math.random() * 3) * 3 + Math.floor(Math.random() * 3);
+    const v = Math.floor(rnd() * 8) * 9 + Math.floor(rnd() * 3) * 3 + Math.floor(rnd() * 3);
     S.bulbs[v] = (S.bulbs[v] || 0) + 1;
   }
   sfx('coin'); toast(T('bought'), 'info'); return true;
@@ -1637,7 +1657,7 @@ function growth() {
     p.a += tl.w > 0.15 ? 1 : 0.55;
     tl.w = Math.max(0, tl.w - 0.12);
     if (tl.w <= 0.01) p.h -= 0.06;
-    if (!tl.pe && p.a >= 6 && Math.random() < 0.03) { tl.pe = true; toast(T('aphids'), 'bad'); }
+    if (!tl.pe && p.a >= 6 && rnd() < 0.03) { tl.pe = true; toast(T('aphids'), 'bad'); }
     if (tl.pe) p.h -= 0.05;
     p.q = tl.s * 0.6 + 0.4 * sunAt(x, y);
     if (stageOf(p) === 3 && !S.discovered.includes(p.v)) discover(p.v);
@@ -1652,7 +1672,7 @@ function breedPass() {
       if (!inPlay(nx, ny)) continue;
       const nt = tileAt(nx, ny);
       if (!bloom(nt)) continue;
-      if (Math.random() < 0.04 + 0.12 * (tl.pl.q + nt.pl.q) / 2) {
+      if (rnd() < 0.04 + 0.12 * (tl.pl.q + nt.pl.q) / 2) {
         const child = breed(tl.pl.v, nt.pl.v);
         S.bulbs[child] = (S.bulbs[child] || 0) + 1;
         S.stats.bred++;
@@ -1664,10 +1684,10 @@ function breedPass() {
 function marketPass() {
   for (const v of S.discovered) {
     if (S.mania && S.mania.v === v) continue;
-    S.market[v] = clamp((S.market[v] ?? 1) * (0.96 + Math.random() * 0.08), 0.5, 2.2);
+    S.market[v] = clamp((S.market[v] ?? 1) * (0.96 + rnd() * 0.08), 0.5, 2.2);
   }
   if (!S.mania && S.day === 5 && S.discovered.length) {
-    S.mania = { v: S.discovered[Math.floor(Math.random() * S.discovered.length)], d: 0 };
+    S.mania = { v: S.discovered[Math.floor(rnd() * S.discovered.length)], d: 0 };
   }
   if (S.mania) {
     const m = S.mania; m.d++;
@@ -1680,7 +1700,7 @@ function frostPass() {
   if ((S.season === 2 && S.day === 11) || (S.season === 4 && S.day === 19)) toast(T('frostWarn'), 'info');
   if (!frost) return;
   toast(T('frost'), 'bad');
-  each(tl => { if (tl.pl && stageOf(tl.pl) <= 1 && Math.random() < 0.35) tl.pl.h -= 0.8; });
+  each(tl => { if (tl.pl && stageOf(tl.pl) <= 1 && rnd() < 0.35) tl.pl.h -= 0.8; });
 }
 function endDay() {
   frostPass(); fountainWater(); growth(); breedPass(); marketPass();
@@ -1810,6 +1830,7 @@ function openFestival() {
   const record = b.score > best.score;
   if (record) store(KEY_BEST, { score: b.score, stars });
   S.lastFest = { season: S.season, score: b.score, stars, parts: b.parts, varieties: S.discovered.length, blooms: S.stats.blooms, akce: S.akce, record };
+  if (stars === 3 && window.Arena && !FLAG.auto) Arena.award('lale-3stars', T('awStars'));
   // the jury's verdict feeds the economy: prize akçe, reputation (cut flowers sell higher per tier) and a gift bulb
   const jury = juryOf(S), tierBefore = repTier();
   const fav = jury.jurors.reduce((a, r) => (r.score > a.score ? r : a));
@@ -1839,6 +1860,13 @@ function endGame() {
   S.ended = true;
   const f = S.lastFest;
   S.won = f.stars === 3 && S.discovered.length >= 20;
+  // arena-kit: the Sultan's festival badge, and the daily streak for the day this garden was seeded with
+  S.arenaStreak = null;
+  if (window.Arena && !FLAG.auto) {
+    if (S.won) Arena.award('lale-win', T('awWin'));
+    const d = S.daily ? Arena.daily() : null;
+    if (d && d.day === S.daily) { const r = d.complete(f.score); S.arenaStreak = { s: r.streak, b: r.best }; }
+  }
   const best = load(KEY_BEST) || { score: 0, stars: 0 };
   store(KEY_BEST, { score: Math.max(best.score, f.score), stars: Math.max(best.stars || 0, f.stars), varieties: Math.max(best.varieties || 0, S.discovered.length) });
   saveGame();
@@ -1851,6 +1879,7 @@ function saveGame() { if (S) store(KEY_SAVE, S); }
 /* ---------- three.js scene ---------- */
 const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, cfg.quality === 'low' ? 1 : 1.5));
+if (window.Arena) Arena.perf.attach(renderer, { max: Math.min(devicePixelRatio || 1, cfg.quality === 'low' ? 1 : 1.5) }); // arena-kit: dynamic pixel ratio, same cap
 const LOW = cfg.quality === 'low';
 renderer.shadowMap.enabled = !LOW;
 renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -2529,19 +2558,29 @@ function renderEnd() {
       <div><span>${T('statBred')}</span><b>${S.stats.bred}</b></div>
     </div>
     <p class="muted" style="margin:6px 0;">🏆 ${T('best')}: <b>${best.score ?? 0}</b></p>
+    ${S.arenaStreak ? `<p class="muted" style="margin:6px 0;">${T('daily')} · ${T('dailyLine').replace('{s}', S.arenaStreak.s).replace('{b}', S.arenaStreak.b)}</p>` : ''}
     <div class="btns">
       <button class="primary" id="b-end-again">${T('again')}</button>
       <button id="b-end-endless">${T('endlessBtn')}</button>
       <button id="b-end-menu">${T('mainMenu')}</button>
-    </div>`;
+    </div>
+    ${window.Arena ? `<div class="btns"><button id="b-end-share">${T('share')}</button><button id="b-end-other" data-href="https://furkiozknn.github.io/${arenaOther()}/">${T('anotherGame')}</button></div>` : ''}`;
   $('b-end-again').onclick = () => newGame();
   $('b-end-endless').onclick = () => { S.endless = true; saveGame(); show(null); };
   $('b-end-menu').onclick = () => toTitle();
+  const ot = $('b-end-other'); if (ot) ot.onclick = () => window.open(ot.dataset.href, '_blank', 'noopener');
+  const sh = $('b-end-share');
+  if (sh) sh.onclick = () => Arena.share({ title: 'Lale Bahçesi · ' + (S.won ? T('winTitle') : T('loseTitle')),
+    lines: [T('shareLine').replace('{n}', f.score).replace('{st}', f.stars).replace('{v}', S.discovered.length)].concat(S.daily ? [T('daily') + ' · ' + String(S.daily).replace(/(\d{4})(\d\d)(\d\d)/, '$1-$2-$3')] : [], S.arenaStreak ? [T('dailyLine').replace('{s}', S.arenaStreak.s).replace('{b}', S.arenaStreak.b)] : []),
+    url: 'https://furkiozknn.github.io/lale-bahcesi/' });
 }
+const arenaOther = () => { const g = Arena.games.filter(x => x !== 'lale-bahcesi'); return g[(Date.now() / 60000 | 0) % g.length]; };
 function renderTitle() {
   const best = load(KEY_BEST);
   $('title-best').innerHTML = best ? `<span>🏆 ${T('best')}: <b>${best.score}</b> · ${best.stars}★${best.varieties ? ' · ' + best.varieties + ' ' + T('varieties').toLowerCase() : ''}</span>` : `<span>${T('bestNone')}</span>`;
   $('b-cont').classList.toggle('hidden', !load(KEY_SAVE) || (load(KEY_SAVE) && load(KEY_SAVE).ended));
+  const db = $('b-daily');
+  if (window.Arena) { const d = Arena.daily(); db.classList.remove('hidden'); db.textContent = `${T('daily')} · ${d.done ? T('dailyDone') + ' · ' : ''}${T('dailyLine').replace('{s}', d.streak).replace('{b}', d.best)}`; }
 }
 function syncSettings() {
   $('s-master').value = cfg.master; $('s-music').value = cfg.music; $('s-sfx').value = cfg.sfx;
@@ -2550,6 +2589,7 @@ function syncSettings() {
 }
 function applyI18n() {
   document.documentElement.lang = cfg.lang;
+  if (window.Arena) Arena.lang(cfg.lang);
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = T(el.dataset.t); });
   $('b-lang').textContent = cfg.lang === 'tr' ? 'TR' : 'EN';
 }
@@ -2593,10 +2633,13 @@ function show(name) {
   renderHUD();
 }
 function toTitle() { game = false; show('title'); }
-function newGame() {
+function newGame(daily) {
   S = newState(); sel = null; tool = null;
+  if (daily) { // daily challenge: the day's seed lays the soil, picks the six starting bulbs and drives the sim dice
+    S.seed = daily.seed; S.daily = daily.day; S.tiles = makeTiles(rnd); S.bulbs = { [Math.floor(rnd() * 8) * 9]: 6 };
+  }
   game = true; setupSeason(); show(null);
-  toast(T('welcome'), 'info'); saveGame();
+  toast(T(daily ? 'dailyWelcome' : 'welcome'), 'info'); saveGame();
   audioInit();
 }
 function continueGame() {
@@ -2688,11 +2731,13 @@ function toggleFull() { if (!document.fullscreenElement) document.documentElemen
 const cycleSpeed = () => { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; renderHUD(); };
 $('b-play').onclick = () => { audioInit(); newGame(); };
 $('b-cont').onclick = () => { audioInit(); continueGame(); };
+$('b-daily').onclick = () => { audioInit(); newGame(Arena.daily()); };
+$('s-a11y').onclick = () => { if (window.Arena) Arena.openSettings(); };
 $('b-set-title').onclick = () => { prevOverlay = 'title'; show('settings'); };
 $('b-set-pause').onclick = () => { prevOverlay = 'pause'; show('settings'); };
 $('b-back').onclick = () => back();
 $('b-resume').onclick = () => show(null);
-$('b-restart').onclick = () => newGame();
+$('b-restart').onclick = () => newGame(S && S.daily && window.Arena && Arena.daily().day === S.daily ? Arena.daily() : null); // a daily restarts as the same daily
 $('b-menu').onclick = () => toTitle();
 $('b-pause').onclick = () => togglePause();
 $('b-speed').onclick = cycleSpeed;
@@ -2754,6 +2799,14 @@ addEventListener('keydown', e => {
   else if (k === 'arrowdown') dist = clamp(dist + 1, 9, 30);
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) saveGame(); });
+// arena-kit: the frame loop already stops the garden while the tab is hidden; the music follows the player's
+// "pause when the tab is hidden" setting. Only an AudioContext suspended here is resumed. The accessibility panel
+// opens from Settings (a corner button would cover the end of the build bar on phones).
+if (window.Arena) {
+  let arenaSuspended = false;
+  Arena.on('pause', () => { if (ac && ac.state === 'running') { ac.suspend(); arenaSuspended = true; } });
+  Arena.on('resume', () => { if (arenaSuspended && ac) ac.resume(); arenaSuspended = false; });
+}
 
 /* ---------- simulation step ---------- */
 let botTimer = 0;
@@ -2844,6 +2897,7 @@ window.lale = {
   get errors() { return errors.slice(); },
   get garden() { if (!S) return null; const c = { beds: 0, planted: 0, stages: [0, 0, 0, 0, 0], cut: 0, pool: 0, decor: 0 }; for (const t of S.tiles) { if (t.t === T_BED) c.beds++; if (t.t === T_POOL) c.pool++; if (t.d) c.decor++; if (t.pl) { c.planted++; c.stages[stageOf(t.pl)]++; if (t.pl.c) c.cut++; } } return c; },
   assets: 'none (procedural only)',
+  get reducedMotion() { return REDUCED; }, get seed() { return S ? S.seed : null; },
   renderer
 };
 window.laleSim = seconds => { let t = 0; while (t < seconds && !botDone) { simulate(1 / 30); t += 1 / 30; } return window.lale.state; };
