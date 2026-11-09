@@ -1317,7 +1317,7 @@ const STR = {
     language: 'Dil', quality: 'Kalite', low: 'Düşük', high: 'Yüksek', fullscreen: 'Tam ekran', fsBtn: 'Aç / kapat',
     seasonS: 'Mev.', dayS: 'Gün', akceS: 'Akç.', varS: 'Çeş.', beautyS: 'Güz.',
     season: 'Mevsim', day: 'Gün', akce: 'Akçe', varieties: 'Çeşit', beauty: 'Güzellik', speed: 'Hız',
-    catalogue: 'Katalog', bazaar: 'Bazar', found: 'bulundu', unknown: 'Bilinmiyor',
+    catalogue: 'Katalog', bazaar: 'Bazar', found: 'bulundu', unknown: 'Bilinmiyor', hybridReq: 'Gereken: {p1} + {p2}',
     toolPath: 'Yol', toolBed: 'Yatak', toolPool: 'Havuz', toolCypress: 'Servi', toolPlane: 'Çınar',
     toolLantern: 'Fener', toolBench: 'Bank', toolErase: 'Sil',
     tile: 'Parsel', plantPick: 'Dikmek için soğan seçin:', noBulbs: 'Soğanınız yok. Bazardan paket alın.',
@@ -1386,7 +1386,7 @@ const STR = {
     language: 'Language', quality: 'Quality', low: 'Low', high: 'High', fullscreen: 'Fullscreen', fsBtn: 'Toggle',
     seasonS: 'Sea.', dayS: 'Day', akceS: 'Akç.', varS: 'Var.', beautyS: 'Bty.',
     season: 'Season', day: 'Day', akce: 'Akçe', varieties: 'Varieties', beauty: 'Beauty', speed: 'Speed',
-    catalogue: 'Catalogue', bazaar: 'Bazaar', found: 'found', unknown: 'Unknown',
+    catalogue: 'Catalogue', bazaar: 'Bazaar', found: 'found', unknown: 'Unknown', hybridReq: 'Requires: {p1} + {p2}',
     toolPath: 'Path', toolBed: 'Bed', toolPool: 'Pool', toolCypress: 'Cypress', toolPlane: 'Plane',
     toolLantern: 'Lantern', toolBench: 'Bench', toolErase: 'Erase',
     tile: 'Plot', plantPick: 'Pick a bulb to plant:', noBulbs: 'No bulbs. Buy a pack at the bazaar.',
@@ -2500,6 +2500,24 @@ function renderBazaar() {
   }).join('') : `<div class="muted">-</div>`;
   $('baz-body').innerHTML = h;
 }
+function getHybridParents(targetV) {
+  const targetColor = Math.floor(targetV / 9);
+  const targetShape = Math.floor((targetV % 9) / 3);
+  for (let c1 = 0; c1 < 10; c1++) {
+    for (let c2 = c1; c2 < 10; c2++) {
+      let mixed = c1 === c2 ? c1 : (MIX[c1 + ',' + c2] ?? c1);
+      if (mixed === targetColor) {
+        const p1 = c1 * 9;
+        const p2 = c2 * 9;
+        if (S.discovered.includes(p1) && S.discovered.includes(p2)) {
+          return [PAL[c1][cfg.lang], PAL[c2][cfg.lang]];
+        }
+      }
+    }
+  }
+  return [PAL[0][cfg.lang], PAL[3][cfg.lang]];
+}
+
 function renderCat() {
   if (!S) return;
   $('cat-count').textContent = `${S.discovered.length}/90 · ${T('found')}`;
@@ -2507,7 +2525,12 @@ function renderCat() {
   for (let v = 0; v < 90; v++) {
     const known = S.discovered.includes(v);
     const d = dec(v);
-    h += `<div class="card ${known ? '' : 'unk'}">${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : '???'}</small></div>`;
+    let hintText = '';
+    if (!known) {
+      const parents = getHybridParents(v);
+      hintText = T('hybridReq').replace('{p1}', parents[0]).replace('{p2}', parents[1]);
+    }
+    h += `<div class="card ${known ? '' : 'unk'}" ${!known ? 'title="' + hintText + '"' : ''}>${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : hintText}</small></div>`;
   }
   $('cat-body').innerHTML = h;
 }
