@@ -1,0 +1,20 @@
+{
+  "game": "lale-bahcesi",
+  "recorded": "2026-11-10T01:42:00.003Z",
+  "commit": "9dc39f3",
+  "entrySha": "8499ae606fb4",
+  "run": "() => { window.laleSim(4000); }",
+  "metrics": {
+    "won": 1,
+    "stars": 3,
+    "beauty": 87,
+    "varieties": 21,
+    "rep": 108,
+    "blooms": 20,
+    "bred": 92,
+    "season": 4,
+    "ended": true,
+    "botDone": true,
+    "gameErrors": 0
+  }
+}
