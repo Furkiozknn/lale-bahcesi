@@ -1158,6 +1158,7 @@ h2 {
   box-shadow: 0 2px 0 rgba(59, 29, 44, 0.08);
 }
 #build button small { font-size: 10px; font-weight: 600; color: var(--mut); opacity: 0.9; }
+#build button small { white-space: nowrap; } /* "60 akçe" (EN) must not break: below ~1150 px the bar is sized to min-content and then scrolled by 6 px */
 #build button:hover { background: #FFFFFF; border-color: var(--accent); transform: translateY(-2px); }
 #build button.on {
   background: var(--accent);
@@ -1411,7 +1412,7 @@ h2 {
   </div>
 </header>
 
-<div id="toasts" aria-live="polite"></div>
+<div id="toasts" role="status" aria-live="polite"></div>
 <div id="tile" class="glass hidden" role="dialog"></div>
 <div id="coach" class="coach glass hidden" role="status"></div>
 <nav id="build" class="glass hidden" aria-label="build"></nav>
@@ -1554,7 +1555,7 @@ const STR = {
     stage4: 'Solmuş / kesilmiş', kGrass: 'Çimen', kPath: 'Yol', kBed: 'Yatak', kPool: 'Havuz',
     kFountain: 'Çeşme', kKiosk: 'Köşk', kDecor: 'Süs', empty: 'Boş', sellAll: 'Hepsini sat', sellOne: 'Sat',
     bulbsTitle: 'Soğanlar', flowersTitle: 'Kesik çiçekler', flowersNone: 'Kesik çiçek yok',
-    buyPack: 'Soğan paketi al (20 akçe)', packDesc: 'Rastgele 3 soğan', qLowNote: 'Düşük kalite yeniden yüklemeden sonra geçerli olur.', qHighNote: 'Yüksek kalite yeniden yüklemeden sonra geçerli olur.', marketTitle: 'Piyasa', mania: 'Lale çılgınlığı!',
+    buyPack: 'Soğan paketi al (20 akçe)', packDesc: 'Rastgele 3 soğan', akAbbr: 'ak.', qLowNote: 'Düşük kalite yeniden yüklemeden sonra geçerli olur.', qHighNote: 'Yüksek kalite yeniden yüklemeden sonra geçerli olur.', marketTitle: 'Piyasa', mania: 'Lale çılgınlığı!',
     festTitle: 'Şükûfe Şenliği', score: 'Puan',
     juryTitle: 'Jüri', juryPrize: 'Jüri ödülü: +{n} akçe', rep: 'İtibar', repBonus: 'kesik çiçek +%{n}',
     juryGift: 'Gözde jüri hediyesi:', repUp: 'İtibar yükseldi:',
@@ -1623,7 +1624,7 @@ const STR = {
     stage4: 'Wilted / cut', kGrass: 'Lawn', kPath: 'Path', kBed: 'Bed', kPool: 'Pool',
     kFountain: 'Fountain', kKiosk: 'Kiosk', kDecor: 'Decor', empty: 'Empty', sellAll: 'Sell all', sellOne: 'Sell',
     bulbsTitle: 'Bulbs', flowersTitle: 'Cut flowers', flowersNone: 'No cut flowers',
-    buyPack: 'Buy bulb pack (20 akçe)', packDesc: '3 random bulbs', qLowNote: 'Low quality takes effect after reload.', qHighNote: 'High quality takes effect after reload.', marketTitle: 'Market', mania: 'Tulip mania!',
+    buyPack: 'Buy bulb pack (20 akçe)', packDesc: '3 random bulbs', akAbbr: 'akçe', qLowNote: 'Low quality takes effect after reload.', qHighNote: 'High quality takes effect after reload.', marketTitle: 'Market', mania: 'Tulip mania!',
     festTitle: 'Blossom Festival (Şükûfe Şenliği)', score: 'Score',
     juryTitle: 'Jury', juryPrize: 'Jury prize: +{n} akçe', rep: 'Reputation', repBonus: 'cut flowers +{n}%',
     juryGift: 'Favourite juror’s gift:', repUp: 'Reputation rose:',
@@ -2652,7 +2653,7 @@ function renderHUD() {
   $('b-sound').classList.toggle('on', cfg.music > 0 || cfg.sfx > 0);
   $('b-lang').textContent = cfg.lang === 'tr' ? 'TR' : 'EN';
   $('build').innerHTML = TOOLS.map(t => {
-    const cost = COST[t] ? `<small>${COST[t]} ak.</small>` : '<small>&nbsp;</small>';
+    const cost = COST[t] ? `<small>${COST[t]} ${T('akAbbr')}</small>` : '<small>&nbsp;</small>';
     return `<button data-tool="${t}" class="${tool === t ? 'on' : ''}" aria-pressed="${tool === t}">${T('tool' + t[0].toUpperCase() + t.slice(1))}${cost}</button>`;
   }).join('');
   renderCoach();
@@ -2714,11 +2715,11 @@ function renderBazaar() {
   h += `<div class="section-divider"><span>${T('bulbsTitle')}</span></div>`;
   h += bulbs.length ? bulbs.map(v => {
     const col = '#' + PAL[dec(Number(v)).c].col.toString(16).padStart(6, '0');
-    return `<div class="item"><div class="item-info"><span class="bulb-dot" style="background:${col}"></span><span>${nameOf(Number(v))} ×${S.bulbs[v]}</span> <small class="price-tag">${sellPrice(Number(v), 0, false)} ak.</small></div><button data-b="bulb" data-v="${v}">${T('sellOne')}</button></div>`;
+    return `<div class="item"><div class="item-info"><span class="bulb-dot" style="background:${col}"></span><span>${nameOf(Number(v))} ×${S.bulbs[v]}</span> <small class="price-tag">${sellPrice(Number(v), 0, false)} ${T('akAbbr')}</small></div><button data-b="bulb" data-v="${v}">${T('sellOne')}</button></div>`;
   }).join('') : `<div class="muted">${T('noBulbs')}</div>`;
   h += `<div class="section-divider"><span>${T('flowersTitle')}</span></div>`;
   const totalCutVal = S.flowers.reduce((acc, f) => acc + sellPrice(f.v, f.q, true), 0);
-  h += S.flowers.length ? `<div class="item"><div class="item-info"><span>${S.flowers.length} × ${T('flowersTitle')}</span><small class="price-tag">+${totalCutVal} ak.</small></div><button data-b="sellall" class="primary">${T('sellAll')}</button></div>` : `<div class="muted">${T('flowersNone')}</div>`;
+  h += S.flowers.length ? `<div class="item"><div class="item-info"><span>${S.flowers.length} × ${T('flowersTitle')}</span><small class="price-tag">+${totalCutVal} ${T('akAbbr')}</small></div><button data-b="sellall" class="primary">${T('sellAll')}</button></div>` : `<div class="muted">${T('flowersNone')}</div>`;
   h += `<div class="section-divider"><span>${T('marketTitle')}</span></div>`;
   const top = S.discovered.slice().sort((a, b) => (S.market[b] ?? 1) - (S.market[a] ?? 1)).slice(0, 5);
   h += top.length ? top.map(v => {
