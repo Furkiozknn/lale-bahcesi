@@ -14,7 +14,7 @@
 <meta property="og:image:width" content="960">
 <meta property="og:image:height" content="540">
 <meta name="twitter:card" content="summary_large_image">
-<script>/*ARENA-KIT:BEGIN v1.0.0 sha256:a9b9a8b52b3e*/
+<script>/*ARENA-KIT:BEGIN v1.0.1 sha256:bc575c398c95*/
 /* ARENA-KIT v1 — shared layer for the 21 Claude Game Arena games.
  *
  * Injected inline into each game's index.html (between begin/end marker comments) by
@@ -24,7 +24,8 @@
  *   Arena.perf.attach(renderer)        dynamic pixel ratio for weak GPUs (Intel UHD)
  *   Arena.hint(id, text)               one-time hint toast (first 30 s guidance)
  *   Arena.endCard({...})               end-of-session card: reason, score, "again", another game
- *   Arena.daily(game)                  UTC-day seed + mulberry32 rng + streak
+ *   Arena.daily(game, {dayKey})        UTC-day seed (or the game's own day key) + mulberry32 rng + streak
+ *   Arena.quiet                        true on ?auto / ?nosave / ?demo: nothing is written to localStorage
  *   Arena.share({...})                 Web Share / clipboard text + optional PNG card
  *   Arena.profile(), Arena.award(id)   cross-game passport (shared origin localStorage)
  *   Arena.settings / openSettings()    accessibility panel (text size, contrast, motion, vibration, auto-pause)
@@ -35,7 +36,7 @@
 (function (root) {
   'use strict';
   if (root.Arena && root.Arena.version) return; // injected twice (e.g. iframe) -> keep the first
-  var VERSION = '1.0.0';
+  var VERSION = '1.0.1';
   var hasDOM = typeof document !== 'undefined';
 
   /* ---------- core (pure, Node-testable) ---------- */
@@ -45,6 +46,12 @@
     var d = date || new Date();
     return d.getUTCFullYear() * 10000 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate();
   };
+  core.localDayKey = function (date) { // local-time YYYYMMDD (for games whose own daily turns at local midnight)
+    var d = date || new Date();
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+  };
+  // Bot / demo / no-save runs must not touch the player's storage: ?auto, ?nosave, ?demo (any value).
+  core.isQuiet = function (search) { return /[?&](auto|nosave|demo)(=|&|$)/.test(search || ''); };
   core.prevDayKey = function (key) {
     var y = Math.floor(key / 10000), m = Math.floor(key / 100) % 100, d = key % 100;
     return core.dayKey(new Date(Date.UTC(y, m - 1, d) - 86400000));
@@ -99,7 +106,9 @@
 
   /* ---------- storage ---------- */
   var mem = {};
-  function store() { try { return root.localStorage; } catch (e) { return null; } }
+  var quiet = false;
+  try { quiet = hasDOM && core.isQuiet(location.search); } catch (e) {}
+  function store() { if (quiet) return null; try { return root.localStorage; } catch (e) { return null; } }
   function get(key, fallback) {
     var s = store(), raw = null;
     try { raw = s ? s.getItem('arena.' + key) : (key in mem ? mem[key] : null); } catch (e) { raw = null; }
@@ -260,11 +269,12 @@
     return close;
   }
 
-  function daily(game) {
+  function daily(game, opts) {
     game = game || gameId;
+    var own = opts && /^\d{8}$/.test(String(opts.dayKey || '')) ? +opts.dayKey : 0;
     var q = null;
     try { q = hasDOM && new URLSearchParams(location.search).get('d'); } catch (e) {}
-    var day = /^\d{8}$/.test(q || '') ? +q : core.dayKey();
+    var day = /^\d{8}$/.test(q || '') ? +q : (own || core.dayKey());
     var seed = core.hash(game + ':' + day);
     var recs = get('daily.v1', {});
     var rec = recs[game] || { last: 0, streak: 0, best: 0 };
@@ -360,7 +370,7 @@
   }
 
   root.Arena = {
-    version: VERSION, game: gameId, games: GAMES.slice(), lang: function (l) { if (l) lang = l === 'tr' ? 'tr' : 'en'; return lang; },
+    version: VERSION, quiet: quiet, game: gameId, games: GAMES.slice(), lang: function (l) { if (l) lang = l === 'tr' ? 'tr' : 'en'; return lang; },
     perf: perf, hint: hint, toast: toast, endCard: endCard, daily: daily, share: share, shareCard: shareCard,
     profile: profile, award: award, settings: settings, openSettings: openSettings, mountSettingsButton: mountSettingsButton,
     on: function (name, fn) { (listeners[name] = listeners[name] || []).push(fn); },
@@ -1003,7 +1013,7 @@ h2 {
    ========================================================================== */
 #toasts {
   position: fixed;
-  top: 76px;
+  top: calc(var(--hud-b, 72px) + 4px); /* --hud-b: bottom edge of the HUD, kept current by a ResizeObserver */
   left: 50%;
   transform: translateX(-50%);
   z-index: 25;
@@ -1051,16 +1061,21 @@ h2 {
 /* ==========================================================================
    Responsive Adaptations (Mobile & Small Screens)
    ========================================================================== */
+/* narrow screens: two rows (logo + tool buttons on top, stats below) so every HUD button stays on screen */
+@media (max-width: 1000px) {
+  #hud { flex-wrap: wrap; row-gap: 6px; }
+  .tools { order: 1; margin-left: auto; flex-wrap: wrap; }
+  .stats { order: 2; flex: 1 1 100%; flex-wrap: wrap; }
+}
 @media (max-width: 760px) {
   #hud {
     padding: 6px 10px;
-    gap: 8px;
+    gap: 6px 8px;
   }
   .brand span { display: none; } /* keep only imperial tulip logo */
   .brand { padding: 0; }
   .stats {
     gap: 6px;
-    flex-wrap: nowrap;
     justify-content: center;
   }
   .stat {
@@ -1070,9 +1085,13 @@ h2 {
   .stat span.long, .stat span.short { display: none !important; } /* icons speak cleanly */
   .stat b { font-size: 13.5px; }
   .tools { gap: 4px; }
-  .ibtn { min-width: 40px; min-height: 40px; padding: 4px; }
-  #toasts { top: 70px; }
+  .ibtn { min-width: 44px; min-height: 44px; padding: 4px; }
   #coach, #tile { bottom: 84px; }
+}
+/* the logo and six 44 px buttons do not fit one row below ~400 px: drop the logo, keep the buttons */
+@media (max-width: 400px) {
+  .brand { display: none; }
+  .tools { margin: 0 auto; }
 }
 
 @media (max-width: 480px) {
@@ -1326,7 +1345,7 @@ const STR = {
     stage4: 'Solmuş / kesilmiş', kGrass: 'Çimen', kPath: 'Yol', kBed: 'Yatak', kPool: 'Havuz',
     kFountain: 'Çeşme', kKiosk: 'Köşk', kDecor: 'Süs', empty: 'Boş', sellAll: 'Hepsini sat', sellOne: 'Sat',
     bulbsTitle: 'Soğanlar', flowersTitle: 'Kesik çiçekler', flowersNone: 'Kesik çiçek yok',
-    buyPack: 'Soğan paketi al (20 akçe)', marketTitle: 'Piyasa', mania: 'Lale çılgınlığı!',
+    buyPack: 'Soğan paketi al (20 akçe)', packDesc: 'Rastgele 3 soğan', qLowNote: 'Düşük kalite yeniden yüklemeden sonra geçerli olur.', qHighNote: 'Yüksek kalite yeniden yüklemeden sonra geçerli olur.', marketTitle: 'Piyasa', mania: 'Lale çılgınlığı!',
     festTitle: 'Şükûfe Şenliği', score: 'Puan',
     juryTitle: 'Jüri', juryPrize: 'Jüri ödülü: +{n} akçe', rep: 'İtibar', repBonus: 'kesik çiçek +%{n}',
     juryGift: 'Gözde jüri hediyesi:', repUp: 'İtibar yükseldi:',
@@ -1395,7 +1414,7 @@ const STR = {
     stage4: 'Wilted / cut', kGrass: 'Lawn', kPath: 'Path', kBed: 'Bed', kPool: 'Pool',
     kFountain: 'Fountain', kKiosk: 'Kiosk', kDecor: 'Decor', empty: 'Empty', sellAll: 'Sell all', sellOne: 'Sell',
     bulbsTitle: 'Bulbs', flowersTitle: 'Cut flowers', flowersNone: 'No cut flowers',
-    buyPack: 'Buy bulb pack (20 akçe)', marketTitle: 'Market', mania: 'Tulip mania!',
+    buyPack: 'Buy bulb pack (20 akçe)', packDesc: '3 random bulbs', qLowNote: 'Low quality takes effect after reload.', qHighNote: 'High quality takes effect after reload.', marketTitle: 'Market', mania: 'Tulip mania!',
     festTitle: 'Blossom Festival (Şükûfe Şenliği)', score: 'Score',
     juryTitle: 'Jury', juryPrize: 'Jury prize: +{n} akçe', rep: 'Reputation', repBonus: 'cut flowers +{n}%',
     juryGift: 'Favourite juror’s gift:', repUp: 'Reputation rose:',
@@ -2291,6 +2310,9 @@ function resize() {
   cam.updateProjectionMatrix();
 }
 addEventListener('resize', resize);
+// toasts sit just under the HUD, whose height changes when it wraps to two rows on narrow screens
+{ const hud = $('hud'), setHudB = () => document.documentElement.style.setProperty('--hud-b', Math.round(hud.getBoundingClientRect().bottom) + 'px');
+  if (window.ResizeObserver) new ResizeObserver(setHudB).observe(hud); addEventListener('resize', setHudB); }
 
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit = new THREE.Vector3();
 function pickTile(px, py) {
@@ -2469,7 +2491,7 @@ function renderBazaar() {
   if (!S) return;
   $('baz-akce').innerHTML = `<span class="baz-akce-pill"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#F4C34B" stroke="#B45309" stroke-width="1.4"/><circle cx="10" cy="10" r="5.5" fill="none" stroke="#D97706" stroke-width="0.7" stroke-dasharray="1 1"/><path d="M7 10.5c1-1.5 2.5-2 4-1M8 8c1 2 2.5 3 4 2M9 5v10" stroke="#78350F" stroke-width="1.2" stroke-linecap="round"/></svg><b>${S.akce}</b> akçe</span>`;
   const bulbs = Object.keys(S.bulbs).filter(v => S.bulbs[v] > 0);
-  let h = `<div class="item featured-pack"><div><b>${T('buyPack')}</b><small class="block-hint">3 adet melez/nadir soğan</small></div><button data-b="pack" class="primary">${T('buyPack').split('(')[0].trim()}</button></div>`;
+  let h = `<div class="item featured-pack"><div><b>${T('buyPack')}</b><small class="block-hint">${T('packDesc')}</small></div><button data-b="pack" class="primary">${T('buyPack').split('(')[0].trim()}</button></div>`;
   h += `<div class="section-divider"><span>${T('bulbsTitle')}</span></div>`;
   h += bulbs.length ? bulbs.map(v => {
     const col = '#' + PAL[dec(Number(v)).c].col.toString(16).padStart(6, '0');
@@ -2578,7 +2600,9 @@ const arenaOther = () => { const g = Arena.games.filter(x => x !== 'lale-bahcesi
 function renderTitle() {
   const best = load(KEY_BEST);
   $('title-best').innerHTML = best ? `<span>🏆 ${T('best')}: <b>${best.score}</b> · ${best.stars}★${best.varieties ? ' · ' + best.varieties + ' ' + T('varieties').toLowerCase() : ''}</span>` : `<span>${T('bestNone')}</span>`;
-  $('b-cont').classList.toggle('hidden', !load(KEY_SAVE) || (load(KEY_SAVE) && load(KEY_SAVE).ended));
+  const sv = load(KEY_SAVE);
+  // an ended game stays continuable once the player chose the endless garden on the end screen
+  $('b-cont').classList.toggle('hidden', !sv || (sv.ended && !sv.endless));
   const db = $('b-daily');
   if (window.Arena) { const d = Arena.daily(); db.classList.remove('hidden'); db.textContent = `${T('daily')} · ${d.done ? T('dailyDone') + ' · ' : ''}${T('dailyLine').replace('{s}', d.streak).replace('{b}', d.best)}`; }
 }
@@ -2644,7 +2668,7 @@ function newGame(daily) {
 }
 function continueGame() {
   const s = load(KEY_SAVE);
-  if (!s || s.ended) return newGame();
+  if (!s || (s.ended && !s.endless)) return newGame();
   S = s; sel = null; tool = null; game = true;
   if (typeof S.rep !== 'number') S.rep = 0;   // saves from before the jury have no reputation yet
   setupSeason();
@@ -2752,8 +2776,8 @@ $('s-music').oninput = e => { cfg.music = +e.target.value; applyVolumes(); saveC
 $('s-sfx').oninput = e => { cfg.sfx = +e.target.value; applyVolumes(); saveCfg(); };
 $('s-tr').onclick = () => setLang('tr');
 $('s-en').onclick = () => setLang('en');
-$('s-low').onclick = () => { cfg.quality = 'low'; saveCfg(); syncSettings(); toast('Low quality takes effect after reload.', 'info'); };
-$('s-high').onclick = () => { cfg.quality = 'high'; saveCfg(); syncSettings(); toast('High quality takes effect after reload.', 'info'); };
+$('s-low').onclick = () => { cfg.quality = 'low'; saveCfg(); syncSettings(); toast(T('qLowNote'), 'info'); };
+$('s-high').onclick = () => { cfg.quality = 'high'; saveCfg(); syncSettings(); toast(T('qHighNote'), 'info'); };
 $('s-full').onclick = toggleFull;
 $('build').addEventListener('click', e => {
   const b = e.target.closest('button[data-tool]'); if (!b) return;
