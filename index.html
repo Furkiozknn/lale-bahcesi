@@ -769,10 +769,59 @@ h2 {
 .mania-pulse { background: linear-gradient(90deg, #F59E0B, #EF4444); color: #fff; animation: pulseMania 1s infinite alternate; }
 @keyframes pulseMania { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chips button { font-size: 13px; min-height: 44px; padding: 6px 12px; border-radius: 10px; background: #fff; }
-.bulb-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); flex-shrink: 0; }
-.chip-count { color: var(--accent); margin-left: 4px; }
+.chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.chips button {
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #FFFDF9;
+  border: 1.5px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  touch-action: manipulation;
+  text-align: left;
+}
+.chips button:hover {
+  background: #FFFFFF;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.chips button > span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bulb-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+.chip-count {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 12.5px;
+  margin-left: auto;
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: rgba(190, 24, 93, 0.09);
+  flex-shrink: 0;
+}
 
 /* ==========================================================================
    HUD Layout - Structured Imperial Header
@@ -858,53 +907,187 @@ h2 {
 .ibtn.txt { font-weight: 800; font-size: 12.5px; }
 
 /* ==========================================================================
-   Tile Inspector Dialog & Imperial Coach Banner
+   Bottom Action Dock (Tile Actions & Mobile Thumb Zone)
    ========================================================================== */
 #tile {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 88px;
-  z-index: 12;
-  width: min(94vw, 420px);
-  padding: 16px 18px;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 20;
+  width: min(96vw, 440px);
+  max-height: min(70vh, 420px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   font-size: 14px;
   background: var(--corner) no-repeat right 8px top 8px / 28px 28px,
               linear-gradient(180deg, #FFFFFF, var(--paper));
   border: 1.5px solid var(--accent);
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(59, 29, 44, 0.28), inset 0 0 0 1px var(--line-gold);
-  animation: tilePop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 18px;
+  box-shadow: 0 12px 36px rgba(59, 29, 44, 0.28), inset 0 0 0 1px var(--line-gold);
+  animation: tileDockPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@keyframes tilePop {
-  from { opacity: 0; transform: translate(-50%, 8px) scale(0.96); }
+@keyframes tileDockPop {
+  from { opacity: 0; transform: translate(-50%, 14px) scale(0.97); }
   to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
-#tile .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
-#tile .head b { font-family: 'Cinzel Decorative', serif; font-size: 16px; color: var(--accent); }
-.kind-tag { display: inline-block; padding: 2px 10px; border-radius: 12px; background: rgba(59, 29, 44, 0.08); font-size: 11.5px; font-weight: 700; color: var(--ink-light); }
-.tile-close-btn { min-width: 32px; min-height: 32px; padding: 0; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; font-weight: 800; color: var(--mut); }
+/* When the tile action dock is open, hide the build toolbar and coach banner */
+#tile:not(.hidden) ~ #build { display: none !important; }
+#tile:not(.hidden) ~ #coach { display: none !important; }
 
-.soil-status { display: flex; align-items: center; gap: 10px; }
-.moist-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 11.5px; font-weight: 700; }
+#tile .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+#tile .head b {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px;
+  color: var(--accent);
+}
+.kind-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: rgba(59, 29, 44, 0.08);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink-light);
+}
+.tile-close-btn {
+  min-width: 48px;
+  min-height: 48px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--mut);
+  background: rgba(59, 29, 44, 0.05);
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+.tile-close-btn:hover {
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.tile-close-btn:active {
+  transform: translateY(1px);
+}
+
+.soil-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.moist-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
 .moist-pill.ok { background: rgba(2, 132, 199, 0.15); color: #0369A1; }
 .moist-pill.dry { background: rgba(239, 68, 68, 0.15); color: #B91C1C; }
 
-.flower-header { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
-.flower-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-.stage-tag { font-size: 11.5px; font-weight: 600; color: var(--leaf); }
-.aphid-alert { padding: 6px 10px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #991B1B; font-size: 12.5px; }
+.empty-water-btn {
+  margin-left: auto;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 8px 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  touch-action: manipulation;
+}
 
-.action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
-.action-row button { flex: 1 1 calc(50% - 4px); min-height: 44px; font-weight: 600; }
-.harvest-pulse { animation: harvestGlow 1.2s infinite alternate; }
+.flower-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+.flower-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.flower-meta b {
+  font-size: 14.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stage-tag { font-size: 12px; font-weight: 600; color: var(--leaf); }
+.aphid-alert {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #991B1B;
+  font-size: 12.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 2px;
+}
+.action-row button {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  touch-action: manipulation;
+}
+.action-row button.harvest-pulse {
+  grid-column: 1 / -1;
+  min-height: 52px;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+.harvest-pulse {
+  animation: harvestGlow 1.2s infinite alternate;
+}
 @keyframes harvestGlow {
-  from { box-shadow: 0 3px 0 #700F36, 0 0 6px var(--accent-glow); }
-  to { box-shadow: 0 3px 0 #700F36, 0 0 18px rgba(244, 195, 75, 0.8); }
+  from { box-shadow: 0 3px 0 #700F36, 0 0 8px var(--accent-glow); }
+  to { box-shadow: 0 3px 0 #700F36, 0 0 20px rgba(244, 195, 75, 0.85); }
+}
+
+#tile button[data-act="rotate"] {
+  width: 100%;
+  min-height: 48px;
+  min-width: 48px;
+  font-weight: 700;
 }
 
 /* Coach Advisor Banner - Bostancıbaşı Fermanı */
@@ -912,7 +1095,7 @@ h2 {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 88px;
+  bottom: calc(76px + env(safe-area-inset-bottom));
   z-index: 11;
   width: min(92vw, 480px);
   padding: 12px 18px;
@@ -1086,7 +1269,7 @@ h2 {
   .stat b { font-size: 13.5px; }
   .tools { gap: 4px; }
   .ibtn { min-width: 44px; min-height: 44px; padding: 4px; }
-  #coach, #tile { bottom: 84px; }
+  #coach { bottom: calc(80px + env(safe-area-inset-bottom)); }
 }
 /* the logo and six 44 px buttons do not fit one row below ~400 px: drop the logo, keep the buttons */
 @media (max-width: 400px) {
@@ -1103,9 +1286,7 @@ h2 {
   .stat b { font-size: 13px; }
 }
 
-/* phones: the eight build tools did not fit one row; #build scrolled sideways with a hidden scrollbar (7e52007), so
-   Bench and Erase (and Lantern at 360 px) started off-screen. Two rows of four instead, every tool visible; the coach
-   hint and the tile panel sit above the taller bar. */
+/* phones: 8 build tools in two rows of 4; bottom action dock and coach banner placed in thumb-friendly positions */
 @media (max-width: 600px) {
   #build {
     display: grid;
@@ -1116,8 +1297,19 @@ h2 {
     gap: 6px;
     padding: 6px 8px;
   }
-  #build button { min-width: 0; min-height: 52px; padding: 4px 2px; }
-  #coach, #tile { bottom: calc(158px + env(safe-area-inset-bottom)); }
+  #build button { min-width: 48px; min-height: 52px; padding: 4px 2px; }
+  #coach { bottom: calc(134px + env(safe-area-inset-bottom)); }
+  #tile {
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: min(96vw, 420px);
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  #tile .head b { font-size: 15px; }
+  #tile .flower-meta b { font-size: 13.5px; }
+  #tile .action-row button { min-height: 48px; min-width: 48px; font-size: 13px; }
+  #tile .chips { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 6px; }
+  #tile .chips button { min-height: 48px; min-width: 48px; font-size: 12.5px; padding: 6px 10px; }
 }
 
 /* Şükûfe Şenliği jury cards */
@@ -2391,7 +2583,7 @@ function endPtr(e) {
   if (!ptrs.has(e.pointerId)) return;
   ptrs.delete(e.pointerId);
   if (ptrs.size === 0 && drag) {
-    if (drag.moved < 6 && game && overlay === null && !tool && drag.tile) selectTile(drag.tile);
+    if (drag.moved < 6 && game && overlay === null && !tool) selectTile(drag.tile);
     drag = null;
   }
 }
@@ -2407,7 +2599,10 @@ function applyTool(t) {
   dirty = true;
 }
 function selectTile(t) {
-  if (!inPlay(t.x, t.y)) return;
+  if (!t || !inPlay(t.x, t.y)) {
+    if (sel) { sel = null; renderTile(); }
+    return;
+  }
   sel = t; renderTile();
 }
 const ringSel = new THREE.Mesh(new THREE.RingGeometry(0.46, 0.56, 24).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xBE185D, transparent: true, opacity: 0.9, depthWrite: false }));
@@ -2475,7 +2670,13 @@ function renderCoach() {
 function renderTile() {
   renderCoach();
   const panel = $('tile');
-  if (!S || !sel || !game) { panel.classList.add('hidden'); ringSel.visible = false; return; }
+  if (!S || !sel || !game) {
+    panel.classList.add('hidden');
+    ringSel.visible = false;
+    $('build').classList.toggle('hidden', !game || overlay !== null);
+    return;
+  }
+  $('build').classList.add('hidden');
   const tl = tileAt(sel.x, sel.y);
   ringSel.visible = true; ringSel.position.x = wxOf(sel.x); ringSel.position.z = wxOf(sel.y);
   panel.classList.remove('hidden');
@@ -2484,10 +2685,10 @@ function renderTile() {
   if (tl.t === T_BED && !tl.pl) {
     const opts = Object.keys(S.bulbs).filter(v => S.bulbs[v] > 0);
     const moistPct = Math.round(tl.w * 100);
-    html += `<div class="soil-status"><span class="moist-pill ${tl.w > 0.15 ? 'ok' : 'dry'}">💧 ${moistPct}%</span><span class="muted">${T('empty')}</span></div>`;
+    html += `<div class="soil-status"><span class="moist-pill ${tl.w > 0.15 ? 'ok' : 'dry'}">💧 ${moistPct}%</span><span class="muted">${T('empty')}</span><button data-act="water" class="empty-water-btn" title="${T('water')}">💧 ${T('water')}</button></div>`;
     html += opts.length ? `<div style="font-size:12.5px;font-weight:700;color:var(--ink-light);margin-top:2px;">${T('plantPick')}</div><div class="chips">` + opts.map(v => {
       const col = '#' + PAL[dec(Number(v)).c].col.toString(16).padStart(6, '0');
-      return `<button data-act="plant" data-v="${v}"><span class="bulb-dot" style="background:${col}"></span>${nameOf(Number(v))} <b class="chip-count">×${S.bulbs[v]}</b></button>`;
+      return `<button data-act="plant" data-v="${v}"><span class="bulb-dot" style="background:${col}"></span><span>${nameOf(Number(v))}</span><b class="chip-count">×${S.bulbs[v]}</b></button>`;
     }).join('') + '</div>' : `<div class="muted">${T('noBulbs')}</div>`;
   }
   if (tl.t === T_BED && tl.pl) {
@@ -2496,11 +2697,12 @@ function renderTile() {
     const col = '#' + PAL[dec(p.v).c].col.toString(16).padStart(6, '0');
     html += `<div class="flower-header"><span class="bulb-dot" style="background:${col}"></span><div class="flower-meta"><b>${nameOf(p.v)}</b><div class="stage-tag">🌱 ${T('stage' + st)}</div></div><span class="moist-pill ${tl.w > 0.15 ? 'ok' : 'dry'}">💧 ${moistPct}%</span></div>`;
     if (tl.pe) html += `<div class="aphid-alert">🐛 <b>${T('aphids')}</b></div>`;
-    html += `<div class="action-row"><button data-act="water" title="${T('water')}">💧 ${T('water')}</button>`;
+    html += `<div class="action-row">`;
     if (bloom(tl)) html += `<button data-act="harvest" class="primary harvest-pulse" title="${T('harvest')}">✂️ ${T('harvest')}</button>`;
+    html += `<button data-act="water" title="${T('water')}">💧 ${T('water')}</button>`;
     html += `<button data-act="lift" title="${T('lift')}">🌱 ${T('lift')}</button>`;
     if (tl.pe) html += `<button data-act="clean" title="${T('clean')}">🧹 ${T('clean')}</button>`;
-    html += '</div>';
+    html += `</div>`;
   }
   panel.innerHTML = html;
 }
@@ -2665,7 +2867,7 @@ function show(name) {
   for (const s of SCREENS) $('scr-' + s).classList.toggle('hidden', s !== name);
   $('hud').classList.toggle('hidden', !game);
   $('b-pause').classList.toggle('on', name === 'pause');
-  $('build').classList.toggle('hidden', !game || name !== null);
+  $('build').classList.toggle('hidden', !game || name !== null || !!sel);
   if (name === null) renderTile(); else $('tile').classList.add('hidden');
   if (name === 'title') renderTitle();
   if (name === 'cat') renderCat();
