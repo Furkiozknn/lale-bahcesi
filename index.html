@@ -1270,6 +1270,7 @@ h2 {
 #build button[data-tool="lantern"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Cpath d='M12 2v3M8 8l4-3 4 3v7l-4 3-4-3V8z' fill='%23F4C34B' fill-opacity='0.6'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%23E11D48' stroke='none'/%3E%3C/svg%3E"); }
 #build button[data-tool="bench"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2'%3E%3Cpath d='M4 11h16M5 7h14M6 7v8M18 7v8M4 17l2-2h12l2 2'/%3E%3C/svg%3E"); }
 #build button[data-tool="erase"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BE185D' stroke-width='2.2'%3E%3Cpath d='M18 6L6 18M6 6l12 12' stroke-linecap='round'/%3E%3C/svg%3E"); }
+#build button[data-tool="brush"]::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233B1D2C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 3l3 3-10 10-4 1 1-4 10-10z' fill='%23F4C34B' fill-opacity='0.4'/%3E%3Cpath d='M4.5 19.5c-1 1-1.5 2-1.5 2.5 1.2 0 2.5-.5 3.5-1.5' stroke='%23BE185D' stroke-width='2.2'/%3E%3Cpath d='M13 18c1.5 1.5 3 2 4.5 2' stroke='%230284C7' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E"); }
 
 #build button.on::before {
   filter: brightness(0) invert(1);
@@ -1370,18 +1371,19 @@ h2 {
   .stat b { font-size: 13px; }
 }
 
-/* phones: 8 build tools in two rows of 4; bottom action dock and coach banner placed in thumb-friendly positions */
+/* phones: 9 build tools in two balanced rows; bottom action dock and coach banner placed in thumb-friendly positions */
 @media (max-width: 600px) {
   #build {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    width: min(96vw, 420px);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    width: min(96vw, 440px);
     max-width: none;
     overflow: visible;
-    gap: 6px;
+    gap: 5px;
     padding: 6px 8px;
   }
-  #build button { min-width: 48px; min-height: 52px; padding: 4px 2px; }
+  #build button { min-width: 44px; min-height: 48px; padding: 4px 2px; font-size: 11.5px; }
+  #build button[data-tool="brush"] { grid-column: span 2; }
   #coach { bottom: calc(134px + env(safe-area-inset-bottom)); }
   #tile {
     bottom: max(8px, env(safe-area-inset-bottom));
@@ -1591,7 +1593,7 @@ const N = 16, DAY_SEC = 14, SEASON_DAYS = 30, GS = [10, 12, 14, 16];
 const T_GRASS = 0, T_PATH = 1, T_BED = 2, T_POOL = 3, T_FOUNTAIN = 4, T_KIOSK = 5;
 const COST = { path: 2, bed: 8, pool: 60, cypress: 30, plane: 40, lantern: 18, bench: 22 };
 const DECOR = ['cypress', 'plane', 'lantern', 'bench'];
-const TOOLS = ['path', 'bed', 'pool', 'cypress', 'plane', 'lantern', 'bench', 'erase'];
+const TOOLS = ['path', 'bed', 'pool', 'cypress', 'plane', 'lantern', 'bench', 'erase', 'brush'];
 const BULB_PRICE = 6, FLOWER_PRICE = 11, PACK_PRICE = 20, BED_LIMIT = 260;
 const PAL = [
   { tr: 'Kırmızı', en: 'Red', col: 0xe63946 }, { tr: 'Pembe', en: 'Pink', col: 0xf4a6c1 },
@@ -1631,7 +1633,7 @@ const STR = {
     season: 'Mevsim', day: 'Gün', akce: 'Akçe', varieties: 'Çeşit', beauty: 'Güzellik', speed: 'Hız',
     catalogue: 'Katalog', bazaar: 'Bazar', found: 'bulundu', unknown: 'Bilinmiyor',
     toolPath: 'Yol', toolBed: 'Yatak', toolPool: 'Havuz', toolCypress: 'Servi', toolPlane: 'Çınar',
-    toolLantern: 'Fener', toolBench: 'Bank', toolErase: 'Sil',
+    toolLantern: 'Fener', toolBench: 'Bank', toolErase: 'Sil', toolBrush: 'Fırça',
     tile: 'Parsel', plantPick: 'Dikmek için soğan seçin:', noBulbs: 'Soğanınız yok. Bazardan paket alın.',
     water: 'Sula', harvest: 'Kes', lift: 'Söküp al', clean: 'Yaprak bitini temizle',
     rotate: 'Döndür: Q / E', stage0: 'Filiz', stage1: 'Yaprak', stage2: 'Tomurcuk', stage3: 'Çiçekte',
@@ -1700,7 +1702,7 @@ const STR = {
     season: 'Season', day: 'Day', akce: 'Akçe', varieties: 'Varieties', beauty: 'Beauty', speed: 'Speed',
     catalogue: 'Catalogue', bazaar: 'Bazaar', found: 'found', unknown: 'Unknown',
     toolPath: 'Path', toolBed: 'Bed', toolPool: 'Pool', toolCypress: 'Cypress', toolPlane: 'Plane',
-    toolLantern: 'Lantern', toolBench: 'Bench', toolErase: 'Erase',
+    toolLantern: 'Lantern', toolBench: 'Bench', toolErase: 'Erase', toolBrush: 'Brush',
     tile: 'Plot', plantPick: 'Pick a bulb to plant:', noBulbs: 'No bulbs. Buy a pack at the bazaar.',
     water: 'Water', harvest: 'Cut', lift: 'Lift bulb', clean: 'Clean aphids',
     rotate: 'Rotate: Q / E', stage0: 'Sprout', stage1: 'Leaf', stage2: 'Bud', stage3: 'In bloom',
@@ -1796,7 +1798,7 @@ window.addEventListener('error', e => { errors.push(String(e.message)); });
 
 /* ---------- state ---------- */
 let S = null, game = false, overlay = null, dirty = true, sel = null, tool = null, hover = null, prevOverlay = null;
-let botAcc = 0, botDone = false;
+let botAcc = 0, botDone = false, brushQueue = [];
 const START_VARIETY = 0;
 function makeTiles(r = Math.random) {
   const a = [];
@@ -1891,19 +1893,75 @@ function plantAt(x, y, v) {
   tl.pl = { v, a: 0, c: false, q: tl.s * 0.6 + 0.4 * sunAt(x, y), h: 1 };
   sfx('plant'); markDirty(); return true;
 }
-function waterAt(x, y) {
+function waterAt(x, y, quiet = false) {
   const tl = tileAt(x, y);
   if (tl.t !== T_BED) return false;
-  tl.w = Math.min(1, tl.w + 0.6); sfx('water'); markDirty(); return true;
+  tl.w = Math.min(1, tl.w + 0.6);
+  if (!quiet) { sfx('water'); markDirty(); }
+  return true;
 }
-function harvestAt(x, y) {
+function harvestAt(x, y, quiet = false) {
   const tl = tileAt(x, y);
   if (!bloom(tl)) return false;
   S.flowers.push({ v: tl.pl.v, q: tl.pl.q });
   S.stats.blooms++;
   S.coached = true;
   tl.pl.c = true;
-  sfx('pick'); markDirty(); return true;
+  if (!quiet) { sfx('pick'); markDirty(); }
+  return true;
+}
+/* ---------- batch brush tool (watering & harvest) ---------- */
+function queueBrushTile(t) {
+  if (!t || !inPlay(t.x, t.y)) return;
+  const tl = tileAt(t.x, t.y);
+  if (tl.t !== T_BED) return;
+  if (brushQueue.length === 0) {
+    brushQueue.push({ x: t.x, y: t.y });
+    updateBrushVisuals();
+    return;
+  }
+  const last = brushQueue[brushQueue.length - 1];
+  if (last.x === t.x && last.y === t.y) return;
+  const dx = t.x - last.x, dy = t.y - last.y;
+  const steps = Math.max(Math.abs(dx), Math.abs(dy));
+  if (steps > 6) return;
+  for (let s = 1; s <= steps; s++) {
+    const ix = Math.round(last.x + (dx * s) / steps);
+    const iy = Math.round(last.y + (dy * s) / steps);
+    if (!inPlay(ix, iy)) break;
+    const itl = tileAt(ix, iy);
+    if (itl.t !== T_BED) break; // sweep only connects adjacent bed tiles
+    if (!brushQueue.some(p => p.x === ix && p.y === iy)) {
+      brushQueue.push({ x: ix, y: iy });
+    }
+  }
+  updateBrushVisuals();
+}
+function executeBrushQueue() {
+  if (!brushQueue || !brushQueue.length) return 0;
+  const queue = brushQueue.slice();
+  brushQueue = [];
+  updateBrushVisuals();
+  let harvested = 0, watered = 0;
+  for (const pt of queue) {
+    if (!inPlay(pt.x, pt.y)) continue;
+    const tl = tileAt(pt.x, pt.y);
+    if (tl.t !== T_BED) continue;
+    if (bloom(tl)) {
+      if (harvestAt(pt.x, pt.y, true)) harvested++;
+    } else {
+      if (waterAt(pt.x, pt.y, true)) watered++;
+    }
+  }
+  if (harvested > 0 || watered > 0) {
+    if (harvested > 0) sfx('pick');
+    if (watered > 0) sfx('water');
+    markDirty();
+    if (harvested && watered) toast(`${T('picked')} (${harvested}) · ${T('watered')} (${watered})`, 'good');
+    else if (harvested) toast(`${T('picked')} (${harvested})`, 'good');
+    else if (watered) toast(`${T('watered')} (${watered})`, 'good');
+  }
+  return harvested + watered;
 }
 function liftAt(x, y) {
   const tl = tileAt(x, y);
@@ -2630,9 +2688,11 @@ cvs.addEventListener('pointerdown', e => {
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 1) {
     drag = { x: e.clientX, y: e.clientY, moved: 0, tile: pickTile(e.clientX, e.clientY) };
+    if (tool === 'brush') { brushQueue = []; updateBrushVisuals(); }
     if (game && overlay === null && tool && drag.tile) applyTool(drag.tile);
   } else if (ptrs.size === 2) {
     drag = null; // cancel single-finger tap/drag when pinch begins to avoid accidental tile select on lift
+    if (tool === 'brush') { brushQueue = []; updateBrushVisuals(); }
     const [a, b] = [...ptrs.values()]; pinchD = Math.hypot(a.x - b.x, a.y - b.y);
   }
 });
@@ -2645,6 +2705,7 @@ cvs.addEventListener('pointermove', e => {
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2) {
     drag = null;
+    if (tool === 'brush') { brushQueue = []; updateBrushVisuals(); }
     const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
     if (pinchD > 0) dist = clamp(dist * pinchD / d, 9, 30);
     pinchD = d; return;
@@ -2668,7 +2729,11 @@ function endPtr(e) {
   if (!ptrs.has(e.pointerId)) return;
   ptrs.delete(e.pointerId);
   if (ptrs.size === 0 && drag) {
-    if (drag.moved < 6 && game && overlay === null && !tool) selectTile(drag.tile);
+    if (tool === 'brush' && game && overlay === null) {
+      executeBrushQueue();
+    } else if (drag.moved < 6 && game && overlay === null && !tool) {
+      selectTile(drag.tile);
+    }
     drag = null;
   }
 }
@@ -2676,9 +2741,17 @@ cvs.addEventListener('pointerup', endPtr);
 cvs.addEventListener('pointercancel', endPtr);
 cvs.addEventListener('pointerleave', () => setHover(null));
 cvs.addEventListener('wheel', e => { e.preventDefault(); dist = clamp(dist + e.deltaY * 0.02, 9, 30); }, { passive: false });
-function setHover(t) { hover = t; if (!t || !game) { hoverRing.visible = false; return; } hoverRing.visible = true; hoverRing.position.x = wxOf(t.x); hoverRing.position.z = wxOf(t.y); }
+function setHover(t) {
+  hover = t;
+  if (!t || !game) { hoverRing.visible = false; return; }
+  hoverRing.visible = true;
+  hoverRing.position.x = wxOf(t.x); hoverRing.position.z = wxOf(t.y);
+  if (tool === 'brush' && tileAt(t.x, t.y).t === T_BED) hoverRing.material.color.setHex(0x0284C7);
+  else hoverRing.material.color.setHex(0xf59e0b);
+}
 function applyTool(t) {
   if (!game || overlay !== null) return;
+  if (tool === 'brush') { queueBrushTile(t); return; }
   const ok = buildAt(t.x, t.y, tool);
   if (!ok) return;
   dirty = true;
@@ -2692,6 +2765,20 @@ function selectTile(t) {
 }
 const ringSel = new THREE.Mesh(new THREE.RingGeometry(0.46, 0.56, 24).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xBE185D, transparent: true, opacity: 0.9, depthWrite: false }));
 ringSel.position.y = 0.1; ringSel.visible = false; scene.add(ringSel);
+const brushRingGeo = new THREE.RingGeometry(0.38, 0.46, 20).rotateX(-Math.PI / 2);
+const brushRingMat = new THREE.MeshBasicMaterial({ color: 0x0284C7, transparent: true, opacity: 0.88, depthWrite: false });
+const brushRings = new THREE.InstancedMesh(brushRingGeo, brushRingMat, 64);
+brushRings.count = 0; brushRings.position.y = 0.102; scene.add(brushRings);
+function updateBrushVisuals() {
+  if (!brushRings) return;
+  const n = Math.min(brushQueue.length, 64);
+  brushRings.count = n;
+  for (let i = 0; i < n; i++) {
+    const pt = brushQueue[i];
+    place(brushRings, i, wxOf(pt.x), 0, wxOf(pt.y), 1, 1, 1);
+  }
+  brushRings.instanceMatrix.needsUpdate = true;
+}
 
 /* ---------- UI rendering ---------- */
 const SVG = {
@@ -2949,6 +3036,7 @@ let speed = 1;
 const SCREENS = ['title', 'settings', 'pause', 'cat', 'bazaar', 'fest', 'end'];
 function show(name) {
   overlay = name;
+  if (name !== null) { brushQueue = []; updateBrushVisuals(); }
   for (const s of SCREENS) $('scr-' + s).classList.toggle('hidden', s !== name);
   $('hud').classList.toggle('hidden', !game);
   $('b-pause').classList.toggle('on', name === 'pause');
@@ -2962,7 +3050,7 @@ function show(name) {
 }
 function toTitle() { game = false; show('title'); }
 function newGame(daily) {
-  S = newState(); sel = null; tool = null;
+  S = newState(); sel = null; tool = null; brushQueue = []; updateBrushVisuals();
   if (daily) { // daily challenge: the day's seed lays the soil, picks the six starting bulbs and drives the sim dice
     S.seed = daily.seed; S.daily = daily.day; S.tiles = makeTiles(rnd); S.bulbs = { [Math.floor(rnd() * 8) * 9]: 6 };
   }
@@ -2973,7 +3061,7 @@ function newGame(daily) {
 function continueGame() {
   const s = load(KEY_SAVE);
   if (!s || (s.ended && !s.endless)) return newGame();
-  S = s; sel = null; tool = null; game = true;
+  S = s; sel = null; tool = null; brushQueue = []; updateBrushVisuals(); game = true;
   if (typeof S.rep !== 'number') S.rep = 0;   // saves from before the jury have no reputation yet
   setupSeason();
   // a save taken while the festival screen was open goes back to that screen, so the reward is not paid twice
@@ -3085,7 +3173,9 @@ $('s-high').onclick = () => { cfg.quality = 'high'; saveCfg(); syncSettings(); t
 $('s-full').onclick = toggleFull;
 $('build').addEventListener('click', e => {
   const b = e.target.closest('button[data-tool]'); if (!b) return;
-  const t = b.dataset.tool; tool = tool === t ? null : t; renderHUD();
+  const t = b.dataset.tool; tool = tool === t ? null : t;
+  brushQueue = []; updateBrushVisuals();
+  renderHUD();
 });
 $('tile').addEventListener('click', e => {
   const r = e.target.closest('button[data-act]'); if (!r || !sel) return;
@@ -3224,6 +3314,20 @@ window.lale = {
   get jury() { return S ? juryOf(S) : null; },
   get errors() { return errors.slice(); },
   get garden() { if (!S) return null; const c = { beds: 0, planted: 0, stages: [0, 0, 0, 0, 0], cut: 0, pool: 0, decor: 0 }; for (const t of S.tiles) { if (t.t === T_BED) c.beds++; if (t.t === T_POOL) c.pool++; if (t.d) c.decor++; if (t.pl) { c.planted++; c.stages[stageOf(t.pl)]++; if (t.pl.c) c.cut++; } } return c; },
+  get tool() { return tool; },
+  set tool(v) { tool = v; renderHUD(); },
+  get brush() { return tool === 'brush'; },
+  set brush(v) { tool = v ? 'brush' : (tool === 'brush' ? null : tool); renderHUD(); },
+  get brushQueue() { return brushQueue.slice(); },
+  brushSweep(tiles) {
+    if (!tiles || !tiles.length) return 0;
+    brushQueue = [];
+    for (const pt of tiles) {
+      const p = Array.isArray(pt) ? { x: pt[0], y: pt[1] } : pt;
+      queueBrushTile(p);
+    }
+    return executeBrushQueue();
+  },
   assets: 'none (procedural only)',
   get reducedMotion() { return REDUCED; }, get seed() { return S ? S.seed : null; },
   renderer
