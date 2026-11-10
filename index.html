@@ -1103,6 +1103,23 @@ h2 {
   .stat b { font-size: 13px; }
 }
 
+/* phones: the eight build tools did not fit one row; #build scrolled sideways with a hidden scrollbar (7e52007), so
+   Bench and Erase (and Lantern at 360 px) started off-screen. Two rows of four instead, every tool visible; the coach
+   hint and the tile panel sit above the taller bar. */
+@media (max-width: 600px) {
+  #build {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: min(96vw, 420px);
+    max-width: none;
+    overflow: visible;
+    gap: 6px;
+    padding: 6px 8px;
+  }
+  #build button { min-width: 0; min-height: 52px; padding: 4px 2px; }
+  #coach, #tile { bottom: calc(158px + env(safe-area-inset-bottom)); }
+}
+
 /* Şükûfe Şenliği jury cards */
 .jury { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; text-align: left; }
 .juror {

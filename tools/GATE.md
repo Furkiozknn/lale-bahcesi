@@ -62,11 +62,11 @@ kale-savunmasi original (`hisarSim`, its timings); for lale-bahcesi:
   rep 108. This gate catches large regressions (breeding halved: bred 92 -> 44, FAIL), not a few per cent. A real
   fix is a seed for every garden (as the daily mode already has, `S.seed`) and the bot drawing from `rnd()`; then
   `init` can go and the tolerances can tighten.
-- **layout**: `?auto`: `#hud` (speed, pause, catalogue, bazaar, sound, language) and the `#build` bar. `#build` is a
-  horizontal scroller with a hidden scrollbar (7e52007, UI rebirth): on phones Bench and Erase (and Lantern at
-  360 px) start off-screen and are reached only by swiping, with nothing showing that the bar scrolls. The gate
-  checks the bar as one element (inside the viewport, on top), not each button in it; with `#build button` those
-  buttons fail. This is a finding for the game, not a gate exception; it is not in the research report.
+- **layout**: `?auto`: every `#hud` button (speed, pause, catalogue, bazaar, sound, language) and every `#build`
+  button, each on its own. Until 8f29723 `#build` was a horizontal scroller with a hidden scrollbar (7e52007, UI
+  rebirth): on phones Bench and Erase (and Lantern at 360 px) started off-screen, reachable only by swiping, and the
+  gate checked the bar as one element. 8f29723 makes it two rows of four below 600 px; with `#build button` the
+  previous main fails (3 buttons off-screen at 360, 2 at 390 and 412) and the fix passes (14 buttons per phone).
   `layout.known` is empty.
 - **runtime here**: about 12 s per sim run; full gate with an identical base under a minute.
 

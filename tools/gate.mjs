@@ -61,10 +61,9 @@ const GAME = {
   layout: {
     query: '?auto', // boot starts a garden at once: HUD (stats, speed, pause, catalogue, bazaar, sound, language) and build bar
     viewports: [[390, 844], [360, 740], [412, 915]],
-    // #build is a horizontal scroller (overflow-x: auto, scrollbar hidden; 7e52007): on phones its last buttons (Bench,
-    // Erase; Lantern at 360 px) start off-screen and are reached by swiping the bar. The bar itself is checked, not each
-    // button inside it; '#build button' fails on them. Reported as a finding, see GATE.md.
-    selectors: ['#hud button', '#build'],
+    // every build button is checked on its own: on phones #build is two rows of four (fix 8f29723; before it was a
+    // horizontal scroller with a hidden scrollbar and Bench/Erase/Lantern started off-screen)
+    selectors: ['#hud button', '#build button'],
     known: { ids: [], reason: '' },
     mode: 'enforce', // 'report' = print offenders, never fail (use only with a written reason)
     timeoutMs: 180000,
