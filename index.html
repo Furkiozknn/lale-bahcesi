@@ -1610,6 +1610,31 @@ const NAMED = {
   28: { tr: 'Altın Kaftan', en: 'Golden Kaftan' }, 40: { tr: 'Gül Mor Sultan', en: 'Rose Purple Sultan' },
   62: { tr: 'Bordo Hilal', en: 'Maroon Crescent' }
 };
+// 20 classical Ottoman divan poetry adjectives for hybrid flowers
+const HYBRID_ADJECTIVES = [
+  { tr: 'Maşukî', en: 'Maşukî' },
+  { tr: 'Dil-âram', en: 'Dil-âram' },
+  { tr: 'Nûr-ı Adn', en: 'Nûr-ı Adn' },
+  { tr: 'Berk-i Gül', en: 'Berk-i Gül' },
+  { tr: 'Rûy-ı Yâr', en: 'Rûy-ı Yâr' },
+  { tr: 'Şevk-engîz', en: 'Şevk-engîz' },
+  { tr: 'Gül-rîz', en: 'Gül-rîz' },
+  { tr: 'Subh-ı Bahâr', en: 'Subh-ı Bahâr' },
+  { tr: 'Sîm-ten', en: 'Sîm-ten' },
+  { tr: 'Nazîr-i Şâh', en: 'Nazîr-i Şâh' },
+  { tr: 'Feyz-i Bârî', en: 'Feyz-i Bârî' },
+  { tr: 'Câm-ı Cem', en: 'Câm-ı Cem' },
+  { tr: 'Yâkûtî', en: 'Yâkûtî' },
+  { tr: 'Lâle-hâr', en: 'Lâle-hâr' },
+  { tr: 'Mâh-rû', en: 'Mâh-rû' },
+  { tr: 'Dil-şâd', en: 'Dil-şâd' },
+  { tr: 'Necm-i Seher', en: 'Necm-i Seher' },
+  { tr: 'Şule-pâş', en: 'Şule-pâş' },
+  { tr: 'Dürr-i Yektâ', en: 'Dürr-i Yektâ' },
+  { tr: 'Behcet-efzâ', en: 'Behcet-efzâ' }
+];
+const DIVAN_ADJECTIVES = HYBRID_ADJECTIVES;
+const HYBRID_NAMES = HYBRID_ADJECTIVES;
 // colour mixes when two parents of different colours cross
 const MIX = { '0,2': 1, '0,3': 5, '2,3': 7, '1,4': 8, '0,4': 6, '0,5': 9, '3,5': 9, '1,2': 1, '2,4': 8, '2,7': 7, '1,3': 7 };
 // Şükûfe Şenliği jury: four visitors with their own taste; the favourite (score >= 7) gives a bulb [variety, count]
@@ -1787,12 +1812,40 @@ const rnd = () => {
 };
 const saveCfg = () => store(KEY_S, cfg);
 const dec = v => ({ c: Math.floor(v / 9), s: Math.floor((v % 9) / 3), p: v % 3 });
+const registerHybrid = v => {
+  const id = Number(v);
+  if (!S) return;
+  if (!S.hybrids) S.hybrids = {};
+  if (S.hybrids[id] === undefined) {
+    const idx = Object.keys(S.hybrids).length % HYBRID_ADJECTIVES.length;
+    S.hybrids[id] = idx;
+  }
+};
+const isHybrid = v => {
+  const id = Number(v);
+  if (NAMED[id]) return false;
+  if (S && S.hybrids && S.hybrids[id] !== undefined) return true;
+  const d = dec(id);
+  return d.c === 8 || d.c === 9 || d.c === 1 || d.c === 5 || d.c === 6 || d.c === 7 || d.s > 0 || d.p > 0;
+};
+const getHybridName = v => {
+  const id = Number(v);
+  if (S && S.hybrids && S.hybrids[id] !== undefined) {
+    return HYBRID_ADJECTIVES[S.hybrids[id] % HYBRID_ADJECTIVES.length];
+  }
+  return HYBRID_ADJECTIVES[id % HYBRID_ADJECTIVES.length];
+};
 const nameOf = v => {
-  if (NAMED[v]) return NAMED[v][cfg.lang];
-  const d = dec(v);
+  const id = Number(v);
+  if (NAMED[id]) return NAMED[id][cfg.lang] || NAMED[id].tr;
+  if (isHybrid(id)) {
+    const adj = getHybridName(id);
+    if (adj) return adj[cfg.lang] || adj.tr;
+  }
+  const d = dec(id);
   return cfg.lang === 'tr' ? `${PAL[d.c].tr} ${SHAPE[d.s].tr} (${PATT[d.p].tr})` : `${PAL[d.c].en} ${SHAPE[d.s].en}, ${PATT[d.p].en}`;
 };
-const rarityOf = v => NAMED[v] ? 2 : (dec(v).s === 2 ? 1.5 : 1);
+const rarityOf = v => NAMED[Number(v)] ? 2 : (dec(Number(v)).s === 2 ? 1.5 : 1);
 const errors = [];
 window.addEventListener('error', e => { errors.push(String(e.message)); });
 
@@ -1819,7 +1872,8 @@ function newState() {
   return {
     season: 1, day: 1, clock: 0, akce: 50, rot: 0, bulbs: { [START_VARIETY]: 6 }, flowers: [],
     discovered: [], market: {}, mania: null, tiles: makeTiles(), endless: false, ended: false, won: false,
-    stats: { blooms: 0, bred: 0 }, lastFest: null, coached: false, rep: 0, festPending: false
+    stats: { blooms: 0, bred: 0 }, lastFest: null, coached: false, rep: 0, festPending: false,
+    hybrids: {}
   };
 }
 const tileAt = (x, y) => S.tiles[y * N + x];
@@ -1851,7 +1905,9 @@ function breed(a, b) {
   let s = rnd() < 0.5 ? da.s : db.s, p = rnd() < 0.5 ? da.p : db.p;
   if (rnd() < 0.1) s = Math.floor(rnd() * 3);
   if (rnd() < 0.1) p = Math.floor(rnd() * 3);
-  return c * 9 + s * 3 + p;
+  const child = c * 9 + s * 3 + p;
+  registerHybrid(child);
+  return child;
 }
 function sellPrice(v, q, flower) {
   const m = S.market[v] ?? 1;
@@ -2907,7 +2963,7 @@ function renderCat() {
   for (let v = 0; v < 90; v++) {
     const known = S.discovered.includes(v);
     const d = dec(v);
-    h += `<div class="card ${known ? '' : 'unk'}">${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : '???'}</small></div>`;
+    h += `<div class="card ${known ? '' : 'unk'}" data-v="${v}">${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : '???'}</small></div>`;
   }
   $('cat-body').innerHTML = h;
 }
@@ -3063,6 +3119,7 @@ function continueGame() {
   if (!s || (s.ended && !s.endless)) return newGame();
   S = s; sel = null; tool = null; brushQueue = []; updateBrushVisuals(); game = true;
   if (typeof S.rep !== 'number') S.rep = 0;   // saves from before the jury have no reputation yet
+  if (!S.hybrids) S.hybrids = {};
   setupSeason();
   // a save taken while the festival screen was open goes back to that screen, so the reward is not paid twice
   if (S.festPending && S.lastFest && S.lastFest.jury) { renderFest(); show('fest'); } else show(null);
@@ -3329,6 +3386,8 @@ window.lale = {
     return executeBrushQueue();
   },
   assets: 'none (procedural only)',
+  get hybridNames() { return HYBRID_ADJECTIVES; },
+  nameOf(v) { return nameOf(v); },
   get reducedMotion() { return REDUCED; }, get seed() { return S ? S.seed : null; },
   renderer
 };
