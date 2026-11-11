@@ -823,7 +823,128 @@ h2 {
 .card svg { width: 44px; height: 60px; }
 .card b { font-size: 12.5px; color: var(--ink); line-height: 1.25; }
 .card small { color: var(--mut); font-size: 11px; }
-.card.unk { opacity: 0.55; background: rgba(245, 240, 230, 0.5); border-style: dashed; }
+.card.unk {
+  opacity: 0.72;
+  background: rgba(250, 246, 238, 0.75);
+  border: 1.5px dashed var(--line);
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  touch-action: manipulation;
+  transition: opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.card.unk:hover,
+.card.unk:focus-visible,
+.card.unk.active-tip {
+  opacity: 1;
+  background: #FFFFFF;
+  border-style: solid;
+  border-color: var(--gold-dark);
+  box-shadow: 0 4px 16px rgba(59, 29, 44, 0.18), 0 0 0 1.5px var(--gold);
+  transform: translateY(-2px);
+}
+.card.unk .tulip-sil {
+  filter: drop-shadow(0 2px 4px rgba(59, 29, 44, 0.12));
+}
+.card.unk .card-tip {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  padding: 4px;
+  background: rgba(43, 23, 34, 0.95);
+  color: #FFF9F0;
+  border: 1px solid var(--line-gold);
+  border-radius: 9px;
+  box-shadow: 0 4px 14px rgba(59, 29, 44, 0.35);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.card.unk:hover .card-tip,
+.card.unk:focus-visible .card-tip,
+.card.unk.active-tip .card-tip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.card.unk .tip-badge {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gold-light);
+  opacity: 0.95;
+}
+.card.unk .tip-req {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.card.unk .hint-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+.card.unk .hint-plus {
+  color: var(--gold-light);
+  font-weight: 800;
+  font-size: 9.5px;
+}
+.card.unk .tip-names {
+  font-size: 10.5px;
+  color: #FFFFFF;
+}
+.card.unk .unk-shape-lbl {
+  color: var(--mut);
+  font-size: 10.5px;
+  text-transform: capitalize;
+}
+
+/* Codex Hint Banner inside Catalogue */
+.cat-codex-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(255, 252, 245, 0.96), rgba(254, 243, 199, 0.9));
+  border: 1.5px solid var(--line-gold);
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: 0 2px 8px rgba(59, 29, 44, 0.06);
+  min-height: 40px;
+}
+.cat-codex-banner .codex-icon { font-size: 17px; flex-shrink: 0; }
+.cat-codex-banner .codex-text { flex: 1; line-height: 1.35; }
+.cat-codex-banner b.codex-highlight { color: var(--accent); font-weight: 800; }
+.cat-codex-banner .codex-target { color: var(--ink-light); font-weight: 500; }
+.cat-codex-banner .hint-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid rgba(59, 29, 44, 0.2);
+  vertical-align: -1px;
+  margin: 0 1px;
+}
 
 .list { display: flex; flex-direction: column; gap: 8px; max-height: 65vh; overflow-y: auto; padding: 4px; }
 .item {
@@ -1369,6 +1490,11 @@ h2 {
   #build button { min-width: 52px; min-height: 48px; padding: 4px 6px; font-size: 11px; }
   .stat { padding: 4px 6px; }
   .stat b { font-size: 13px; }
+  .cat-codex-banner { font-size: 11.5px; padding: 6px 10px; gap: 6px; min-height: 36px; }
+  .card.unk .card-tip { font-size: 9.5px; padding: 3px 2px; }
+  .card.unk .tip-badge { font-size: 8px; }
+  .card.unk .hint-dot { width: 8px; height: 8px; }
+  .card.unk .tip-names { font-size: 9.5px; }
 }
 
 /* phones: 9 build tools in two balanced rows; bottom action dock and coach banner placed in thumb-friendly positions */
@@ -1562,6 +1688,10 @@ h2 {
 <section id="scr-cat" class="screen hidden">
   <div class="panel wide">
     <div class="row" style="justify-content:space-between"><h2 data-t="catalogue"></h2><span id="cat-count"></span></div>
+    <div id="cat-codex-banner" class="cat-codex-banner" role="status" aria-live="polite">
+      <span class="codex-icon" aria-hidden="true">📜</span>
+      <span id="cat-codex-text" class="codex-text"></span>
+    </div>
     <div id="cat-body" class="grid-cards"></div>
     <div class="btns"><button id="b-cat-close" data-t="close"></button></div>
   </div>
@@ -1657,6 +1787,8 @@ const STR = {
     seasonS: 'Mev.', dayS: 'Gün', akceS: 'Akç.', varS: 'Çeş.', beautyS: 'Güz.',
     season: 'Mevsim', day: 'Gün', akce: 'Akçe', varieties: 'Çeşit', beauty: 'Güzellik', speed: 'Hız',
     catalogue: 'Katalog', bazaar: 'Bazar', found: 'bulundu', unknown: 'Bilinmiyor',
+    breedReq: 'Gereksinim', breedHintTitle: 'Melezleme Gereksinimi',
+    breedCodexIntro: 'Kilitli melez silüetlerinin üzerine gelin veya dokunun: ebeveyn renk gereksinimleri burada görünür.',
     toolPath: 'Yol', toolBed: 'Yatak', toolPool: 'Havuz', toolCypress: 'Servi', toolPlane: 'Çınar',
     toolLantern: 'Fener', toolBench: 'Bank', toolErase: 'Sil', toolBrush: 'Fırça',
     tile: 'Parsel', plantPick: 'Dikmek için soğan seçin:', noBulbs: 'Soğanınız yok. Bazardan paket alın.',
@@ -1726,6 +1858,8 @@ const STR = {
     seasonS: 'Sea.', dayS: 'Day', akceS: 'Akç.', varS: 'Var.', beautyS: 'Bty.',
     season: 'Season', day: 'Day', akce: 'Akçe', varieties: 'Varieties', beauty: 'Beauty', speed: 'Speed',
     catalogue: 'Catalogue', bazaar: 'Bazaar', found: 'found', unknown: 'Unknown',
+    breedReq: 'Requirement', breedHintTitle: 'Breeding Requirement',
+    breedCodexIntro: 'Hover or tap locked hybrid silhouettes to see parent color requirements.',
     toolPath: 'Path', toolBed: 'Bed', toolPool: 'Pool', toolCypress: 'Cypress', toolPlane: 'Plane',
     toolLantern: 'Lantern', toolBench: 'Bench', toolErase: 'Erase', toolBrush: 'Brush',
     tile: 'Plot', plantPick: 'Pick a bulb to plant:', noBulbs: 'No bulbs. Buy a pack at the bazaar.',
@@ -1846,6 +1980,28 @@ const nameOf = v => {
   return cfg.lang === 'tr' ? `${PAL[d.c].tr} ${SHAPE[d.s].tr} (${PATT[d.p].tr})` : `${PAL[d.c].en} ${SHAPE[d.s].en}, ${PATT[d.p].en}`;
 };
 const rarityOf = v => NAMED[Number(v)] ? 2 : (dec(Number(v)).s === 2 ? 1.5 : 1);
+// Breeding codex: parent color combinations required to breed each variety
+const PARENT_MAP = {
+  0: [0, 0], // Red + Red / Kırmızı + Kırmızı
+  1: [0, 2], // Red + White / Kırmızı + Beyaz
+  2: [2, 2], // White + White / Beyaz + Beyaz
+  3: [3, 3], // Yellow + Yellow / Sarı + Sarı
+  4: [4, 4], // Purple + Purple / Mor + Mor
+  5: [0, 3], // Red + Yellow / Kırmızı + Sarı
+  6: [0, 4], // Red + Purple / Kırmızı + Mor
+  7: [2, 3], // White + Yellow / Beyaz + Sarı
+  8: [1, 4], // Pink + Purple / Pembe + Mor
+  9: [0, 5]  // Red + Orange / Kırmızı + Turuncu
+};
+const breedingReq = v => {
+  const d = dec(Number(v));
+  const pair = PARENT_MAP[d.c] || [d.c, d.c];
+  const c1 = pair[0], c2 = pair[1];
+  const lang = cfg.lang;
+  const n1 = (PAL[c1] && (PAL[c1][lang] || PAL[c1].tr)) || '';
+  const n2 = (PAL[c2] && (PAL[c2][lang] || PAL[c2].tr)) || '';
+  return { c1, c2, text: `${n1} + ${n2}` };
+};
 const errors = [];
 window.addEventListener('error', e => { errors.push(String(e.message)); });
 
@@ -2845,7 +3001,20 @@ function flowerSVG(v) {
   const d = dec(v);
   const known = S && S.discovered.includes(v);
   if (!known) {
-    return `<svg viewBox="0 0 40 54" class="tulip-svg"><circle cx="20" cy="27" r="21" fill="rgba(59,29,44,0.04)"/><path d="M20 10 C14 16 11 24 11 32 C11 38 15 42 20 42 C25 42 29 38 29 32 C29 24 26 16 20 10 Z" fill="#D8D1C7" opacity="0.6"/><path d="M20 42 L20 50" stroke="#B8B0A4" stroke-width="2.2" stroke-linecap="round"/><text x="20" y="31" text-anchor="middle" font-family="'Cinzel Decorative', Georgia, serif" font-weight="700" font-size="14" fill="#8C8275">?</text></svg>`;
+    // Undiscovered hybrid silhouette with Ottoman manuscript ink tone
+    const silCol = 'rgba(74, 46, 59, 0.32)';
+    const stemCol = 'rgba(74, 46, 59, 0.26)';
+    const shape = d.s === 0
+      ? `<circle cx="20" cy="18" r="12" fill="${silCol}"/>`
+      : d.s === 1
+        ? `<ellipse cx="20" cy="18" rx="9" ry="14" fill="${silCol}"/>`
+        : `<path d="M20 4 C15 12 11 20 11 28 C11 34 15 37 20 37 C25 37 29 34 29 28 C29 20 25 12 20 4 Z" fill="${silCol}"/>`;
+    const pat = d.p === 1
+      ? `<path d="M20 10 L20 25" stroke="rgba(244, 195, 75, 0.5)" stroke-width="2.2" stroke-linecap="round"/><circle cx="20" cy="10" r="1.3" fill="rgba(244, 195, 75, 0.6)"/>`
+      : d.p === 2
+        ? `<circle cx="20" cy="18" r="11" fill="none" stroke="rgba(255, 255, 255, 0.55)" stroke-width="1.8" stroke-dasharray="2 1.5"/>`
+        : '';
+    return `<svg viewBox="0 0 40 54" class="tulip-svg tulip-sil" aria-hidden="true">${shape}${pat}<path d="M20 32 L20 50" stroke="${stemCol}" stroke-width="2.6" stroke-linecap="round"/><path d="M20 43 C15 41 12 37 12 33 C16 33 19 37 20 43 Z" fill="${stemCol}"/></svg>`;
   }
   const col = '#' + PAL[d.c].col.toString(16).padStart(6, '0');
   const shape = d.s === 0
@@ -2956,14 +3125,47 @@ function renderBazaar() {
   }).join('') : `<div class="muted">-</div>`;
   $('baz-body').innerHTML = h;
 }
+function updateCodexBanner(v) {
+  const req = breedingReq(v);
+  if (!req) return;
+  const hex1 = '#' + PAL[req.c1].col.toString(16).padStart(6, '0');
+  const hex2 = '#' + PAL[req.c2].col.toString(16).padStart(6, '0');
+  const dot1 = `<span class="hint-dot" style="background:${hex1}"></span>`;
+  const dot2 = `<span class="hint-dot" style="background:${hex2}"></span>`;
+  const targetName = nameOf(v);
+  const title = T('breedHintTitle');
+  const el = $('cat-codex-text');
+  if (el) el.innerHTML = `<b class="codex-highlight">${title}:</b> ${dot1} ${dot2} <b>${req.text}</b> <span class="codex-target">→ ${targetName}</span>`;
+}
+function resetCodexBanner() {
+  const el = $('cat-codex-text');
+  if (el) el.innerHTML = T('breedCodexIntro');
+}
 function renderCat() {
   if (!S) return;
   $('cat-count').textContent = `${S.discovered.length}/90 · ${T('found')}`;
+  resetCodexBanner();
   let h = '';
   for (let v = 0; v < 90; v++) {
     const known = S.discovered.includes(v);
     const d = dec(v);
-    h += `<div class="card ${known ? '' : 'unk'}" data-v="${v}">${flowerSVG(v)}<b>${known ? nameOf(v) : T('unknown')}</b><small>${known ? (NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang] : '???'}</small></div>`;
+    if (known) {
+      h += `<div class="card" data-v="${v}">${flowerSVG(v)}<b>${nameOf(v)}</b><small>${(NAMED[v] ? '★ ' : '') + PAL[d.c][cfg.lang] + ' · ' + SHAPE[d.s][cfg.lang]}</small></div>`;
+    } else {
+      const req = breedingReq(v);
+      const hex1 = '#' + PAL[req.c1].col.toString(16).padStart(6, '0');
+      const hex2 = '#' + PAL[req.c2].col.toString(16).padStart(6, '0');
+      const hintLabel = `${T('breedReq')}: ${req.text}`;
+      h += `<div class="card unk" data-v="${v}" tabindex="0" role="button" aria-label="${T('unknown')} (${hintLabel})" title="${hintLabel}">
+        ${flowerSVG(v)}
+        <b>${T('unknown')}</b>
+        <small class="unk-shape-lbl">${SHAPE[d.s][cfg.lang]}</small>
+        <div class="card-tip">
+          <span class="tip-badge">🧬 ${T('breedReq')}</span>
+          <span class="tip-req"><span class="hint-dot" style="background:${hex1}"></span><span class="hint-plus">+</span><span class="hint-dot" style="background:${hex2}"></span><span class="tip-names">${req.text}</span></span>
+        </div>
+      </div>`;
+    }
   }
   $('cat-body').innerHTML = h;
 }
@@ -3255,6 +3457,33 @@ $('baz-body').addEventListener('click', e => {
   if (k === 'sellall') sellAllFlowers();
   renderBazaar(); renderHUD();
 });
+$('cat-body').addEventListener('click', e => {
+  const card = e.target.closest('.card.unk');
+  if (!card) return;
+  const wasActive = card.classList.contains('active-tip');
+  $('cat-body').querySelectorAll('.card.unk.active-tip').forEach(c => c.classList.remove('active-tip'));
+  if (!wasActive) {
+    card.classList.add('active-tip');
+    updateCodexBanner(Number(card.dataset.v));
+  } else {
+    resetCodexBanner();
+  }
+});
+$('cat-body').addEventListener('pointerover', e => {
+  const card = e.target.closest('.card.unk');
+  if (!card) return;
+  updateCodexBanner(Number(card.dataset.v));
+});
+$('cat-body').addEventListener('pointerout', e => {
+  const card = e.target.closest('.card.unk');
+  if (!card) return;
+  const active = $('cat-body').querySelector('.card.unk.active-tip');
+  if (active) {
+    updateCodexBanner(Number(active.dataset.v));
+  } else {
+    resetCodexBanner();
+  }
+});
 addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   const k = e.key.toLowerCase();
@@ -3388,6 +3617,7 @@ window.lale = {
   assets: 'none (procedural only)',
   get hybridNames() { return HYBRID_ADJECTIVES; },
   nameOf(v) { return nameOf(v); },
+  breedingReq(v) { return breedingReq(v); },
   get reducedMotion() { return REDUCED; }, get seed() { return S ? S.seed : null; },
   renderer
 };
