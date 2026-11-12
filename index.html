@@ -3067,7 +3067,7 @@ function renderCoach() {
 function renderTile() {
   renderCoach();
   const panel = $('tile');
-  if (!S || !sel || !game) {
+  if (!S || !sel || !game || overlay !== null) { // keep tile inspector and selection ring hidden while an overlay is open
     panel.classList.add('hidden');
     ringSel.visible = false;
     $('build').classList.toggle('hidden', !game || overlay !== null);
@@ -3299,7 +3299,7 @@ function show(name) {
   $('hud').classList.toggle('hidden', !game);
   $('b-pause').classList.toggle('on', name === 'pause');
   $('build').classList.toggle('hidden', !game || name !== null || !!sel);
-  if (name === null) renderTile(); else $('tile').classList.add('hidden');
+  renderTile();
   if (name === 'title') renderTitle();
   if (name === 'cat') renderCat();
   if (name === 'bazaar') renderBazaar();
