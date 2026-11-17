@@ -2380,7 +2380,8 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 const isPhone = matchMedia('(pointer:coarse)').matches || innerWidth < 700;
 const cfg = Object.assign({ master: 0.8, music: 0.6, sfx: 0.8, lang: /^tr/i.test(navigator.language || '') ? 'tr' : 'en', quality: isPhone ? 'low' : 'high', mPrev: 0.6, sPrev: 0.8 }, load(KEY_S) || {});
-if (qs.has('lang')) cfg.lang = qs.get('lang') === 'en' ? 'en' : 'tr';
+if (cfg.lang !== 'tr' && cfg.lang !== 'en') cfg.lang = (/^tr/i.test(navigator.language || '') ? 'tr' : 'en'); // stored unknown language -> browser's
+if (qs.get('lang') === 'en' || qs.get('lang') === 'tr') cfg.lang = qs.get('lang');
 if (FLAG.low) cfg.quality = 'low';
 const T = k => (STR[cfg.lang] && STR[cfg.lang][k]) || STR.en[k] || k;
 const Tn = (k, n) => T(k).replace('{n}', n);
