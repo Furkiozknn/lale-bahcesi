@@ -914,6 +914,11 @@ input[type=range] {
 #scr-title {
   background: radial-gradient(circle at 50% 30%, rgba(255, 246, 230, 0.95), rgba(205, 234, 248, 0.75));
 }
+/* Yazı denetimi (2026-11): başlık paneli alttaki 'Claude Game Arena · …' bilgisini örtüyordu; panel onun üstünde biter */
+#scr-title { padding-bottom: 58px; }
+#scr-title .panel { max-height: calc(100vh - 76px); max-height: calc(100dvh - 76px); }
+#scr-title:not(.hidden) ~ .foot { z-index: 21; }
+@media (max-height: 800px) { #scr-title .panel { gap: 10px; padding-top: 20px; padding-bottom: 16px; } }
 
 /* Garden Scroll Panel - Imperial Tezhip Frame */
 .panel {
