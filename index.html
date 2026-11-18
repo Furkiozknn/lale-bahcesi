@@ -2882,6 +2882,18 @@ function openFestival() {
   show('fest');
   if (window.Arena && Arena.complete) Arena.complete({ mount: $('fest-body') });   // arena-kit v1.1: lale-bahcesi/complete + one-tap 👍/👎 (nothing on ?auto)
 }
+// Portals (arena-kit v1.3 Arena.portal): an interstitial may play only at the natural break, when the player leaves the
+// season-end festival screen ("next season") or the end card ("play again", "endless garden", "main menu"), while the
+// garden already waits behind the screen. On the game's own site (no portal SDK) afterBreak() runs the action
+// synchronously, exactly as before. The ?auto bot calls festContinue() directly and is not affected. One tap = one
+// action. No rewarded hook (see the G-050 report): "grow the bulbs faster" would change the festival score and the
+// best record, and a new button would not fit the build bar on phones.
+let breakBusy = false;
+function afterBreak(f) {
+  if (!(window.Arena && Arena.portal && Arena.portal.name !== 'none')) return f(); // own site: synchronous, as before
+  if (breakBusy) return; breakBusy = true;
+  Arena.portal.midgame().catch(() => false).then(() => { breakBusy = false; f(); });
+}
 function festContinue() {
   S.festPending = false;
   if (S.season < 4) {
@@ -3649,7 +3661,7 @@ function renderFest() {
     </div>
     ${f.jury ? renderJury(f.jury) : ''}
     <div class="btns"><button class="primary" id="b-fest-next">${last ? (S.endless ? T('endlessBtn') : T('stars')) : T('nextSeason')}</button></div>`;
-  $('b-fest-next').onclick = () => festContinue();
+  $('b-fest-next').onclick = () => afterBreak(() => { if (overlay === 'fest') festContinue(); });
 }
 function renderJury(j) {
   const hex = c => '#' + c.toString(16).padStart(6, '0');
@@ -3692,9 +3704,9 @@ function renderEnd() {
       <button id="b-end-menu">${T('mainMenu')}</button>
     </div>
     ${window.Arena ? `<div class="btns"><button id="b-end-share">${T('share')}</button><button id="b-end-other" data-href="https://furkiozknn.github.io/${arenaOther()}/">${T('anotherGame')}</button></div>` : ''}`;
-  $('b-end-again').onclick = () => newGame();
-  $('b-end-endless').onclick = () => { S.endless = true; saveGame(); show(null); };
-  $('b-end-menu').onclick = () => toTitle();
+  $('b-end-again').onclick = () => afterBreak(() => newGame());
+  $('b-end-endless').onclick = () => afterBreak(() => { S.endless = true; saveGame(); show(null); });
+  $('b-end-menu').onclick = () => afterBreak(() => toTitle());
   const ot = $('b-end-other'); if (ot) ot.onclick = () => window.open(ot.dataset.href, '_blank', 'noopener');
   const sh = $('b-end-share');
   if (sh) sh.onclick = () => Arena.share({ title: 'Lale Bahçesi · ' + (S.won ? T('winTitle') : T('loseTitle')),
