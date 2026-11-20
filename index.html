@@ -2012,6 +2012,17 @@ h2 {
 #fest-body > .btns { position: sticky; bottom: -24px; align-self: stretch; margin: 0 -24px -24px; padding: 12px 24px 16px; background: linear-gradient(180deg, rgba(255, 249, 240, 0), var(--paper) 35%); }
 @media (max-width: 480px) { .jury { grid-template-columns: 1fr; } }
 
+/* v2.1: the version / More games row must stay on the first phone screen without scrolling */
+@media (max-width: 480px) {
+  #scr-title .panel { gap: 8px; }
+  #scr-title .howto { margin: 2px 0 4px; gap: 6px; }
+  #scr-title .howto li { padding: 8px 10px 8px 40px; }
+  #scr-title .howto li::before { top: 8px; }
+  .metarow button, .metarow a { font-size: 12px; padding: 0 8px; }
+  #scr-title .panel { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 480px) and (max-height: 780px) { #scr-title .logo { width: 56px; height: 56px; } }
+@media (max-height: 700px) { #scr-title .howto li { padding-top: 6px; padding-bottom: 6px; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -3744,7 +3755,7 @@ function renderEnd() {
 }
 const arenaOther = () => { const g = Arena.games.filter(x => x !== 'lale-bahcesi'); return g[(Date.now() / 60000 | 0) % g.length]; };
 function renderTitle() {
-  $('b-news').textContent = VERSION + ' · ' + VERSION_DATE[cfg.lang === 'en' ? 'en' : 'tr'] + ' · ' + T('newsShort') + ' ›';
+  $('b-news').textContent = VERSION + ' · ' + VERSION_DATE[cfg.lang === 'en' ? 'en' : 'tr'] + ' · ' + T('newsShort');
   const best = load(KEY_BEST);
   $('title-best').innerHTML = best ? `<span>🏆 ${T('best')}: <b>${best.score}</b> · ${best.stars}★${best.varieties ? ' · ' + best.varieties + ' ' + T('varieties').toLowerCase() : ''}</span>` : `<span>${T('bestNone')}</span>`;
   const sv = load(KEY_SAVE);
