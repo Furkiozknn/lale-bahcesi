@@ -72,7 +72,7 @@
 - **Global hotkeys:** `P` / `Esc` pause, `M` music, `X` effects, `L` language, `T` game speed, `F` fullscreen, `C` catalogue, `B` bazaar, `Q` / `E` rotate decoration.
 - **Audio control:** The speaker button (top right on every screen) mutes music and effects together and is remembered.
 - **Touch:** Tap bed tiles or HUD icons directly; drag to pan the terrace, pinch to zoom.
-- **Persistence:** Settings are saved in `localStorage` under `arena.lale-bahcesi.settings`; the garden under `arena.lale-bahcesi.save`, and the best festival score under `arena.lale-bahcesi.best`. Turkish is the default language; phones start on the Low tier.
+- **Persistence:** Settings are saved in `localStorage` under `arena.lale-bahcesi.settings`; the garden under `arena.lale-bahcesi.save`, the best festival score under `arena.lale-bahcesi.best`, and the festival ledger under `arena.lale-bahcesi.ledger`. Turkish is the default language; phones start on the Low tier.
 
 <details>
 <summary><b>URL flags for testing</b></summary>
@@ -88,6 +88,10 @@
 `window.lale` and `window.laleSim(seconds)` expose the state and fast-forward controls for automated tests.
 
 </details>
+
+## Version
+
+Current version: **v2.1 (November 2026)**, shown on the main menu next to the What's new window. See [CHANGELOG.md](CHANGELOG.md) (in Turkish) for the list of changes. New in v2.1: a local festival ledger (best 5 finished games, key `arena.lale-bahcesi.ledger`), a version label with a What's new window, and a "More games" link.
 
 ## Screenshots
 
