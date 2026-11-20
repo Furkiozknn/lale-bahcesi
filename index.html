@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Lale Bahçesi · Claude Game Arena</title>
 <meta name="arena-game" content="lale-bahcesi">
-<meta name="description" content="A cosy 3D garden builder in the Ottoman Tulip Era: plant bulbs on a sunlit sandstone diorama, breed new tulip varieties and win the Sultan's festival. Plays in the browser.">
+<meta name="description" content="Osmanlı Lale Devri’nde sakin bir 3D bahçe kurma oyunu: soğan dikin, yeni lale çeşitleri üretin, Sultan’ın şenliğini kazanın. Tarayıcıda oynanır. / A cosy 3D tulip garden builder in the browser.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Lale Bahçesi · Tulip Garden">
-<meta property="og:description" content="A cosy 3D garden builder in the Ottoman Tulip Era: plant bulbs on a sunlit sandstone diorama, breed new tulip varieties and win the Sultan's festival. Plays in the browser.">
+<meta property="og:description" content="Osmanlı Lale Devri’nde sakin bir 3D bahçe kurma oyunu: soğan dikin, yeni lale çeşitleri üretin, Sultan’ın şenliğini kazanın. / A cosy 3D tulip garden builder.">
 <meta property="og:url" content="https://furkiozknn.github.io/lale-bahcesi/">
 <meta property="og:image" content="https://furkiozknn.github.io/lale-bahcesi/docs/card.jpg">
 <meta property="og:image:width" content="960">
@@ -1213,6 +1213,13 @@ h2 {
 }
 .foot a { pointer-events: auto; color: var(--accent); text-decoration: none; font-weight: 600; }
 .foot a:hover { text-decoration: underline; }
+.metarow { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 8px; margin: 0; }
+.metarow button, .metarow a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; font: inherit; font-size: 13px; background: transparent; border: 1px solid var(--line); border-radius: 10px; color: var(--accent); text-decoration: none; cursor: pointer; }
+.metarow button:hover, .metarow a:hover { background: var(--glass); }
+.ledger { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; text-align: left; }
+.ledger li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; }
+.news-list { text-align: left; margin: 0 0 10px; padding-left: 20px; line-height: 1.5; font-size: 14px; }
+#scr-news .panel { max-height: calc(100vh - 76px); max-height: calc(100dvh - 76px); overflow-y: auto; }
 
 /* When game HUD is active, hide the arena footer banner so it never overlaps the build dock */
 #hud:not(.hidden) ~ .foot { opacity: 0; pointer-events: none; }
@@ -2109,6 +2116,7 @@ h2 {
       <button id="b-set-title" data-t="settings"></button>
     </div>
     <p id="title-best" class="muted"></p>
+    <div class="metarow"><button id="b-news"></button><a id="b-hub" href="https://furkiozknn.github.io/" data-t="allGames"></a></div>
   </div>
 </section>
 
@@ -2119,6 +2127,17 @@ h2 {
     <button id="b-restart" data-t="restart"></button>
     <button id="b-set-pause" data-t="settings"></button>
     <button id="b-menu" data-t="mainMenu"></button>
+  </div>
+</section>
+
+<section id="scr-news" class="screen hidden">
+  <div class="panel center" style="max-width:560px">
+    <h2 data-t="newsTitle"></h2>
+    <h3 data-t="ledgerTitle" style="margin:4px 0"></h3>
+    <ul class="ledger" id="ledger-list"></ul>
+    <h3 id="news-ver" style="margin:4px 0"></h3>
+    <ul class="news-list" id="news-list"></ul>
+    <div class="btns"><button id="b-news-close" data-t="back"></button></div>
   </div>
 </section>
 
@@ -2164,7 +2183,7 @@ h2 {
   <div class="panel center" style="max-width:560px" id="end-body"></div>
 </section>
 
-<footer class="foot"><span>Claude Game Arena · built by Claude Haiku 5.5 · <a href="https://github.com/Furkiozknn">furkiozknn.github.io</a></span></footer>
+<footer class="foot"><span>Claude Game Arena · built by Claude Haiku 5.5 · <a href="https://furkiozknn.github.io/">furkiozknn.github.io</a></span></footer>
 
 <script type="module">
 import * as THREE from 'three';
@@ -2294,7 +2313,9 @@ const STR = {
     coachCut: 'Bir lale açtı: üstüne tıklayıp Kes’e basın.',
     a11y: 'Erişilebilirlik', share: 'Paylaş', anotherGame: 'Başka oyun', daily: 'Günün Meydan Okuması',
     dailyLine: 'seri {s} gün · en iyi {b}', dailyDone: 'bugün tamam', dailyWelcome: 'Günün bahçesi: toprak, ilk soğanlar ve pazar şansı herkese aynı.',
-    shareLine: '{n} puan · {st}★ · {v}/20 çeşit', awWin: 'Lale Bahçesi: Sultan’ın şenliği', awStars: 'Lale Bahçesi: üç yıldızlı şenlik', awAll: 'Lale Bahçesi: 20 çeşit'
+    shareLine: '{n} puan · {st}★ · {v}/20 çeşit', awWin: 'Lale Bahçesi: Sultan’ın şenliği', awStars: 'Lale Bahçesi: üç yıldızlı şenlik', awAll: 'Lale Bahçesi: 20 çeşit',
+    allGames: 'Diğer oyunlar', newsTitle: 'Yenilikler ve defter', newsShort: 'Yenilikler', ledgerTitle: 'Şenlik defteri (en iyi 5)', ledgerNone: 'Henüz kayıt yok: bir oyunu bitirince buraya yazılır.', ledgerWin: 'Sultan’ın şenliği', ledgerDaily: 'günün bahçesi',
+    news: ['Şenlik defteri: bitirdiğiniz oyunların en iyi 5 skoru bu cihazda saklanır.', 'Ana menüde sürüm etiketi ve Yenilikler penceresi.', 'Ana menüye “Diğer oyunlar” bağlantısı eklendi; alt satırdaki bağlantı artık oyun merkezine gidiyor.', 'Düzeltme: yeni bir şenlik rekoru, kayıtlı en yüksek çeşit sayısını siliyordu.']
   },
   en: {
     title: 'Lale Bahçesi', sub: 'Build a palace tulip garden in the Ottoman Tulip Era.',
@@ -2365,7 +2386,9 @@ const STR = {
     coachCut: 'A tulip is in bloom: click it and press Cut.',
     a11y: 'Accessibility', share: 'Share', anotherGame: 'Another game', daily: 'Daily challenge',
     dailyLine: 'streak {s} · best {b}', dailyDone: 'done today', dailyWelcome: 'Today’s garden: soil, first bulbs and market luck are the same for everyone.',
-    shareLine: '{n} points · {st}★ · {v}/20 varieties', awWin: 'Lale Bahçesi: the Sultan’s festival', awStars: 'Lale Bahçesi: a three-star festival', awAll: 'Lale Bahçesi: 20 varieties'
+    shareLine: '{n} points · {st}★ · {v}/20 varieties', awWin: 'Lale Bahçesi: the Sultan’s festival', awStars: 'Lale Bahçesi: a three-star festival', awAll: 'Lale Bahçesi: 20 varieties',
+    allGames: 'More games', newsTitle: 'What’s new and ledger', newsShort: 'What’s new', ledgerTitle: 'Festival ledger (best 5)', ledgerNone: 'No entries yet: finishing a game writes one here.', ledgerWin: 'Sultan’s festival', ledgerDaily: 'daily garden',
+    news: ['Festival ledger: the best 5 scores of the games you finish are kept on this device.', 'A version label and a What’s new window on the main menu.', 'A “More games” link on the main menu; the footer link now goes to the games hub.', 'Fix: a new festival record wiped the saved best variety count.']
   }
 };
 
@@ -2373,7 +2396,8 @@ const STR = {
 const $ = id => document.getElementById(id);
 const qs = new URLSearchParams(location.search);
 const FLAG = { auto: qs.has('auto'), debug: qs.has('debug'), low: qs.has('low') };
-const KEY_S = 'arena.lale-bahcesi.settings', KEY_SAVE = 'arena.lale-bahcesi.save', KEY_BEST = 'arena.lale-bahcesi.best';
+const KEY_S = 'arena.lale-bahcesi.settings', KEY_SAVE = 'arena.lale-bahcesi.save', KEY_BEST = 'arena.lale-bahcesi.best', KEY_LEDGER = 'arena.lale-bahcesi.ledger';
+const VERSION = 'v2.1', VERSION_DATE = { tr: 'Kasım 2026', en: 'November 2026' };
 const load = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
 const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } };
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -2862,7 +2886,7 @@ function openFestival() {
   const stars = starsFor(b.score);
   const best = load(KEY_BEST) || { score: 0, stars: 0 };
   const record = b.score > best.score;
-  if (record) store(KEY_BEST, { score: b.score, stars });
+  if (record) store(KEY_BEST, Object.assign({}, best, { score: b.score, stars }));
   S.lastFest = { season: S.season, score: b.score, stars, parts: b.parts, varieties: S.discovered.length, blooms: S.stats.blooms, akce: S.akce, record };
   if (stars === 3 && window.Arena && !FLAG.auto) Arena.award('lale-3stars', T('awStars'));
   // the jury's verdict feeds the economy: prize akçe, reputation (cut flowers sell higher per tier) and a gift bulb
@@ -2916,6 +2940,11 @@ function endGame() {
   }
   const best = load(KEY_BEST) || { score: 0, stars: 0 };
   store(KEY_BEST, { score: Math.max(best.score, f.score), stars: Math.max(best.stars || 0, f.stars), varieties: Math.max(best.varieties || 0, S.discovered.length) });
+  if (!FLAG.auto) { // local festival ledger: the 5 best finished games on this device
+    const led = load(KEY_LEDGER); const list = Array.isArray(led) ? led : [];
+    list.push({ score: f.score, stars: f.stars, varieties: S.discovered.length, won: !!S.won, daily: S.daily || 0, at: new Date().toISOString().slice(0, 10) });
+    list.sort((a, b2) => b2.score - a.score); store(KEY_LEDGER, list.slice(0, 5));
+  }
   saveGame();
   renderEnd(); show('end');
 }
@@ -3715,6 +3744,7 @@ function renderEnd() {
 }
 const arenaOther = () => { const g = Arena.games.filter(x => x !== 'lale-bahcesi'); return g[(Date.now() / 60000 | 0) % g.length]; };
 function renderTitle() {
+  $('b-news').textContent = VERSION + ' · ' + VERSION_DATE[cfg.lang === 'en' ? 'en' : 'tr'] + ' · ' + T('newsShort') + ' ›';
   const best = load(KEY_BEST);
   $('title-best').innerHTML = best ? `<span>🏆 ${T('best')}: <b>${best.score}</b> · ${best.stars}★${best.varieties ? ' · ' + best.varieties + ' ' + T('varieties').toLowerCase() : ''}</span>` : `<span>${T('bestNone')}</span>`;
   const sv = load(KEY_SAVE);
@@ -3722,6 +3752,13 @@ function renderTitle() {
   $('b-cont').classList.toggle('hidden', !sv || (sv.ended && !sv.endless));
   const db = $('b-daily');
   if (window.Arena) { const d = Arena.daily(); db.classList.remove('hidden'); db.textContent = `${T('daily')} · ${d.done ? T('dailyDone') + ' · ' : ''}${T('dailyLine').replace('{s}', d.streak).replace('{b}', d.best)}`; }
+}
+function renderNews() {
+  const L = cfg.lang === 'en' ? 'en' : 'tr';
+  const led = load(KEY_LEDGER), list = Array.isArray(led) ? led : [];
+  $('ledger-list').innerHTML = list.length ? list.map((e, i) => `<li><span>${i + 1}. <b>${e.score}</b> · ${e.stars}★ · ${e.varieties}/20${e.won ? ' · ' + T('ledgerWin') : ''}${e.daily ? ' · ' + T('ledgerDaily') : ''}</span><span class="muted">${e.at || ''}</span></li>`).join('') : `<li class="muted">${T('ledgerNone')}</li>`;
+  $('news-ver').textContent = VERSION + ' · ' + VERSION_DATE[L];
+  $('news-list').innerHTML = STR[L].news.map(t => `<li>${t}</li>`).join('');
 }
 function syncSettings() {
   $('s-master').value = cfg.master; $('s-music').value = cfg.music; $('s-sfx').value = cfg.sfx;
@@ -3741,6 +3778,7 @@ function renderAll() {
   if (overlay === 'fest' && S && S.lastFest) renderFest();
   if (overlay === 'end' && S && S.lastFest) renderEnd();
   if (overlay === 'title') renderTitle();
+  if (overlay === 'news') renderNews();
   if (overlay === 'settings') syncSettings();
 }
 function toast(msg, kind = 'info') {
@@ -3759,7 +3797,7 @@ function toast(msg, kind = 'info') {
   while (box.children.length > 3) box.firstChild.remove();
 }
 let speed = 1;
-const SCREENS = ['title', 'settings', 'pause', 'cat', 'bazaar', 'fest', 'end'];
+const SCREENS = ['title', 'settings', 'pause', 'cat', 'bazaar', 'fest', 'end', 'news'];
 function show(name) {
   overlay = name;
   if (name !== null) { brushQueue = []; updateBrushVisuals(); }
@@ -3769,6 +3807,7 @@ function show(name) {
   $('build').classList.toggle('hidden', !game || name !== null || !!sel);
   renderTile();
   if (name === 'title') renderTitle();
+  if (name === 'news') renderNews();
   if (name === 'cat') renderCat();
   if (name === 'bazaar') renderBazaar();
   if (name === 'settings') syncSettings();
@@ -3800,6 +3839,7 @@ function togglePause() {
   else if (overlay === 'pause') show(null);
 }
 function back() {
+  if (overlay === 'news') { show('title'); return; }
   if (overlay === 'settings') { show(prevOverlay); return; }
   if (overlay === 'cat' || overlay === 'bazaar') { show(null); return; }
   if (overlay === 'pause') { show(null); return; }
@@ -3879,6 +3919,8 @@ $('s-a11y').onclick = () => { if (window.Arena) Arena.openSettings(); };
 $('b-set-title').onclick = () => { prevOverlay = 'title'; show('settings'); };
 $('b-set-pause').onclick = () => { prevOverlay = 'pause'; show('settings'); };
 $('b-back').onclick = () => back();
+$('b-news').onclick = () => show('news');
+$('b-news-close').onclick = () => back();
 $('b-resume').onclick = () => show(null);
 $('b-restart').onclick = () => newGame(S && S.daily && window.Arena && Arena.daily().day === S.daily ? Arena.daily() : null); // a daily restarts as the same daily
 $('b-menu').onclick = () => toTitle();
@@ -3955,7 +3997,7 @@ $('cat-body').addEventListener('pointerout', e => {
 addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   const k = e.key.toLowerCase();
-  if (k === 'p' || k === 'escape') { if (overlay === 'settings' || overlay === 'cat' || overlay === 'bazaar' || overlay === 'pause') back(); else if (overlay === null) togglePause(); e.preventDefault(); }
+  if (k === 'p' || k === 'escape') { if (overlay === 'settings' || overlay === 'cat' || overlay === 'bazaar' || overlay === 'pause' || overlay === 'news') back(); else if (overlay === null) togglePause(); e.preventDefault(); }
   else if (k === 'm') toggleMusic();
   else if (k === 'x') toggleSfx();
   else if (k === 'l') setLang(cfg.lang === 'tr' ? 'en' : 'tr');
