@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://furkiozknn.github.io/lale-bahcesi/">
-    <img src="docs/card.jpg" width="100%" alt="Lale Bahçesi: a cosy 3D tulip garden builder in the Ottoman Tulip Era. Click to play in your browser.">
+    <img src="docs/card-3d.jpg" width="100%" alt="Lale Bahçesi: a cosy 3D tulip garden builder in the Ottoman Tulip Era. Click to play in your browser.">
   </a>
 </p>
 
@@ -29,13 +29,29 @@
 
 ## Features
 
+<p align="center">
+  <img src="docs/features.jpg" width="100%" alt="Lale Bahçesi feature list on stepping-stone plaques beside the gardener and the onion mascot: a growing terrace, tulip breeding, a living bazaar, seasonal festivals, and one file at 60 fps.">
+</p>
+
+<details>
+<summary><b>Feature details</b></summary>
+
 - **Terrace garden expansion:** Build paths, beds, a turtle pool, cypress and plane trees, lanterns and benches; starting with 4 beds, the terrace grows every season from 10x10 to 16x16 tiles.
 - **Tulip breeding & genetics:** Start with 6 bulbs and cross-pollinate blooming pairs on neighbouring tiles to discover hybrid seeds mixing 3 petal shapes (round, almond, needle-petalled lale-i rumi) and 3 patterns (plain, flamed, edged).
 - **Dynamic bazaar & tulip mania:** Trade bulbs and cuts with 50 starting akçe; navigate shifting market prices and sudden tulip manias while managing aphids and seasonal frost alerts.
 - **Seasonal festivals & Sultan's favour:** Each season spans 30 days and culminates in a royal festival scored on variety, colour harmony, fountain symmetry and decoration; win with 3 stars and 20 varieties.
 - **Ultra-lean web performance:** A single `index.html` running Three.js r170 delivering 60 fps at 42–61 draw calls and 4.3k–4.9k triangles on Intel UHD 620 (budget ~150 calls), tested by an automated bot across all seasons with 0 JS errors.
 
+</details>
+
 ## How to play
+
+<p align="center">
+  <img src="docs/how-to-play.jpg" width="100%" alt="How to play Lale Bahçesi: plant and water, cut and harvest, tend and protect, with the main keyboard controls, beside the gardener and the onion mascot at dusk.">
+</p>
+
+<details>
+<summary><b>Goal and steps</b></summary>
 
 > [!TIP]
 > **Goal:** Win the final festival with three stars and at least 20 tulip varieties. Endless mode continues afterwards.
@@ -43,6 +59,8 @@
 1. **Plant and water:** You start with 6 bulbs and 50 akçe. Click a bed tile to select it, plant a bulb from the list, water it (from the tile panel, or let the fountain's range do it) and wait for the bud.
 2. **Cut and harvest:** Cut blooming tulips with **Cut** to sell blooms, and lift bulbs afterwards with **Lift bulb** to expand your stock or breed hybrids.
 3. **Tend and protect:** Clean aphids from infected tulips before they spread, and heed frost warnings the day before cold snaps to protect young bulbs.
+
+</details>
 
 <details>
 <summary><b>Moves and rules</b></summary>
