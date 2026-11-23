@@ -3445,13 +3445,22 @@ function zeminKur(tx) {
   const yol = tx[2].clone(); yol.repeat.set(0.3, 0.3); yol.needsUpdate = true;
   M.plinth.map = yol; M.plinth.color.setHex(0xf0dcc0); M.plinth.needsUpdate = true;
 }
-{
+// three.js gives every new texture, material, geometry and object a UUID drawn from Math.random. The game's garden,
+// sim dice and bot also draw from Math.random (the gate seeds it), so the style layer builds its objects with its own
+// private stream: loading the sprites must not shift the garden by a single draw.
+let ST_RND = 0x5eed1a1e;
+function sakin(fn) {
+  const r = Math.random;
+  Math.random = () => { ST_RND = (ST_RND + 0x6D2B79F5) >>> 0; let t = ST_RND; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  try { return fn(); } finally { Math.random = r; }
+}
+sakin(() => {
   const load = (p, srgb = true) => new Promise(res => new THREE.TextureLoader().load('assets/3d/' + p, t => {
     if (srgb) t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 4; res(t);
   }, undefined, () => res(null)));
   Promise.all(['lale.webp', 'lale-m.webp', 'chibi.webp', 'juri.webp', 'zemin-cimen.webp', 'zemin-toprak.webp', 'zemin-yol.webp', 'zemin-mermer.webp']
-    .map((p, i) => load(p, i !== 1))).then(tx => {
+    .map((p, i) => load(p, i !== 1))).then(tx => sakin(() => {
     if (tx.some(t => !t)) return; // a missing file keeps the old meshes
     const zem = tx.slice(4);
     for (const t of zem) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
@@ -3469,10 +3478,9 @@ function zeminKur(tx) {
     ST.sh.frustumCulled = false; ST.sh.count = 0; scene.add(ST.sh);
     for (const m of tulipMeshes) m.visible = false;
     ST.ready = true;
-    dirty = true; // rebuild decor and terrace as sprites
-    if (S) buildTerrace();
-  });
-}
+    if (S) { rebuildDecor(); buildTerrace(); } // decor and kiosk as sprites (no extra world rebuild)
+  }));
+});
 
 /* ---------- world rebuild (only when dirty) ---------- */
 function rebuildWorld() {
