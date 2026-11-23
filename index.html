@@ -2030,10 +2030,70 @@ h2 {
   }
   .juror { animation: none !important; }
 }
+
+/* =================================================================================================
+   stil-3d (24.11.2026): the song video's soft 3D chibi world. The garden floats over the video's Bosphorus terrace
+   plate (assets/3d/gok.webp); figures from assets/3d/; softer, rounder cards.
+   ================================================================================================= */
+#gok3d { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: #f6d9c4 url("assets/3d/gok.webp") center 72% / cover no-repeat; filter: saturate(1.15); }
+#gok3d::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255, 236, 214, 0) 55%, rgba(255, 226, 200, 0.2)); }
+#gece3d { position: absolute; inset: 0; background: #1d2b4f; opacity: 0; z-index: 1; }
+#gl { z-index: 1; }
+.panel { border-radius: 22px; box-shadow: inset 0 0 0 4px var(--paper), inset 0 0 0 5.5px var(--line-gold), inset 0 -10px 30px rgba(244, 195, 75, 0.12), 0 18px 44px rgba(91, 40, 20, 0.28), 0 4px 10px rgba(91, 40, 20, 0.14); }
+.glass { border-radius: 18px; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7), 0 10px 26px rgba(91, 40, 20, 0.2), 0 2px 6px rgba(91, 40, 20, 0.12); }
+button { border-radius: 14px; box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.9), inset 0 -3px 0 rgba(120, 60, 30, 0.1), 0 3px 0 rgba(91, 40, 20, 0.14), 0 6px 12px rgba(91, 40, 20, 0.1); }
+button.primary { box-shadow: inset 0 2px 0 rgba(255, 210, 225, 0.45), inset 0 -3px 0 rgba(90, 10, 40, 0.3), 0 3px 0 #700F36, 0 8px 16px var(--accent-glow); }
+#scr-title { background: radial-gradient(circle at 50% 30%, rgba(255, 246, 230, 0.55), rgba(255, 226, 205, 0.35)), url("assets/3d/gok.webp") center 72% / cover no-repeat, #f6d9c4; }
+#scr-title .logo3d { display: flex; justify-content: center; align-items: flex-end; height: 132px; margin: -8px auto -4px; gap: 0; }
+#scr-title .logo3d img { height: 100%; width: auto; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(91, 40, 20, 0.3)); }
+#scr-title .logo3d img.sogan { height: 82%; margin-left: -6px; }
+.fig3 { flex: none; object-fit: contain; filter: drop-shadow(0 5px 7px rgba(91, 40, 20, 0.3)); }
+.head3 { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.head3 h2 { margin: 0; }
+.head3 .fig3 { height: 64px; width: auto; }
+#end-body .head3 .fig3 { height: 96px; }
+.juror-badge.j3 { width: 42px; height: 42px; background: #FFF6E8 !important; overflow: hidden; align-items: flex-start; }
+.juror-badge.j3 img { width: 100%; height: auto; margin-top: 1px; }
+.t3l { position: relative; display: inline-block; width: 56px; height: 64px; flex: none; }
+.t3l > i { position: absolute; inset: 0; background: url("assets/3d/ui-lale.webp") 0 0 / 300% 100% no-repeat; }
+.t3l > i.c, .t3l > i.k, .t3l > i.a { background: var(--c); -webkit-mask: url("assets/3d/ui-lale-m.webp") 0 0 / 300% 300% no-repeat; mask: url("assets/3d/ui-lale-m.webp") 0 0 / 300% 300% no-repeat; mix-blend-mode: multiply; }
+.t3l > i.k { background: #FFF2D6; mix-blend-mode: normal; opacity: 0.9; }
+.t3l > i.a { background: #F4B63B; mix-blend-mode: normal; opacity: 0.85; }
+.t3l.s1 > i { background-position-x: 50%; } .t3l.s2 > i { background-position-x: 100%; }
+.t3l.s0 > i.c, .t3l.s0 > i.k, .t3l.s0 > i.a { -webkit-mask-position-x: 0; mask-position-x: 0; }
+.t3l.s1 > i.c, .t3l.s1 > i.k, .t3l.s1 > i.a { -webkit-mask-position-x: 50%; mask-position-x: 50%; }
+.t3l.s2 > i.c, .t3l.s2 > i.k, .t3l.s2 > i.a { -webkit-mask-position-x: 100%; mask-position-x: 100%; }
+.t3l > i.c { -webkit-mask-position-y: 0; mask-position-y: 0; }
+.t3l > i.k { -webkit-mask-position-y: 50%; mask-position-y: 50%; }
+.t3l > i.a { -webkit-mask-position-y: 100%; mask-position-y: 100%; }
+.t3l.sil { filter: brightness(0) opacity(0.26); }
+.t3l { filter: drop-shadow(0 3px 3px rgba(91, 40, 20, 0.22)); }
+.item .ico3 { width: 34px; height: 34px; object-fit: contain; flex: none; filter: drop-shadow(0 2px 3px rgba(91, 40, 20, 0.25)); }
+.item-info, .featured-pack > div { display: flex; align-items: center; gap: 8px; }
+#coach { display: flex; align-items: center; gap: 8px; }
+#coach::before { content: ''; flex: none; width: 34px; height: 38px; margin: -8px 0; background: url("assets/3d/ui-sogan.webp") center / contain no-repeat; }
+#build button[data-tool="cypress"]::before { background-image: url("assets/3d/ui-servi.webp"); width: 22px; height: 24px; }
+#build button[data-tool="plane"]::before { background-image: url("assets/3d/ui-cinar.webp"); width: 24px; height: 24px; }
+#build button[data-tool="lantern"]::before { background-image: url("assets/3d/ui-fener.webp"); width: 22px; height: 24px; }
+#build button[data-tool="bench"]::before { background-image: url("assets/3d/ui-bank.webp"); width: 26px; height: 22px; background-position: center; }
+#build button.on[data-tool="cypress"]::before, #build button.on[data-tool="plane"]::before, #build button.on[data-tool="lantern"]::before, #build button.on[data-tool="bench"]::before { filter: drop-shadow(0 0 2px #fff); }
+@media (max-width: 480px) {
+  #scr-title .logo3d { height: 104px; }
+  .head3 .fig3 { height: 52px; }
+  #end-body .head3 .fig3 { height: 80px; }
+}
+@media (max-height: 800px) and (min-width: 481px) {
+  #scr-title .logo3d { height: 92px; }
+  .head3 .fig3 { height: 46px; }
+  #end-body .head3 .fig3 { height: 64px; }
+}
+@media (max-width: 480px) and (max-height: 780px) { #scr-title .logo3d { height: 64px; } }
+@media (max-height: 560px) { #scr-title .logo3d { height: 52px; } .head3 .fig3, #end-body .head3 .fig3 { height: 40px; } }
 </style>
 <script data-goatcounter="https://furkiozknn.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
+<div id="gok3d" aria-hidden="true"><div id="gece3d"></div></div>
 <canvas id="gl" aria-label="Lale Bahçesi"></canvas>
 
 <header id="hud" class="glass hidden">
@@ -2100,21 +2160,7 @@ h2 {
 
 <section id="scr-title" class="screen hidden">
   <div class="panel center">
-    <svg class="logo" viewBox="0 0 96 96" aria-hidden="true">
-      <circle cx="48" cy="48" r="46" fill="#FFFBF5" stroke="#B45309" stroke-width="1.8"/>
-      <circle cx="48" cy="48" r="42" fill="none" stroke="#F4C34B" stroke-width="1.2" stroke-dasharray="3 1.5"/>
-      <circle cx="48" cy="48" r="38" fill="#FDFBF7" stroke="#BE185D" stroke-width="0.8" stroke-opacity="0.5"/>
-      <circle cx="48" cy="7" r="1.8" fill="#F4C34B"/>
-      <circle cx="48" cy="89" r="1.8" fill="#F4C34B"/>
-      <circle cx="7" cy="48" r="1.8" fill="#F4C34B"/>
-      <circle cx="89" cy="48" r="1.8" fill="#F4C34B"/>
-      <path d="M48 14 C33 24 26 40 26 56 C26 67 36 74 48 74 C60 74 70 67 70 56 C70 40 63 24 48 14 Z" fill="#BE185D"/>
-      <path d="M48 14 C41 28 38 42 41 57 C43 66 45 71 48 74 C51 71 53 66 55 57 C58 42 55 28 48 14 Z" fill="#F4C34B"/>
-      <path d="M48 20 C42 32 40 45 42 58 C44 65 46 69 48 72 C50 69 52 65 54 58 C56 45 54 32 48 20 Z" fill="#E11D48"/>
-      <path d="M48 74 L48 84" stroke="#2D6A4F" stroke-width="3" stroke-linecap="round"/>
-      <path d="M48 79 C40 76 34 70 34 64 C41 64 46 70 48 79 Z" fill="#52B788"/>
-      <path d="M48 79 C56 76 62 70 62 64 C55 64 50 70 48 79 Z" fill="#52B788"/>
-    </svg>
+    <div class="logo3d" aria-hidden="true"><img src="assets/3d/ui-bahcivan.webp" alt="" draggable="false"><img class="sogan" src="assets/3d/ui-sogan.webp" alt="" draggable="false"></div>
     <h1 data-t="title">Lale Bahçesi</h1>
     <p class="muted" data-t="sub"></p>
     <ul class="howto">
@@ -2964,16 +3010,18 @@ function endGame() {
 function saveGame() { if (S) store(KEY_SAVE, S); }
 
 /* ---------- three.js scene ---------- */
-const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, powerPreference: 'high-performance' });
+// stil-3d: the canvas is transparent; the video's Bosphorus terrace plate (#gok3d) shows behind the floating garden
+const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, alpha: true, powerPreference: 'high-performance' });
+renderer.setClearColor(0x000000, 0);
 renderer.setPixelRatio(Math.min(devicePixelRatio, cfg.quality === 'low' ? 1 : 1.5));
 if (window.Arena) Arena.perf.attach({ setPixelRatio: r => { renderer.setPixelRatio(r); if (FX) FX.setSize(innerWidth, innerHeight); } }, { max: Math.min(devicePixelRatio || 1, cfg.quality === 'low' ? 1 : 1.5) }); // arena-kit: dynamic pixel ratio, same cap
 const LOW = cfg.quality === 'low';
 renderer.shadowMap.enabled = !LOW;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 const scene = new THREE.Scene();
-const SKY_DAY = new THREE.Color(0xcdeaf8), SKY_DUSK = new THREE.Color(0xf6b8a2), SKY_NIGHT = new THREE.Color(0x1d2b4f);
-scene.background = SKY_DAY.clone();
-scene.fog = new THREE.Fog(SKY_DAY.clone(), 30, 80);
+const FOG_DAY = new THREE.Color(0xf3dccb), SKY_DAY = new THREE.Color(0xcdeaf8), SKY_DUSK = new THREE.Color(0xf6b8a2), SKY_NIGHT = new THREE.Color(0x1d2b4f);
+scene.background = null;
+scene.fog = new THREE.Fog(new THREE.Color(0xf3dccb), 30, 80);
 const cam = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
 const hemi = new THREE.HemisphereLight(0xfff8ee, 0x8fc77a, 1.6); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffe6bd, 2.1);
@@ -2985,7 +3033,7 @@ sun.shadow.bias = -0.0008; sun.shadow.normalBias = 0.02;
 scene.add(sun, sun.target);
 // arena-core v2 render preset: neutral tone mapping, CSS vignette + grain, grade. No composer (on Intel UHD it cost ~15% fps)
 // and no room light (every material here is Lambert; the import map also has no three/addons/ entry).
-const FX = window.ArenaCore ? ArenaCore.render.setup(renderer, scene, cam, { tonlama: 'neutral', pozlama: 1.1, ortam: 0, bloom: false, vinyet: 0.24, grain: 0.03, renk: { doygunluk: 1.12, kontrast: 1.06 } }) : null;
+const FX = window.ArenaCore ? ArenaCore.render.setup(renderer, scene, cam, { tonlama: 'neutral', pozlama: 1.1, ortam: 0, bloom: false, saydam: true, vinyet: 0.24, grain: 0.03, renk: { doygunluk: 1.12, kontrast: 1.06 } }) : null;
 
 const M = {
   bark: new THREE.MeshLambertMaterial({ color: 0x7a5230 }), cypress: new THREE.MeshLambertMaterial({ color: 0x2f5d3a }),
@@ -3002,7 +3050,7 @@ const M = {
   cream: new THREE.MeshLambertMaterial({ color: 0xfff7e6 }), tulipCup: new THREE.MeshLambertMaterial()
 };
 const sea = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), M.sea);
-sea.rotation.x = -Math.PI / 2; sea.position.y = -1.1; scene.add(sea);
+sea.rotation.x = -Math.PI / 2; sea.position.y = -1.1; sea.visible = false; scene.add(sea); // stil-3d: the plate's own sea shows instead
 
 // ground tiles: one instanced mesh, colour per tile, with vertex-colour AO and organic noise
 const tileGeo = new THREE.BoxGeometry(0.98, 0.12, 0.98, LOW ? 1 : 2, 1, LOW ? 1 : 2);
@@ -3021,7 +3069,7 @@ tileMesh.receiveShadow = true; scene.add(tileMesh);
 const curbMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.96, 0.045, 0.075), new THREE.MeshLambertMaterial(), N * N * 4);
 const decalMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.14, 0.18, 0.022, LOW ? 5 : 7), new THREE.MeshLambertMaterial(), N * N * (LOW ? 1 : 3));
 curbMesh.receiveShadow = decalMesh.receiveShadow = true; scene.add(curbMesh, decalMesh);
-const TC = { grass: new THREE.Color(0x6fb35f), grassPatch: new THREE.Color(0x589849), soilPatch: new THREE.Color(0x7c6846), path: new THREE.Color(0xf2f0ea), pathStone: new THREE.Color(0xdccbb4), curb: new THREE.Color(0xe3dac9), bed: new THREE.Color(0x8a5a3c), bedWet: new THREE.Color(0x5a3620), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xedeae2) };
+const TC = { grass: new THREE.Color(0x6fb35f), grassPatch: new THREE.Color(0x589849), soilPatch: new THREE.Color(0x7c6846), path: new THREE.Color(0xf4e2c8), pathStone: new THREE.Color(0xe6cba5), curb: new THREE.Color(0xe3dac9), bed: new THREE.Color(0x8a5a3c), bedWet: new THREE.Color(0x5a3620), pool: new THREE.Color(0x4fc0dc), marble: new THREE.Color(0xedeae2) };
 // lawn tint per season: spring fresh, summer deep, autumn gold-olive, winter frosted sage
 const SEASON_GRASS = [0x6fb35f, 0x4f9e4a, 0x9aa64a, 0x8fb8a0].map(c => new THREE.Color(c));
 const dm = new THREE.Object3D();
@@ -3060,6 +3108,7 @@ function buildTerrace() {
   const roof = new THREE.Mesh(new THREE.ConeGeometry(1.35, 0.9, 4), M.roof); roof.rotation.y = Math.PI / 4; roof.position.y = 1.5; kiosk.add(roof);
   const door = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.05), M.bench); door.position.set(0, 0.36, 0.87); kiosk.add(door);
   kiosk.position.set(-4, 0.06, -4);
+  kiosk.visible = !ST.ready; // stil-3d: the video-style kiosk sprite stands here instead
   terraceGroup.add(kiosk);
 }
 // fountain (fixed at the centre, between tiles 7 and 8)
@@ -3101,9 +3150,12 @@ function makeDecor(kind) {
 const decorGroup = new THREE.Group(); scene.add(decorGroup);
 function rebuildDecor() {
   while (decorGroup.children.length) decorGroup.remove(decorGroup.children[0]);
+  ST.decor.length = 0;
   each((tl, x, y) => {
     const kind = tl.d || (tl.t === T_POOL ? 'pool' : '');
     if (!kind) return;
+    // stil-3d: trees, lanterns and benches are the video's 3D props (sprites); the lotus pool stays a mesh
+    if (ST.ready && kind !== 'pool') { ST.decor.push([wxOf(x), wxOf(y), kind, tl.r || 0]); return; }
     const g = makeDecor(kind);
     g.position.set(wxOf(x), 0.06, wxOf(y)); g.rotation.y = (tl.r || 0) * Math.PI / 2;
     decorGroup.add(g);
@@ -3198,6 +3250,238 @@ const sprayGeo = new THREE.BufferGeometry(); sprayGeo.setAttribute('position', n
 const spray = new THREE.Points(sprayGeo, new THREE.PointsMaterial({ map: softSprite(), size: 0.2, color: 0xe6fbff, transparent: true, depthWrite: false, alphaTest: 0.02 }));
 fountain.add(spray);
 
+/* ---------- stil-3d (24.11.2026): the song video's soft 3D chibi garden ----------
+   Tulips, the gardener and her onion-bulb friend, the festival jury and the garden decor are camera-facing cut-outs
+   of the video's 3D figures (assets/3d/*.webp, 3x3 atlases, one draw call each). They stand on the same tiles and
+   follow the same growth stages as the old meshes, so picking, timing and the simulation do not change; the old
+   meshes stay as the fallback until the atlases load. The ground tiles get the video's clay textures.
+   Nothing here draws from Math.random (the gate's sim and the daily garden depend on that stream). */
+const ST = {
+  ready: false, decor: [], gece: -1, light: { value: 1 }, k: 1,
+  // [width, height] of each atlas cell's figure as a fraction of the cell (from the cut-out script)
+  meta: {
+    lale: [[0.504, 0.977], [0.508, 0.977], [0.484, 0.977], [0.527, 0.977], [0.969, 0.789], [0.75, 0.977], [0.785, 0.977], [0.664, 0.977], [0.812, 0.977]],
+    chibi: [[0.621, 0.977], [0.656, 0.977], [0.664, 0.977], [0.594, 0.977], [0.43, 0.977], [0.426, 0.977], [0.734, 0.977], [0.891, 0.977], [0.812, 0.977]],
+    juri: [[0.578, 0.977], [0.465, 0.977], [0.586, 0.977], [0.68, 0.977], [0.34, 0.977], [0.895, 0.977], [0.422, 0.977], [0.969, 0.688], [0.969, 0.922]]
+  }
+};
+const SPR_VERT = `attribute vec3 iPos; attribute vec4 iPar; attribute vec4 iCol; varying vec2 vUv; varying vec4 vCol;
+#include <fog_pars_vertex>
+void main() {
+  vec2 c = position.xy;
+  float cs = cos(iPar.w), sn = sin(iPar.w);
+  c = vec2(c.x * cs - c.y * sn, c.x * sn + c.y * cs);
+  vec4 mvPosition = viewMatrix * vec4(iPos, 1.0);
+  mvPosition.xy += c * iPar.x; mvPosition.z += iPar.x * 0.3;
+  gl_Position = projectionMatrix * mvPosition;
+  float u = iPar.z > 0.0 ? uv.x : 1.0 - uv.x;
+  float col = mod(iPar.y, 3.0), row = floor(iPar.y / 3.0 + 0.01);
+  vUv = vec2((col + u) / 3.0, 1.0 - (row + 1.0 - uv.y) / 3.0);
+  vCol = iCol;
+  #include <fog_vertex>
+}`;
+// plain figures: iCol.a = glow (a lit lantern ignores the night)
+const SPR_FRAG = `uniform sampler2D map; uniform float uLight; varying vec2 vUv; varying vec4 vCol;
+#include <fog_pars_fragment>
+void main() {
+  vec4 c = texture2D(map, vUv);
+  if (c.a < 0.5) discard;
+  gl_FragColor = vec4(c.rgb * mix(uLight, 1.15, vCol.a), 1.0);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+  #include <fog_fragment>
+}`;
+// tulips: the grey cup is painted with the variety colour (iCol.rgb); iCol.a = pattern (1 flamed, 2 edged)
+const LALE_FRAG = `uniform sampler2D map; uniform sampler2D mask; uniform float uLight; varying vec2 vUv; varying vec4 vCol;
+#include <fog_pars_fragment>
+void main() {
+  vec4 c = texture2D(map, vUv);
+  if (c.a < 0.5) discard;
+  vec3 m = texture2D(mask, vUv).rgb;
+  vec3 col = mix(c.rgb, c.rgb * vCol.rgb * 1.12, m.r);
+  if (vCol.a > 0.5 && vCol.a < 1.5) col = mix(col, c.rgb * vec3(1.05, 0.72, 0.2), m.b * 0.9);
+  if (vCol.a > 1.5) col = mix(col, c.rgb * vec3(1.12, 1.06, 0.92), m.g);
+  gl_FragColor = vec4(col * uLight, 1.0);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+  #include <fog_fragment>
+}`;
+function sprBatch(max, frag, meta, tex, mask) {
+  const base = new THREE.PlaneGeometry(1, 1).translate(0, 0.5, 0), g = new THREE.InstancedBufferGeometry();
+  g.index = base.index; g.setAttribute('position', base.attributes.position); g.setAttribute('uv', base.attributes.uv);
+  const B = { n: 0, max, meta };
+  B.pos = new THREE.InstancedBufferAttribute(new Float32Array(max * 3), 3).setUsage(THREE.DynamicDrawUsage);
+  B.par = new THREE.InstancedBufferAttribute(new Float32Array(max * 4), 4).setUsage(THREE.DynamicDrawUsage);
+  B.col = new THREE.InstancedBufferAttribute(new Float32Array(max * 4), 4).setUsage(THREE.DynamicDrawUsage);
+  g.setAttribute('iPos', B.pos); g.setAttribute('iPar', B.par); g.setAttribute('iCol', B.col); g.instanceCount = 0;
+  const uniforms = THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { map: { value: null }, mask: { value: null } }]);
+  uniforms.map.value = tex; uniforms.mask.value = mask || null; uniforms.uLight = ST.light;
+  B.mesh = new THREE.Mesh(g, new THREE.ShaderMaterial({ uniforms, vertexShader: SPR_VERT, fragmentShader: frag, fog: true }));
+  B.mesh.frustumCulled = false; B.mesh.renderOrder = 1; scene.add(B.mesh);
+  return B;
+}
+// push one figure: h = world height of the figure; face = 1 / -1 (mirror); sway = lean angle; tint/glow in r, g, b, a
+function sprPush(B, x, y, z, cell, h, face = 1, sway = 0, shadow = false, r = 1, g = 1, b = 1, a = 0) {
+  if (!B || B.n >= B.max) return;
+  const i = B.n++, s = h / B.meta[cell][1];
+  B.pos.setXYZ(i, x, y, z); B.par.setXYZW(i, s, cell, face, sway); B.col.setXYZW(i, r, g, b, a);
+  if (shadow && ST.sh.count < ST.shMax) {
+    const w = s * B.meta[cell][0];
+    dm.position.set(x, y + 0.02, z); dm.rotation.set(0, 0, 0); dm.scale.set(w * 0.9, 1, w * 0.55); dm.updateMatrix();
+    ST.sh.setMatrixAt(ST.sh.count++, dm.matrix);
+  }
+}
+function sprBegin() {
+  if (!ST.ready) return;
+  ST.chibi.n = 0; ST.juri.n = 0; ST.sh.count = 0;
+  // portrait phones keep the whole terrace in view, so the figures are drawn larger there (looks only)
+  ST.k = cam.aspect < 1 ? 1.8 : 1;
+}
+function sprEnd() {
+  if (!ST.ready) return;
+  for (const B of [ST.chibi, ST.juri, ST.lale]) {
+    B.mesh.geometry.instanceCount = B.n;
+    B.pos.needsUpdate = B.par.needsUpdate = B.col.needsUpdate = true;
+  }
+  ST.sh.instanceMatrix.needsUpdate = true;
+}
+// tulips: same tiles, stages, shapes, colours and patterns as the meshes they replace
+const SPR_STAGE = [[4, 0.34], [5, 0.62], [3, 0.95]];
+function sprTulips(time) {
+  const B = ST.lale; B.n = 0;
+  const o = unlockedOff(), e = N - o, k = cam.aspect < 1 ? 1.4 : 1;
+  for (let y = o; y < e; y++) for (let x = o; x < e; x++) {
+    const tl = S.tiles[y * N + x], p = tl.pl;
+    if (!p) continue;
+    const i = y * N + x, st = stageOf(p), v = p.v, dc = Math.floor(v / 9), ds = Math.floor((v % 9) / 3), dp = v % 3;
+    const sway = REDUCED ? 0 : Math.sin(time * 1.3 + i) * (st >= 2 ? 0.07 : 0.03);
+    const face = ((x * 7 + y * 3) & 1) ? 1 : -1;
+    let cell, h, col = null;
+    if (st < 3) { [cell, h] = SPR_STAGE[st]; if (st === 2) col = cupCol[dc]; }
+    else if (st === 3) { cell = ds; h = 1.1 + 0.22 * clamp(p.q, 0, 1); col = cupCol[dc]; }
+    else { cell = 6; h = p.c ? 0.5 : 0.8; }
+    if (col) sprPush(B, wxOf(x), 0.1, wxOf(y), cell, h * k, face, sway, false, col.r, col.g, col.b, dp);
+    else sprPush(B, wxOf(x), 0.1, wxOf(y), cell, h * k, face, sway);
+  }
+}
+// decor props: cypress, plane tree, lantern (glows at night), bench, and the kiosk in the north-west corner
+const SPR_DECOR = { cypress: [4, 2.6], plane: [5, 2.3], lantern: [6, 1.6], bench: [7, 0.62] };
+function sprDecor(night) {
+  for (const [x, z, kind, r] of ST.decor) {
+    const d = SPR_DECOR[kind]; if (!d) continue;
+    sprPush(ST.juri, x, 0.06, z, d[0], d[1], r & 1 ? -1 : 1, 0, true, 1, 1, 1, kind === 'lantern' ? night : 0);
+  }
+  sprPush(ST.juri, -4, 0.06, -3.9, 8, 2.25, 1, 0, true);
+}
+// the gardener walks to the selected bed (or, idle, to a bed picked by the clock) and waters it; her onion friend follows
+const GARD = { x: 2.4, z: 2.6, ox: 3.2, oz: 3.1, face: 1, oface: 1, tile: null, next: 0, last: 0 };
+function sprPeople(time) {
+  if (!S) return;
+  const dt = Math.min(0.1, Math.max(0, time - GARD.last)); GARD.last = time;
+  if (!sel && time >= GARD.next) {
+    const beds = []; each((tl, x, y) => { if (tl.t === T_BED) beds.push(x, y); });
+    const n = beds.length / 2;
+    if (n) { const j = (Math.floor(time / 6) * 7) % n; GARD.tile = { x: beds[j * 2], y: beds[j * 2 + 1] }; }
+    GARD.next = time + 6;
+  }
+  const t = sel || GARD.tile;
+  const rx = Math.cos(yaw), rz = -Math.sin(yaw); // camera right on the ground
+  let tx = GARD.x, tz = GARD.z;
+  if (t) {
+    // stand on the camera side of the tile, so she is never hidden behind her own tulips
+    tx = wxOf(t.x) + Math.sin(yaw) * 0.55; tz = wxOf(t.y) + Math.cos(yaw) * 0.55;
+    const r0 = Math.hypot(tx, tz); if (r0 < 2.3) { tx *= 2.3 / Math.max(0.01, r0); tz *= 2.3 / Math.max(0.01, r0); }
+  }
+  const dx = tx - GARD.x, dz = tz - GARD.z, d = Math.hypot(dx, dz), moving = d > 0.06 && !REDUCED;
+  if (REDUCED) { GARD.x = tx; GARD.z = tz; }
+  else if (moving) { const st = Math.min(d, 1.7 * dt * Math.max(1, speed)); GARD.x += dx / d * st; GARD.z += dz / d * st; }
+  if (d > 0.06) GARD.face = (dx * rx + dz * rz) > 0 ? -1 : 1;
+  const tile = t && inPlay(t.x, t.y) ? tileAt(t.x, t.y) : null;
+  let cell = 0;
+  if (overlay === 'fest') cell = S.lastFest && S.lastFest.stars >= 2 ? 3 : 4;
+  else if (moving) cell = 1;
+  else if (tile && tile.t === T_BED && tile.pl && bloom(tile)) cell = 5;
+  else if (tile && tile.t === T_BED) cell = 2;
+  const bob = moving ? Math.abs(Math.sin(time * 9)) * 0.06 : 0;
+  sprPush(ST.chibi, GARD.x, 0.12 + bob, GARD.z, cell, 1.0 * ST.k, GARD.face, moving ? Math.sin(time * 9) * 0.06 : 0, true);
+  // onion friend: keeps about one tile behind her
+  const fx = GARD.x - rx * GARD.face * -0.85, fz = GARD.z - rz * GARD.face * -0.85;
+  const ex = fx - GARD.ox, ez = fz - GARD.oz, od = Math.hypot(ex, ez), omove = od > 0.08 && !REDUCED;
+  if (REDUCED) { GARD.ox = fx; GARD.oz = fz; }
+  else if (omove) { const st = Math.min(od, 2.0 * dt * Math.max(1, speed)); GARD.ox += ex / od * st; GARD.oz += ez / od * st; }
+  if (od > 0.08) GARD.oface = (ex * rx + ez * rz) > 0 ? -1 : 1;
+  const happy = overlay === 'fest' ? (S.lastFest && S.lastFest.stars >= 2) : cell === 5;
+  const ocell = happy ? 8 : omove ? 7 : 6;
+  const ohop = happy && !REDUCED ? Math.abs(Math.sin(time * 5)) * 0.18 : omove ? Math.abs(Math.sin(time * 11)) * 0.07 : 0;
+  sprPush(ST.chibi, GARD.ox, 0.12 + ohop, GARD.oz, ocell, 0.74 * ST.k, GARD.oface, omove ? Math.sin(time * 11) * 0.08 : 0, true);
+}
+// ground: lawn, soil, flagstone and marble clay textures, sampled in world space and tinted by each tile's colour
+const ZEM_TYPE = t => t === T_GRASS ? 0 : t === T_BED ? 1 : t === T_PATH ? 2 : (t === T_FOUNTAIN || t === T_KIOSK) ? 3 : 4;
+const zemAttr = new THREE.InstancedBufferAttribute(new Float32Array(N * N), 1);
+tileGeo.setAttribute('aZem', zemAttr);
+function zeminKur(tx) {
+  const ref = [[118, 150, 60], [88, 56, 38], [204, 169, 131], [228, 216, 201]].map(c => new THREE.Color().setRGB(c[0] / 255, c[1] / 255, c[2] / 255, THREE.SRGBColorSpace));
+  const mat = tileMesh.material;
+  mat.onBeforeCompile = sh => {
+    tx.forEach((t, i) => { sh.uniforms['tZ' + i] = { value: t }; });
+    sh.uniforms.uZRef = { value: ref.map(c => new THREE.Vector3(c.r, c.g, c.b)) };
+    sh.vertexShader = 'attribute float aZem;\nvarying float vZem;\nvarying vec2 vWxz;\n' + sh.vertexShader.replace('#include <begin_vertex>',
+      '#include <begin_vertex>\n  vZem = aZem;\n  vWxz = (modelMatrix * instanceMatrix * vec4(position, 1.0)).xz;');
+    sh.fragmentShader = 'uniform sampler2D tZ0; uniform sampler2D tZ1; uniform sampler2D tZ2; uniform sampler2D tZ3; uniform vec3 uZRef[4];\nvarying float vZem;\nvarying vec2 vWxz;\n' +
+      sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+  vec2 zuv = vWxz * 0.5;
+  vec3 zt = vec3(1.0);
+  if (vZem < 0.5) zt = mix(vec3(1.0), texture2D(tZ0, zuv * 1.7).rgb / uZRef[0], 0.7);
+  else if (vZem < 1.5) zt = texture2D(tZ1, zuv * 1.3).rgb / uZRef[1];
+  else if (vZem < 2.5) zt = texture2D(tZ2, zuv * 0.9).rgb / uZRef[2];
+  else if (vZem < 3.5) zt = texture2D(tZ3, zuv * 0.4).rgb / uZRef[3];
+  diffuseColor.rgb *= mix(vec3(1.0), zt, 0.92);`);
+  };
+  mat.needsUpdate = true;
+  decalMesh.visible = false; // the textures carry the lawn, soil and pebble detail now
+  // marble walls and fountain, sandstone plinth
+  const mer = tx[3].clone(); mer.repeat.set(0.35, 0.35); mer.needsUpdate = true;
+  for (const m of [M.marble, M.wall]) { m.map = mer; m.color.setHex(0xfffaf2); m.needsUpdate = true; }
+  const yol = tx[2].clone(); yol.repeat.set(0.3, 0.3); yol.needsUpdate = true;
+  M.plinth.map = yol; M.plinth.color.setHex(0xf0dcc0); M.plinth.needsUpdate = true;
+}
+// three.js gives every new texture, material, geometry and object a UUID drawn from Math.random. The game's garden,
+// sim dice and bot also draw from Math.random (the gate seeds it), so the style layer builds its objects with its own
+// private stream: loading the sprites must not shift the garden by a single draw.
+let ST_RND = 0x5eed1a1e;
+function sakin(fn) {
+  const r = Math.random;
+  Math.random = () => { ST_RND = (ST_RND + 0x6D2B79F5) >>> 0; let t = ST_RND; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  try { return fn(); } finally { Math.random = r; }
+}
+sakin(() => {
+  const load = (p, srgb = true) => new Promise(res => new THREE.TextureLoader().load('assets/3d/' + p, t => {
+    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 4; res(t);
+  }, undefined, () => res(null)));
+  Promise.all(['lale.webp', 'lale-m.webp', 'chibi.webp', 'juri.webp', 'zemin-cimen.webp', 'zemin-toprak.webp', 'zemin-yol.webp', 'zemin-mermer.webp']
+    .map((p, i) => load(p, i !== 1))).then(tx => sakin(() => {
+    if (tx.some(t => !t)) return; // a missing file keeps the old meshes
+    const zem = tx.slice(4);
+    for (const t of zem) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
+    zeminKur(zem);
+    ST.lale = sprBatch(N * N, LALE_FRAG, ST.meta.lale, tx[0], tx[1]);
+    ST.chibi = sprBatch(8, SPR_FRAG, ST.meta.chibi, tx[2]);
+    ST.juri = sprBatch(N * N + 8, SPR_FRAG, ST.meta.juri, tx[3]);
+    // soft contact shadows under the figures and props
+    const sc = document.createElement('canvas'); sc.width = sc.height = 64;
+    const x = sc.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(70,40,20,0.5)'); gr.addColorStop(0.6, 'rgba(70,40,20,0.22)'); gr.addColorStop(1, 'rgba(70,40,20,0)');
+    x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
+    ST.shMax = N * N + 16;
+    ST.sh = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }), ST.shMax);
+    ST.sh.frustumCulled = false; ST.sh.count = 0; scene.add(ST.sh);
+    for (const m of tulipMeshes) m.visible = false;
+    ST.ready = true;
+    if (S) { rebuildDecor(); buildTerrace(); } // decor and kiosk as sprites (no extra world rebuild)
+  }));
+});
+
 /* ---------- world rebuild (only when dirty) ---------- */
 function rebuildWorld() {
   dirty = false;
@@ -3216,6 +3500,7 @@ function rebuildWorld() {
     else if (tl.t === T_POOL) col = TC.pool;
     else if (tl.t === T_FOUNTAIN || tl.t === T_KIOSK) col = TC.marble;
     tileMesh.setColorAt(i, col);
+    zemAttr.setX(i, ZEM_TYPE(tl.t));
     if (!on) continue;
     // path edges and raised-bed marble curbs along tile boundaries where surface type changes
     if (tl.t === T_BED || tl.t === T_PATH) {
@@ -3244,7 +3529,7 @@ function rebuildWorld() {
       }
     }
   }
-  curbMesh.count = nCurb; decalMesh.count = nDecal;
+  curbMesh.count = nCurb; decalMesh.count = nDecal; zemAttr.needsUpdate = true;
   for (const m of [tileMesh, curbMesh, decalMesh]) {
     m.instanceMatrix.needsUpdate = true;
     if (m.instanceColor) m.instanceColor.needsUpdate = true;
@@ -3266,6 +3551,7 @@ const STEM_H = [0.3, 0.55, 0.95, 1.05, 0.6];
 const LEAF_S = [0.5, 0.8, 1, 1, 0.8];
 const EDGE_SCALE = [1, 0.35, 0.2];
 function updateTulips(time) {
+  if (ST.ready) { sprTulips(time); return; }
   // only planted tiles get an instance slot; mesh.count stops the GPU drawing empty slots
   cnt.stem = 0; cnt.cup[0] = cnt.cup[1] = cnt.cup[2] = 0; cnt.flame = 0; cnt.edge = 0;
   const o = unlockedOff(), e = N - o;
@@ -3325,8 +3611,13 @@ function updateVisuals(time) {
   sun.position.set(-Math.cos(dayT * Math.PI) * 12, 2 + e * 12, 6);
   sun.intensity = (0.4 + 2.0 * e) * (1 - night * 0.9);
   hemi.intensity = 1.0 + 0.6 * e - 0.5 * night;
-  skyTmp.copy(SKY_DAY).lerp(SKY_DUSK, dusk).lerp(SKY_NIGHT, night);
-  scene.background.copy(skyTmp); scene.fog.color.copy(skyTmp);
+  skyTmp.copy(FOG_DAY).lerp(SKY_DUSK, dusk).lerp(SKY_NIGHT, night);
+  scene.fog.color.copy(skyTmp);
+  // stil-3d: the backdrop plate darkens with the night; sprites follow the sun
+  const geceO = Math.round((night * 0.72 + dusk * 0.12) * 100) / 100;
+  if (geceO !== ST.gece) { ST.gece = geceO; $('gece3d').style.opacity = geceO; $('gece3d').style.background = night > 0.05 ? '#1d2b4f' : '#e9825f'; }
+  ST.light.value = (1 - 0.55 * night) * (1 - 0.1 * dusk);
+  sprBegin();
   M.lantern.emissiveIntensity = 0.2 + 1.6 * night + 0.05 * Math.sin(time * 9);
   M.candle.emissiveIntensity = 0.2 + 1.6 * night;
   spout.scale.y = 1 + 0.12 * Math.sin(time * 4);
@@ -3359,8 +3650,12 @@ function updateVisuals(time) {
     const a = (REDUCED ? 0.4 : time * 0.22) + i * Math.PI / 2;
     g.position.set(Math.cos(a) * 2.9, 0.12 + (REDUCED ? 0 : Math.abs(Math.sin(time * 6 + i)) * 0.04), Math.sin(a) * 2.9);
     g.rotation.y = -a;
+    // stil-3d: the four jurors from the video world walk the same circle as camera-facing figures
+    if (ST.ready) sprPush(ST.juri, g.position.x, g.position.y, g.position.z, i, 1.25 * ST.k, Math.sin(a) > 0 ? 1 : -1, REDUCED ? 0 : Math.sin(time * 6 + i) * 0.05, true);
   });
+  if (ST.ready) { visitors.visible = false; sprDecor(night); sprPeople(time); }
   updateTulips(time);
+  sprEnd();
 }
 
 /* ---------- camera ---------- */
@@ -3371,6 +3666,7 @@ function updateCamera() {
   // portrait screens: pull back until the whole terrace fits the width (vertical fov 40 degrees)
   const fit = (GS[S ? S.season - 1 : 0] + 3) / (0.728 * cam.aspect);
   const d = cam.aspect < 1 ? Math.max(dist, fit) : dist;
+  scene.fog.near = d + 6; scene.fog.far = d + 70; // stil-3d: haze only beyond the terrace, also on a far phone camera
   cam.position.set(target.x + Math.sin(yaw) * Math.cos(pitch) * d, Math.sin(pitch) * d, target.z + Math.cos(yaw) * Math.cos(pitch) * d);
   cam.lookAt(target);
 }
@@ -3505,37 +3801,14 @@ const SVG = {
   star: '<svg viewBox="0 0 24 24" class="star-icon on"><polygon points="12,1.5 15.2,8.5 22.5,9.2 17,14.3 18.8,21.5 12,17.6 5.2,21.5 7,14.3 1.5,9.2 8.8,8.5" fill="#F4C34B" stroke="#B45309" stroke-width="1.2" stroke-linejoin="round"/></svg>',
   starOff: '<svg viewBox="0 0 24 24" class="star-icon off"><polygon points="12,1.5 15.2,8.5 22.5,9.2 17,14.3 18.8,21.5 12,17.6 5.2,21.5 7,14.3 1.5,9.2 8.8,8.5" fill="#E5DFD5" stroke="#B5ADA3" stroke-width="1.2" stroke-linejoin="round"/></svg>'
 };
+// stil-3d: catalogue tulips are the video's 3D tulip (assets/3d/ui-lale.webp), its grey cup painted in the variety colour;
+// an undiscovered variety shows the same tulip as a dark silhouette
 function flowerSVG(v) {
   const d = dec(v);
   const known = S && S.discovered.includes(v);
-  if (!known) {
-    // Undiscovered hybrid silhouette with Ottoman manuscript ink tone
-    const silCol = 'rgba(74, 46, 59, 0.32)';
-    const stemCol = 'rgba(74, 46, 59, 0.26)';
-    const shape = d.s === 0
-      ? `<circle cx="20" cy="18" r="12" fill="${silCol}"/>`
-      : d.s === 1
-        ? `<ellipse cx="20" cy="18" rx="9" ry="14" fill="${silCol}"/>`
-        : `<path d="M20 4 C15 12 11 20 11 28 C11 34 15 37 20 37 C25 37 29 34 29 28 C29 20 25 12 20 4 Z" fill="${silCol}"/>`;
-    const pat = d.p === 1
-      ? `<path d="M20 10 L20 25" stroke="rgba(244, 195, 75, 0.5)" stroke-width="2.2" stroke-linecap="round"/><circle cx="20" cy="10" r="1.3" fill="rgba(244, 195, 75, 0.6)"/>`
-      : d.p === 2
-        ? `<circle cx="20" cy="18" r="11" fill="none" stroke="rgba(255, 255, 255, 0.55)" stroke-width="1.8" stroke-dasharray="2 1.5"/>`
-        : '';
-    return `<svg viewBox="0 0 40 54" class="tulip-svg tulip-sil" aria-hidden="true">${shape}${pat}<path d="M20 32 L20 50" stroke="${stemCol}" stroke-width="2.6" stroke-linecap="round"/><path d="M20 43 C15 41 12 37 12 33 C16 33 19 37 20 43 Z" fill="${stemCol}"/></svg>`;
-  }
   const col = '#' + PAL[d.c].col.toString(16).padStart(6, '0');
-  const shape = d.s === 0
-    ? `<circle cx="20" cy="18" r="12" fill="${col}"/>`
-    : d.s === 1
-      ? `<ellipse cx="20" cy="18" rx="9" ry="14" fill="${col}"/>`
-      : `<path d="M20 4 C15 12 11 20 11 28 C11 34 15 37 20 37 C25 37 29 34 29 28 C29 20 25 12 20 4 Z" fill="${col}"/>`;
-  const pat = d.p === 1
-    ? `<path d="M20 10 L20 25" stroke="#F4C34B" stroke-width="2.6" stroke-linecap="round"/><circle cx="20" cy="10" r="1.5" fill="#FFF"/>`
-    : d.p === 2
-      ? `<circle cx="20" cy="18" r="11" fill="none" stroke="#FFF7E6" stroke-width="2.2"/>`
-      : '';
-  return `<svg viewBox="0 0 40 54" class="tulip-svg">${shape}${pat}<path d="M20 32 L20 50" stroke="#2D6A4F" stroke-width="2.6" stroke-linecap="round"/><path d="M20 43 C15 41 12 37 12 33 C16 33 19 37 20 43 Z" fill="#52B788"/></svg>`;
+  if (!known) return `<span class="t3l s${d.s} sil" aria-hidden="true"><i></i></span>`;
+  return `<span class="t3l s${d.s}" style="--c:${col}" aria-hidden="true"><i></i><i class="c"></i>${d.p === 1 ? '<i class="a"></i>' : d.p === 2 ? '<i class="k"></i>' : ''}</span>`;
 }
 function kindName(tl) {
   if (tl.t === T_BED) return T('kBed');
@@ -3615,7 +3888,7 @@ function renderBazaar() {
   if (!S) return;
   $('baz-akce').innerHTML = `<span class="baz-akce-pill"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#F4C34B" stroke="#B45309" stroke-width="1.4"/><circle cx="10" cy="10" r="5.5" fill="none" stroke="#D97706" stroke-width="0.7" stroke-dasharray="1 1"/><path d="M7 10.5c1-1.5 2.5-2 4-1M8 8c1 2 2.5 3 4 2M9 5v10" stroke="#78350F" stroke-width="1.2" stroke-linecap="round"/></svg><b>${S.akce}</b> akçe</span>`;
   const bulbs = Object.keys(S.bulbs).filter(v => S.bulbs[v] > 0);
-  let h = `<div class="item featured-pack"><div><b>${T('buyPack')}</b><small class="block-hint">${T('packDesc')}</small></div><button data-b="pack" class="primary">${T('buyPack').split('(')[0].trim()}</button></div>`;
+  let h = `<div class="item featured-pack"><div><img class="ico3" src="assets/3d/ui-sogan-kese.webp" alt="" draggable="false"><span><b>${T('buyPack')}</b><small class="block-hint">${T('packDesc')}</small></span></div><button data-b="pack" class="primary">${T('buyPack').split('(')[0].trim()}</button></div>`;
   h += `<div class="section-divider"><span>${T('bulbsTitle')}</span></div>`;
   h += bulbs.length ? bulbs.map(v => {
     const col = '#' + PAL[dec(Number(v)).c].col.toString(16).padStart(6, '0');
@@ -3623,7 +3896,7 @@ function renderBazaar() {
   }).join('') : `<div class="muted">${T('noBulbs')}</div>`;
   h += `<div class="section-divider"><span>${T('flowersTitle')}</span></div>`;
   const totalCutVal = S.flowers.reduce((acc, f) => acc + sellPrice(f.v, f.q, true), 0);
-  h += S.flowers.length ? `<div class="item"><div class="item-info"><span>${S.flowers.length} × ${T('flowersTitle')}</span><small class="price-tag">+${totalCutVal} ${T('akAbbr')}</small></div><button data-b="sellall" class="primary">${T('sellAll')}</button></div>` : `<div class="muted">${T('flowersNone')}</div>`;
+  h += S.flowers.length ? `<div class="item"><div class="item-info"><img class="ico3" src="assets/3d/ui-demet.webp" alt="" draggable="false"><span>${S.flowers.length} × ${T('flowersTitle')}</span><small class="price-tag">+${totalCutVal} ${T('akAbbr')}</small></div><button data-b="sellall" class="primary">${T('sellAll')}</button></div>` : `<div class="muted">${T('flowersNone')}</div>`;
   h += `<div class="section-divider"><span>${T('marketTitle')}</span></div>`;
   const top = S.discovered.slice().sort((a, b) => (S.market[b] ?? 1) - (S.market[a] ?? 1)).slice(0, 5);
   h += top.length ? top.map(v => {
@@ -3683,7 +3956,7 @@ function renderFest() {
   const stars = [1, 2, 3].map(k => (k <= f.stars ? SVG.star : SVG.starOff)).join('');
   const bar = (label, v, max) => `<div class="bar"><span class="bar-lbl">${label}</span><div class="track"><div class="fill" style="width:${Math.round(v / max * 100)}%"></div></div><span class="bar-val">${v}/${max}</span></div>`;
   $('fest-body').innerHTML = `
-    <h2>${T('festTitle')} · ${f.season}. ${T('season')}</h2>
+    <div class="head3"><img class="fig3" src="assets/3d/ui-${f.stars >= 2 ? 'sevinc' : 'bahcivan'}.webp" alt="" draggable="false"><h2>${T('festTitle')} · ${f.season}. ${T('season')}</h2></div>
     <div class="score-display">
       <div class="big">${f.score}</div>
       <div class="score-lbl">${T('score')}${f.record ? ' · <span class="record-badge">' + T('newRecord') + '</span>' : ''}</div>
@@ -3708,7 +3981,7 @@ function renderJury(j) {
   const cards = j.jurors.map((r, i) => {
     const info = JURY.find(x => x.id === r.id);
     return `<div class="juror${r.id === j.fav ? ' fav' : ''}" style="--i:${i}" data-juror="${r.id}">
-      <div class="juror-head"><span class="juror-badge" style="background:${hex(info.col)}" aria-hidden="true">${T('j_' + r.id)[0]}</span><div><b>${T('j_' + r.id)}</b><small>${T('j_' + r.id + 'R')}</small></div><span class="juror-score">${r.score}<small>/10</small></span></div>
+      <div class="juror-head"><span class="juror-badge j3" style="box-shadow:0 0 0 2px ${hex(info.col)}" aria-hidden="true"><img src="assets/3d/ui-juri-${r.id}.webp" alt="" draggable="false"></span><div><b>${T('j_' + r.id)}</b><small>${T('j_' + r.id + 'R')}</small></div><span class="juror-score">${r.score}<small>/10</small></span></div>
       <div class="track mini"><div class="fill" style="width:${r.score * 10}%"></div></div>
       ${r.good ? `<p class="j-good">+ ${Tn('jg_' + r.good, r.gn)}</p>` : ''}
       <p class="j-tip">→ ${Tn('jt_' + r.tip, r.n)}</p>
@@ -3727,7 +4000,7 @@ function renderEnd() {
   const f = S.lastFest;
   const best = load(KEY_BEST) || {};
   $('end-body').innerHTML = `
-    <h2>${S.won ? T('winTitle') : T('loseTitle')}</h2>
+    <div class="head3"><img class="fig3" src="assets/3d/ui-${S.won ? 'sevinc' : 'uzgun'}.webp" alt="" draggable="false"><h2>${S.won ? T('winTitle') : T('loseTitle')}</h2>${S.won ? '<img class="fig3" src="assets/3d/ui-sogan-sevinc.webp" alt="" draggable="false">' : ''}</div>
     <p class="muted" style="line-height:1.45;margin:4px 0 8px;">${S.won ? T('winText') : T('loseText')}</p>
     <div class="stars">${[1, 2, 3].map(k => (k <= f.stars ? SVG.star : SVG.starOff)).join('')}</div>
     <div class="stats-grid">
@@ -4135,7 +4408,7 @@ window.lale = {
     }
     return executeBrushQueue();
   },
-  assets: 'none (procedural only)',
+  get assets() { return ST.ready ? 'assets/3d (video-style sprites and textures)' : 'loading'; },
   get hybridNames() { return HYBRID_ADJECTIVES; },
   nameOf(v) { return nameOf(v); },
   breedingReq(v) { return breedingReq(v); },
